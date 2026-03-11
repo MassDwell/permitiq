@@ -1,12 +1,12 @@
-# PermitIQ
+# MeritLayer
 
 AI-powered construction compliance & document intelligence platform. Automates permit tracking, deadline management, and regulatory compliance for general contractors and real estate developers.
 
-## What PermitIQ Does
+## What MeritLayer Does
 
 General contractors and developers spend 20-30 hours/week on permit paperwork. They miss deadlines ($5K-$50K fines per violation), fail inspections due to missing docs, and lose institutional knowledge when staff leave.
 
-PermitIQ is the AI brain that:
+MeritLayer is the AI brain that:
 - **Reads compliance documents** - Upload permits, inspection reports, certificates. AI extracts deadlines, requirements, and conditions automatically.
 - **Tracks deadlines** - Never miss a permit deadline with alerts at 7 days, 3 days, and 1 day before due dates.
 - **Maps requirements** - Match project docs against required items. See what's met, pending, or overdue at a glance.
@@ -42,7 +42,7 @@ PermitIQ is the AI brain that:
 
 ```bash
 git clone <repository-url>
-cd permitiq
+cd meritlayer
 pnpm install
 ```
 
@@ -170,7 +170,7 @@ The `vercel.json` includes a cron job configuration for daily deadline alerts at
 ## Project Structure
 
 ```
-permitiq/
+meritlayer/
 ├── src/
 │   ├── app/
 │   │   ├── (auth)/           # Auth pages (sign-in, sign-up)

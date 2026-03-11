@@ -24,7 +24,7 @@ async function seed() {
     const existingUser = await db
       .select()
       .from(users)
-      .where(eq(users.email, "demo@permitiq.com"))
+      .where(eq(users.email, "demo@meritlayer.com"))
       .limit(1);
 
     let demoUser;
@@ -38,7 +38,7 @@ async function seed() {
         .insert(users)
         .values({
           clerkId: "demo_user_clerk_id",
-          email: "demo@permitiq.com",
+          email: "demo@meritlayer.com",
           name: "Demo User",
           plan: "professional",
         })
@@ -292,7 +292,7 @@ async function seed() {
 
     console.log("\nDemo data seeding complete!");
     console.log("\nDemo account:");
-    console.log("  Email: demo@permitiq.com");
+    console.log("  Email: demo@meritlayer.com");
     console.log("  Note: This account uses a mock Clerk ID. For real testing,");
     console.log(
       "        create a new account through the Clerk sign-up flow."
