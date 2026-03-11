@@ -1,0 +1,223 @@
+import { z } from "zod";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { projects, documents, complianceItems } from "@/db/schema";
+import { eq, and, desc, count, sql } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
+
+export const projectsRouter = createTRPCRouter({
+  list: protectedProcedure.query(async ({ ctx }) => {
+    const userProjects = await ctx.db.query.projects.findMany({
+      where: eq(projects.userId, ctx.dbUser.id),
+      orderBy: [desc(projects.updatedAt)],
+      with: {
+        complianceItems: true,
+        documents: true,
+      },
+    });
+
+    // Calculate health scores
+    return userProjects.map((project) => {
+      const totalItems = project.complianceItems.length;
+      const metItems = project.complianceItems.filter((i) => i.status === "met").length;
+      const overdueItems = project.complianceItems.filter((i) => i.status === "overdue").length;
+      const healthScore = totalItems > 0 ? Math.round((metItems / totalItems) * 100) : 100;
+
+      let healthStatus: "green" | "yellow" | "red" = "green";
+      if (overdueItems > 0) {
+        healthStatus = "red";
+      } else if (healthScore < 80) {
+        healthStatus = "yellow";
+      }
+
+      return {
+        ...project,
+        healthScore,
+        healthStatus,
+        totalItems,
+        metItems,
+        overdueItems,
+        documentCount: project.documents.length,
+      };
+    });
+  }),
+
+  get: protectedProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const project = await ctx.db.query.projects.findFirst({
+        where: and(
+          eq(projects.id, input.id),
+          eq(projects.userId, ctx.dbUser.id)
+        ),
+        with: {
+          complianceItems: {
+            with: {
+              document: true,
+            },
+            orderBy: [desc(complianceItems.deadline)],
+          },
+          documents: {
+            orderBy: [desc(documents.createdAt)],
+          },
+        },
+      });
+
+      if (!project) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Project not found",
+        });
+      }
+
+      // Calculate health metrics
+      const totalItems = project.complianceItems.length;
+      const metItems = project.complianceItems.filter((i) => i.status === "met").length;
+      const overdueItems = project.complianceItems.filter((i) => i.status === "overdue").length;
+      const pendingItems = project.complianceItems.filter((i) => i.status === "pending").length;
+      const healthScore = totalItems > 0 ? Math.round((metItems / totalItems) * 100) : 100;
+
+      let healthStatus: "green" | "yellow" | "red" = "green";
+      if (overdueItems > 0) {
+        healthStatus = "red";
+      } else if (healthScore < 80) {
+        healthStatus = "yellow";
+      }
+
+      return {
+        ...project,
+        healthScore,
+        healthStatus,
+        totalItems,
+        metItems,
+        overdueItems,
+        pendingItems,
+      };
+    }),
+
+  create: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().min(1),
+        address: z.string().optional(),
+        jurisdiction: z.string().optional(),
+        projectType: z.enum(["residential", "commercial", "adu", "mixed_use", "renovation"]),
+        description: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Check plan limits
+      const projectCount = await ctx.db
+        .select({ count: count() })
+        .from(projects)
+        .where(
+          and(
+            eq(projects.userId, ctx.dbUser.id),
+            eq(projects.status, "active")
+          )
+        );
+
+      const maxProjects = ctx.dbUser.plan === "starter" ? 1 : ctx.dbUser.plan === "professional" ? 5 : Infinity;
+
+      if (projectCount[0].count >= maxProjects) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: `Your ${ctx.dbUser.plan} plan allows a maximum of ${maxProjects} active project(s). Please upgrade to add more.`,
+        });
+      }
+
+      const [newProject] = await ctx.db
+        .insert(projects)
+        .values({
+          userId: ctx.dbUser.id,
+          name: input.name,
+          address: input.address,
+          jurisdiction: input.jurisdiction,
+          projectType: input.projectType,
+          description: input.description,
+        })
+        .returning();
+
+      return newProject;
+    }),
+
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        name: z.string().min(1).optional(),
+        address: z.string().optional(),
+        jurisdiction: z.string().optional(),
+        projectType: z.enum(["residential", "commercial", "adu", "mixed_use", "renovation"]).optional(),
+        status: z.enum(["active", "completed", "on_hold", "archived"]).optional(),
+        description: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...updates } = input;
+
+      const [updated] = await ctx.db
+        .update(projects)
+        .set({
+          ...updates,
+          updatedAt: new Date(),
+        })
+        .where(and(eq(projects.id, id), eq(projects.userId, ctx.dbUser.id)))
+        .returning();
+
+      if (!updated) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Project not found",
+        });
+      }
+
+      return updated;
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const [deleted] = await ctx.db
+        .delete(projects)
+        .where(and(eq(projects.id, input.id), eq(projects.userId, ctx.dbUser.id)))
+        .returning();
+
+      if (!deleted) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Project not found",
+        });
+      }
+
+      return { success: true };
+    }),
+
+  getUpcomingDeadlines: protectedProcedure
+    .input(z.object({ days: z.number().default(30) }))
+    .query(async ({ ctx, input }) => {
+      const now = new Date();
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + input.days);
+
+      const items = await ctx.db.query.complianceItems.findMany({
+        where: and(
+          sql`${complianceItems.deadline} >= ${now}`,
+          sql`${complianceItems.deadline} <= ${futureDate}`,
+          eq(complianceItems.status, "pending")
+        ),
+        with: {
+          project: {
+            columns: {
+              id: true,
+              name: true,
+              userId: true,
+            },
+          },
+        },
+        orderBy: [complianceItems.deadline],
+      });
+
+      // Filter to only user's projects
+      return items.filter((item) => item.project.userId === ctx.dbUser.id);
+    }),
+});
