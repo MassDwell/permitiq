@@ -5,7 +5,8 @@ import { eq, and, sql, lte, gte, isNull, or } from "drizzle-orm";
 import { Resend } from "resend";
 import { generateAlertMessage } from "@/lib/ai/document-processor";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy-initialize to avoid build-time errors when env vars aren't set
+const getResend = () => new Resend(process.env.RESEND_API_KEY ?? "");
 
 export async function GET(request: Request) {
   // Verify cron secret for security
@@ -143,7 +144,7 @@ export async function GET(request: Request) {
       // Send email if enabled
       if (settings?.emailAlerts && process.env.RESEND_API_KEY) {
         try {
-          await resend.emails.send({
+          await getResend().emails.send({
             from: process.env.RESEND_FROM_EMAIL || "PermitIQ <alerts@permitiq.com>",
             to: item.project.user.email,
             subject: `Deadline Alert: ${item.description}`,
@@ -217,7 +218,7 @@ export async function GET(request: Request) {
       // Send email if enabled
       if (settings?.emailAlerts && process.env.RESEND_API_KEY) {
         try {
-          await resend.emails.send({
+          await getResend().emails.send({
             from: process.env.RESEND_FROM_EMAIL || "PermitIQ <alerts@permitiq.com>",
             to: item.project.user.email,
             subject: `OVERDUE: ${item.description}`,
