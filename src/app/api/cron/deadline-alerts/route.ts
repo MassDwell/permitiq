@@ -145,7 +145,7 @@ export async function GET(request: Request) {
       if (settings?.emailAlerts && process.env.RESEND_API_KEY) {
         try {
           await getResend().emails.send({
-            from: process.env.RESEND_FROM_EMAIL || "PermitIQ <alerts@permitiq.com>",
+            from: process.env.RESEND_FROM_EMAIL || "MeritLayer <alerts@meritlayer.com>",
             to: item.project.user.email,
             subject: `Deadline Alert: ${item.description}`,
             html: `
@@ -219,7 +219,7 @@ export async function GET(request: Request) {
       if (settings?.emailAlerts && process.env.RESEND_API_KEY) {
         try {
           await getResend().emails.send({
-            from: process.env.RESEND_FROM_EMAIL || "PermitIQ <alerts@permitiq.com>",
+            from: process.env.RESEND_FROM_EMAIL || "MeritLayer <alerts@meritlayer.com>",
             to: item.project.user.email,
             subject: `OVERDUE: ${item.description}`,
             html: `

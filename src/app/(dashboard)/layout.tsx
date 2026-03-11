@@ -38,7 +38,7 @@ export default function DashboardLayout({
           {/* Logo */}
           <div className="flex items-center gap-2 px-6 h-16 border-b">
             <Building2 className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-bold">PermitIQ</span>
+            <span className="text-xl font-bold">MeritLayer</span>
           </div>
 
           {/* Navigation */}

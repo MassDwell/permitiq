@@ -124,7 +124,7 @@ export default function LandingPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
               <Building2 className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold">PermitIQ</span>
+              <span className="text-xl font-bold">MeritLayer</span>
             </div>
             <div className="flex items-center gap-4">
               <Link href="/sign-in">
@@ -151,7 +151,7 @@ export default function LandingPage() {
               <span className="text-blue-600">deadline again</span>
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-              PermitIQ is the AI brain that reads your compliance documents, tracks deadlines,
+              MeritLayer is the AI brain that reads your compliance documents, tracks deadlines,
               maps requirements, and alerts you before anything falls through the cracks.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -359,7 +359,7 @@ export default function LandingPage() {
               <Card key={i}>
                 <CardContent className="pt-6">
                   <p className="text-gray-600 italic mb-4">
-                    "PermitIQ has transformed how we manage compliance. We've cut our admin time
+                    "MeritLayer has transformed how we manage compliance. We've cut our admin time
                     in half and haven't missed a deadline since we started using it."
                   </p>
                   <div className="flex items-center gap-3">
@@ -428,10 +428,10 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
               <Building2 className="h-6 w-6 text-blue-600" />
-              <span className="font-bold">PermitIQ</span>
+              <span className="font-bold">MeritLayer</span>
             </div>
             <p className="text-gray-500 text-sm">
-              &copy; {new Date().getFullYear()} PermitIQ. All rights reserved.
+              &copy; {new Date().getFullYear()} MeritLayer. All rights reserved.
             </p>
           </div>
         </div>

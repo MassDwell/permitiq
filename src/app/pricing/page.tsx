@@ -102,7 +102,7 @@ function PricingContent() {
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center gap-2">
               <Building2 className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold">PermitIQ</span>
+              <span className="text-xl font-bold">MeritLayer</span>
             </Link>
             <div className="flex items-center gap-4">
               {isSignedIn ? (

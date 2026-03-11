@@ -295,7 +295,7 @@ export default function SettingsPage() {
                 Integrations coming soon
               </p>
               <p className="text-sm text-gray-400">
-                Connect PermitIQ with Procore, Buildertrend, and more
+                Connect MeritLayer with Procore, Buildertrend, and more
               </p>
             </div>
           </CardContent>

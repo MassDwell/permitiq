@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "PermitIQ - AI-Powered Construction Compliance",
+  title: "MeritLayer - AI-Powered Construction Compliance",
   description:
     "Never miss a permit deadline again. AI-powered document intelligence for construction compliance.",
   keywords: [
