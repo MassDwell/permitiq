@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const getStripe = () => new Stripe(process.env.STRIPE_SECRET_KEY ?? "");
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   let event: Stripe.Event;
 
   try {
-    event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    event = getStripe().webhooks.constructEvent(body, signature, webhookSecret);
   } catch (err) {
     console.error("Webhook signature verification failed:", err);
     return new Response("Webhook Error", { status: 400 });

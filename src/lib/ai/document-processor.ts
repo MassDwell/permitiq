@@ -1,8 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { ExtractedDocumentData } from "@/db/schema";
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
+const getAnthropic = () => new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY ?? "",
 });
 
 const EXTRACTION_PROMPT = `You are an expert construction document analyzer specializing in permit compliance and regulatory requirements.
@@ -79,7 +79,7 @@ export async function processDocumentWithAI(
       const pdfBuffer = await pdfResponse.arrayBuffer();
       const base64Pdf = Buffer.from(pdfBuffer).toString("base64");
 
-      response = await anthropic.messages.create({
+      response = await getAnthropic().messages.create({
         model: "claude-sonnet-4-20250514",
         max_tokens: 4096,
         messages: [
@@ -116,7 +116,7 @@ export async function processDocumentWithAI(
             ? "image/webp"
             : "image/jpeg";
 
-      response = await anthropic.messages.create({
+      response = await getAnthropic().messages.create({
         model: "claude-sonnet-4-20250514",
         max_tokens: 4096,
         messages: [
@@ -144,7 +144,7 @@ export async function processDocumentWithAI(
       const textResponse = await fetch(storageUrl);
       const text = await textResponse.text();
 
-      response = await anthropic.messages.create({
+      response = await getAnthropic().messages.create({
         model: "claude-sonnet-4-20250514",
         max_tokens: 4096,
         messages: [
@@ -194,7 +194,7 @@ export async function generateAlertMessage(
   daysUntilDue: number
 ): Promise<string> {
   try {
-    const response = await anthropic.messages.create({
+    const response = await getAnthropic().messages.create({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 256,
       messages: [

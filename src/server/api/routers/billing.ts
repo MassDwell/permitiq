@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 import Stripe from "stripe";
 import { TRPCError } from "@trpc/server";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const getStripe = () => new Stripe(process.env.STRIPE_SECRET_KEY ?? "");
 
 const PRICE_IDS = {
   starter: process.env.STRIPE_STARTER_PRICE_ID!,
@@ -34,7 +34,7 @@ export const billingRouter = createTRPCRouter({
       let customerId = ctx.dbUser.stripeCustomerId;
 
       if (!customerId) {
-        const customer = await stripe.customers.create({
+        const customer = await getStripe().customers.create({
           email: ctx.dbUser.email,
           name: ctx.dbUser.name || undefined,
           metadata: {
@@ -52,7 +52,7 @@ export const billingRouter = createTRPCRouter({
       }
 
       // Create checkout session
-      const session = await stripe.checkout.sessions.create({
+      const session = await getStripe().checkout.sessions.create({
         customer: customerId,
         mode: "subscription",
         payment_method_types: ["card"],
@@ -81,7 +81,7 @@ export const billingRouter = createTRPCRouter({
       });
     }
 
-    const session = await stripe.billingPortal.sessions.create({
+    const session = await getStripe().billingPortal.sessions.create({
       customer: ctx.dbUser.stripeCustomerId,
       return_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings`,
     });
@@ -95,7 +95,7 @@ export const billingRouter = createTRPCRouter({
     }
 
     try {
-      const subscription = await stripe.subscriptions.retrieve(
+      const subscription = await getStripe().subscriptions.retrieve(
         ctx.dbUser.stripeSubscriptionId
       );
 
