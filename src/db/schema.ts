@@ -74,6 +74,9 @@ export const complianceItems = pgTable("compliance_items", {
   notes: text("notes"),
   source: text("source"), // "extracted" | "manual" | "rule_based"
   ruleId: text("rule_id"), // Reference to jurisdiction rule that created this
+  sourceUrl: text("source_url"),
+  sourceText: text("source_text"),
+  reasoning: text("reasoning"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

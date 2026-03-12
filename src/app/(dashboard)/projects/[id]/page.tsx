@@ -40,10 +40,27 @@ import {
   Plus,
   Loader2,
   ExternalLink,
+  Info,
+  Search,
 } from "lucide-react";
 import Link from "next/link";
 import { DocumentUploadZone } from "@/components/document-upload-zone";
 import { AddComplianceItemDialog } from "@/components/add-compliance-item-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 function getStatusBadge(status: string) {
   switch (status) {
@@ -81,6 +98,8 @@ export default function ProjectDetailPage() {
   const projectId = params.id as string;
 
   const [addItemOpen, setAddItemOpen] = useState(false);
+  const [researchOpen, setResearchOpen] = useState(false);
+  const [researchPermitType, setResearchPermitType] = useState("");
 
   const utils = trpc.useUtils();
 
@@ -122,6 +141,19 @@ export default function ProjectDetailPage() {
     onSuccess: () => {
       toast.success("Project deleted");
       router.push("/dashboard");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const researchRequirements = trpc.compliance.researchRequirements.useMutation({
+    onSuccess: (data) => {
+      utils.projects.get.invalidate({ id: projectId });
+      setResearchOpen(false);
+      toast.success(
+        `Added ${data.items.length} requirements from ${new URL(data.sourceUrl).hostname}`
+      );
     },
     onError: (error) => {
       toast.error(error.message);
@@ -315,10 +347,24 @@ export default function ProjectDetailPage() {
                   Track all requirements for this project
                 </CardDescription>
               </div>
-              <Button onClick={() => setAddItemOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Item
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    const lower = project.name.toLowerCase();
+                    const prefill = /demo(lition)?/.test(lower) ? "demolition" : "";
+                    setResearchPermitType(prefill);
+                    setResearchOpen(true);
+                  }}
+                >
+                  <Search className="h-4 w-4 mr-2" />
+                  Research Requirements
+                </Button>
+                <Button onClick={() => setAddItemOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Item
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               {project.complianceItems.length > 0 ? (
@@ -350,6 +396,52 @@ export default function ProjectDetailPage() {
                             {item.description}
                           </p>
                           {getStatusBadge(item.status)}
+                          {item.sourceUrl && (
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <button className="text-gray-400 hover:text-gray-600 flex-shrink-0">
+                                  <Info className="h-4 w-4" />
+                                </button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-80" align="start">
+                                <div className="space-y-3 text-sm">
+                                  <div>
+                                    <p className="font-semibold text-gray-700 mb-1">Source</p>
+                                    <a
+                                      href={item.sourceUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-blue-600 hover:underline break-all"
+                                    >
+                                      {(() => {
+                                        try {
+                                          const u = new URL(item.sourceUrl);
+                                          const path = u.pathname.length > 30 ? u.pathname.slice(0, 30) + "…" : u.pathname;
+                                          return u.hostname + path;
+                                        } catch {
+                                          return item.sourceUrl;
+                                        }
+                                      })()}
+                                    </a>
+                                  </div>
+                                  {item.sourceText && (
+                                    <div>
+                                      <p className="font-semibold text-gray-700 mb-1">Evidence</p>
+                                      <blockquote className="border-l-2 border-gray-200 pl-3 text-gray-600 italic">
+                                        {item.sourceText}
+                                      </blockquote>
+                                    </div>
+                                  )}
+                                  {item.reasoning && (
+                                    <div>
+                                      <p className="font-semibold text-gray-700 mb-1">Why this applies</p>
+                                      <p className="text-gray-600">{item.reasoning}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </PopoverContent>
+                            </Popover>
+                          )}
                         </div>
                         <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
                           <span className="capitalize">
@@ -488,6 +580,52 @@ export default function ProjectDetailPage() {
         onOpenChange={setAddItemOpen}
         projectId={projectId}
       />
+
+      <Dialog open={researchOpen} onOpenChange={setResearchOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Research Requirements</DialogTitle>
+            <DialogDescription>
+              What permit type is this project? We'll look up the requirements for you.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-2">
+            <Label htmlFor="permitType" className="mb-2 block">Permit type</Label>
+            <Input
+              id="permitType"
+              placeholder="e.g. demolition, building permit, electrical..."
+              value={researchPermitType}
+              onChange={(e) => setResearchPermitType(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && researchPermitType.trim()) {
+                  researchRequirements.mutate({ projectId, permitType: researchPermitType.trim() });
+                }
+              }}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setResearchOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => researchRequirements.mutate({ projectId, permitType: researchPermitType.trim() })}
+              disabled={!researchPermitType.trim() || researchRequirements.isPending}
+            >
+              {researchRequirements.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Researching...
+                </>
+              ) : (
+                <>
+                  <Search className="h-4 w-4 mr-2" />
+                  Research
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
