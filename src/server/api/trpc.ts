@@ -1,9 +1,9 @@
 import { initTRPC, TRPCError } from "@trpc/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { users, userSettings } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
@@ -39,16 +39,52 @@ const isAuthed = t.middleware(async ({ ctx, next }) => {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
-  // Get the database user
-  const dbUser = await ctx.db.query.users.findFirst({
+  // Get or auto-create the database user (handles webhook delivery failures)
+  let dbUser = await ctx.db.query.users.findFirst({
     where: eq(users.clerkId, ctx.userId),
   });
 
   if (!dbUser) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: "User not found in database. Please sign out and sign back in.",
-    });
+    // Webhook may have failed — fetch from Clerk and create user record now
+    try {
+      const clerk = await clerkClient();
+      const clerkUser = await clerk.users.getUser(ctx.userId);
+      const primaryEmail = clerkUser.emailAddresses.find(
+        (e) => e.id === clerkUser.primaryEmailAddressId
+      )?.emailAddress ?? clerkUser.emailAddresses[0]?.emailAddress;
+
+      if (!primaryEmail) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "No email found for user." });
+      }
+
+      const fullName = [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ") || null;
+
+      const [newUser] = await ctx.db
+        .insert(users)
+        .values({
+          clerkId: ctx.userId,
+          email: primaryEmail,
+          name: fullName,
+          plan: "starter",
+        })
+        .returning();
+
+      // Create default settings
+      await ctx.db.insert(userSettings).values({
+        userId: newUser.id,
+        emailAlerts: true,
+        alertLeadDays: 7,
+        dailyDigest: false,
+      });
+
+      dbUser = newUser;
+    } catch (err) {
+      if (err instanceof TRPCError) throw err;
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to initialize user account. Please try again.",
+      });
+    }
   }
 
   return next({
