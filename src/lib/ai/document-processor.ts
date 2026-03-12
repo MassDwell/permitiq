@@ -1,7 +1,19 @@
 import Anthropic from "@anthropic-ai/sdk";
-import * as pdfParseModule from "pdf-parse";
-const pdfParse = (pdfParseModule as any).default ?? pdfParseModule;
+import PDFParser from "pdf2json";
 import { ExtractedDocumentData } from "@/db/schema";
+
+async function extractPdfText(buffer: Buffer): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const parser = new (PDFParser as any)(null, 1);
+    parser.on("pdfParser_dataReady", () => {
+      resolve(parser.getRawTextContent());
+    });
+    parser.on("pdfParser_dataError", (err: unknown) => {
+      reject(new Error(String(err)));
+    });
+    parser.parseBuffer(buffer);
+  });
+}
 
 const MAX_PDF_BASE64_BYTES = 8 * 1024 * 1024; // ~6MB PDF = ~8MB base64, Claude's soft limit before page count issues
 
@@ -110,8 +122,8 @@ export async function processDocumentWithAI(
         });
       } else {
         // Large PDF — extract text and send as plain text (truncated to ~100k chars)
-        const parsed = await pdfParse(pdfBuffer);
-        const extractedText = parsed.text.slice(0, 100000);
+        const rawText = await extractPdfText(pdfBuffer);
+        const extractedText = rawText.slice(0, 100000);
         response = await getAnthropic().messages.create({
           model: "claude-sonnet-4-5",
           max_tokens: 4096,
