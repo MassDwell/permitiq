@@ -55,7 +55,7 @@ export default function RootLayout({
       }}
     >
       <html lang="en" className="dark">
-        <body className={`${inter.variable} font-sans antialiased`}>
+        <body className={`${inter.variable} font-sans antialiased bg-background text-foreground`}>
           <TRPCProvider>
             {children}
             <Toaster />

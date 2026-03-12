@@ -24,7 +24,7 @@ export default function DashboardLayout({
   const { data: unreadCount } = trpc.alerts.getUnreadCount.useQuery();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0A0F1E]">
       {/* Sidebar */}
       <div className="fixed inset-y-0 left-0 z-50 w-64 bg-[#0A0F1E] border-r border-white/10">
         <div className="flex flex-col h-full">
@@ -77,7 +77,7 @@ export default function DashboardLayout({
 
       {/* Main content */}
       <div className="pl-64">
-        <main className="min-h-screen">{children}</main>
+        <main className="min-h-screen bg-[#0A0F1E]">{children}</main>
       </div>
     </div>
   );
