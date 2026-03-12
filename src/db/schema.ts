@@ -362,3 +362,5 @@ export interface JurisdictionRule {
   isRequired: boolean;
   notes?: string;
 }
+
+export * from "./schema-inspections";
