@@ -1,5 +1,5 @@
 import { initTRPC, TRPCError } from "@trpc/server";
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { auth, createClerkClient } from "@clerk/nextjs/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { db } from "@/db";
@@ -47,7 +47,7 @@ const isAuthed = t.middleware(async ({ ctx, next }) => {
   if (!dbUser) {
     // Webhook may have failed — fetch from Clerk and create user record now
     try {
-      const clerk = await clerkClient();
+      const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
       const clerkUser = await clerk.users.getUser(ctx.userId);
       const primaryEmail = clerkUser.emailAddresses.find(
         (e) => e.id === clerkUser.primaryEmailAddressId
