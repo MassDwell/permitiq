@@ -6,6 +6,7 @@ import { alertsRouter } from "./routers/alerts";
 import { settingsRouter } from "./routers/settings";
 import { waitlistRouter } from "./routers/waitlist";
 import { billingRouter } from "./routers/billing";
+import { permitWorkflowsRouter } from "./routers/permitWorkflows";
 
 export const appRouter = createTRPCRouter({
   projects: projectsRouter,
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
   settings: settingsRouter,
   waitlist: waitlistRouter,
   billing: billingRouter,
+  permitWorkflows: permitWorkflowsRouter,
 });
 
 export type AppRouter = typeof appRouter;

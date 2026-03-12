@@ -46,6 +46,7 @@ import {
 import Link from "next/link";
 import { DocumentUploadZone } from "@/components/document-upload-zone";
 import { AddComplianceItemDialog } from "@/components/add-compliance-item-dialog";
+import { PermitWorkflowTab } from "@/components/permit-workflow/permit-workflow-tab";
 import {
   Dialog,
   DialogContent,
@@ -328,8 +329,9 @@ export default function ProjectDetailPage() {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="compliance">
+      <Tabs defaultValue="permits">
         <TabsList>
+          <TabsTrigger value="permits">Permits</TabsTrigger>
           <TabsTrigger value="compliance">
             Compliance Checklist ({project.complianceItems.length})
           </TabsTrigger>
@@ -337,6 +339,13 @@ export default function ProjectDetailPage() {
             Documents ({project.documents.length})
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="permits" className="mt-6">
+          <PermitWorkflowTab
+            projectId={projectId}
+            projectJurisdiction={project.jurisdiction}
+          />
+        </TabsContent>
 
         <TabsContent value="compliance" className="mt-6">
           <Card>
