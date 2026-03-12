@@ -279,4 +279,99 @@ export const projectsRouter = createTRPCRouter({
       // Filter to only user's projects
       return items.filter((item) => item.project.userId === ctx.dbUser.id);
     }),
+
+  getPortfolioStats: protectedProcedure.query(async ({ ctx }) => {
+    const userProjects = await ctx.db.query.projects.findMany({
+      where: eq(projects.userId, ctx.dbUser.id),
+      orderBy: [desc(projects.updatedAt)],
+      with: {
+        complianceItems: true,
+      },
+    });
+
+    const now = new Date();
+    const future60 = new Date();
+    future60.setDate(future60.getDate() + 60);
+
+    const projectStats = userProjects.map((project) => {
+      const totalItems = project.complianceItems.length;
+      const metItems = project.complianceItems.filter((i) => i.status === "met").length;
+      const openItems = project.complianceItems.filter(
+        (i) => i.status === "pending" || i.status === "overdue"
+      ).length;
+      const complianceScore = totalItems > 0 ? Math.round((metItems / totalItems) * 100) : 0;
+
+      const pendingWithDeadline = project.complianceItems
+        .filter((i) => (i.status === "pending" || i.status === "overdue") && i.deadline)
+        .sort((a, b) => new Date(a.deadline!).getTime() - new Date(b.deadline!).getTime());
+
+      const nextDeadline = pendingWithDeadline[0]?.deadline ?? null;
+      const daysToDeadline = nextDeadline
+        ? Math.ceil((new Date(nextDeadline).getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+        : null;
+
+      let status: "critical" | "attention" | "on-track" = "on-track";
+      if (complianceScore < 30 || (daysToDeadline !== null && daysToDeadline < 7)) {
+        status = "critical";
+      } else if (complianceScore < 60 || (daysToDeadline !== null && daysToDeadline < 30)) {
+        status = "attention";
+      }
+
+      return {
+        id: project.id,
+        name: project.name,
+        address: project.address ?? null,
+        complianceScore,
+        nextDeadline: nextDeadline ? new Date(nextDeadline).toISOString() : null,
+        daysToDeadline,
+        openItems,
+        status,
+      };
+    });
+
+    const deadlineItems = await ctx.db.query.complianceItems.findMany({
+      where: and(
+        sql`${complianceItems.deadline} >= ${now}`,
+        sql`${complianceItems.deadline} <= ${future60}`,
+        eq(complianceItems.status, "pending")
+      ),
+      with: {
+        project: {
+          columns: { id: true, name: true, userId: true },
+        },
+      },
+      orderBy: [complianceItems.deadline],
+    });
+
+    const upcomingDeadlines = deadlineItems
+      .filter((item) => item.project.userId === ctx.dbUser.id)
+      .map((item) => ({
+        projectId: item.project.id,
+        projectName: item.project.name,
+        requirement: item.description,
+        dueDate: item.deadline ? new Date(item.deadline).toISOString() : null,
+        daysRemaining: item.deadline
+          ? Math.ceil((new Date(item.deadline).getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+          : null,
+      }));
+
+    const totalProjects = projectStats.length;
+    const avgComplianceScore =
+      totalProjects > 0
+        ? Math.round(projectStats.reduce((acc, p) => acc + p.complianceScore, 0) / totalProjects)
+        : 0;
+    const deadlinesNext30Days = upcomingDeadlines.filter(
+      (d) => d.daysRemaining !== null && d.daysRemaining <= 30
+    ).length;
+    const projectsNeedingAttention = projectStats.filter((p) => p.complianceScore < 50).length;
+
+    return {
+      totalProjects,
+      avgComplianceScore,
+      deadlinesNext30Days,
+      projectsNeedingAttention,
+      projects: projectStats,
+      upcomingDeadlines,
+    };
+  }),
 });

@@ -144,6 +144,7 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
   alerts: many(alerts),
   permitWorkflows: many(permitWorkflows),
   complianceSnapshots: many(complianceSnapshots),
+  members: many(projectMembers),
 }));
 
 export const documentsRelations = relations(documents, ({ one, many }) => ({
@@ -362,5 +363,31 @@ export interface JurisdictionRule {
   isRequired: boolean;
   notes?: string;
 }
+
+// Project Members (Collaborators) table
+export const projectMembers = pgTable("project_members", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+  userId: text("user_id"), // null until invite accepted
+  email: text("email").notNull(),
+  role: text("role").notNull().default("viewer"), // owner | editor | viewer
+  inviteStatus: text("invite_status").notNull().default("pending"), // pending | accepted | declined
+  inviteToken: text("invite_token").unique(),
+  invitedBy: text("invited_by").notNull(), // userId of who sent invite
+  invitedAt: timestamp("invited_at").defaultNow(),
+  acceptedAt: timestamp("accepted_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const projectMembersRelations = relations(projectMembers, ({ one }) => ({
+  project: one(projects, {
+    fields: [projectMembers.projectId],
+    references: [projects.id],
+  }),
+}));
+
+export type ProjectMember = typeof projectMembers.$inferSelect;
+export type NewProjectMember = typeof projectMembers.$inferInsert;
 
 export * from "./schema-inspections";

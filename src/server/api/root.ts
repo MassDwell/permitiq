@@ -9,6 +9,7 @@ import { billingRouter } from "./routers/billing";
 import { permitWorkflowsRouter } from "./routers/permitWorkflows";
 import { jurisdictionRulesRouter } from "./routers/jurisdictionRules";
 import { inspectionsRouter } from "./routers/inspections";
+import { collaboratorsRouter } from "./routers/collaborators";
 
 export const appRouter = createTRPCRouter({
   projects: projectsRouter,
@@ -21,6 +22,7 @@ export const appRouter = createTRPCRouter({
   permitWorkflows: permitWorkflowsRouter,
   jurisdictionRules: jurisdictionRulesRouter,
   inspections: inspectionsRouter,
+  collaborators: collaboratorsRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -6,10 +6,11 @@ import { UserButton } from "@clerk/nextjs";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
-import { LayoutDashboard, Bell, Settings, Zap } from "lucide-react";
+import { LayoutDashboard, Bell, Settings, Zap, BarChart2 } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Portfolio", href: "/portfolio", icon: BarChart2 },
   { name: "Alerts", href: "/alerts", icon: Bell },
   { name: "Settings", href: "/settings", icon: Settings },
   { name: "Upgrade Plan", href: "/pricing", icon: Zap },
