@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { TRPCProvider } from "@/lib/trpc/provider";
 import { Toaster } from "@/components/ui/sonner";
+import { PWARegister } from "@/components/pwa-register";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -22,6 +23,19 @@ export const metadata: Metadata = {
     "deadline management",
     "document intelligence",
   ],
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'MeritLayer',
+  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: '#14B8A6',
 };
 
 export default function RootLayout({
@@ -60,6 +74,7 @@ export default function RootLayout({
           <TRPCProvider>
             {children}
             <Toaster />
+            <PWARegister />
           </TRPCProvider>
         </body>
       </html>

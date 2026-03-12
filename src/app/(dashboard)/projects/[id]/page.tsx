@@ -498,6 +498,7 @@ export default function ProjectDetailPage() {
               { value: "requirements", label: "Requirements" },
               { value: "submission", label: "Submission Prep" },
               { value: "ask-ai", label: "Ask AI" },
+              { value: "financials", label: "Financials" },
               { value: "settings", label: "Settings" },
               { value: "team", label: "Team" },
               { value: "inspections", label: "Inspections", href: `/projects/${projectId}/inspections` },
@@ -543,6 +544,7 @@ export default function ProjectDetailPage() {
           <TabsTrigger value="requirements">Requirements</TabsTrigger>
           <TabsTrigger value="submission">Submission Prep</TabsTrigger>
           <TabsTrigger value="ask-ai">Ask AI</TabsTrigger>
+          <TabsTrigger value="financials">Financials</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
           <TabsTrigger value="team">Team</TabsTrigger>
         </TabsList>
@@ -834,6 +836,18 @@ export default function ProjectDetailPage() {
         {/* TEAM TAB */}
         <TabsContent value="team" className="mt-6">
           <CollaboratorsTab projectId={projectId} />
+        </TabsContent>
+
+        {/* FINANCIALS TAB */}
+        <TabsContent value="financials" className="mt-6">
+          <div className="space-y-6">
+            <HoldCostCalculator
+              complianceScore={project.healthScore}
+              projectId={projectId}
+            />
+            <PermitFeeEstimator />
+            <SoftCostsTab projectId={projectId} />
+          </div>
         </TabsContent>
 
         {/* SETTINGS TAB */}

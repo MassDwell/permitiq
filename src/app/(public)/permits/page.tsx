@@ -11,6 +11,7 @@ import {
   Zap,
   Wrench,
   Wind,
+  Globe,
 } from "lucide-react";
 import { PERMIT_GUIDE_ROUTES, jurisdictionLabel, permitTypeLabel, getJurisdiction } from "@/lib/permit-rules";
 
@@ -191,6 +192,72 @@ export default function PermitsIndexPage() {
                 </Link>
               );
             })}
+          </div>
+        </section>
+
+        {/* Greater Boston City Cards */}
+        <section>
+          <div className="flex items-center gap-2 mb-2">
+            <Globe className="h-5 w-5 text-blue-500 flex-shrink-0" />
+            <h2 className="text-lg font-semibold text-gray-900">Greater Boston</h2>
+          </div>
+          <p className="text-sm text-gray-500 mb-4">
+            City-specific permit intelligence — not generic national guides
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            {[
+              {
+                city: "Boston",
+                desc: "ISD · ZBA · Article 80",
+                href: "/permits/boston/building-permit",
+                available: true,
+              },
+              {
+                city: "Cambridge",
+                desc: "ISD · BZA · LEED",
+                href: "/permits/cambridge/building-permit",
+                available: true,
+              },
+              {
+                city: "Somerville",
+                desc: "ISD · SomerVision 2022",
+                href: "/permits/somerville/building-permit",
+                available: true,
+              },
+              {
+                city: "Brookline",
+                desc: "Town Building Dept · Historical",
+                href: "/permits/brookline/building-permit",
+                available: true,
+              },
+              {
+                city: "Newton",
+                desc: "Building Dept",
+                href: null,
+                available: false,
+              },
+            ].map((item) =>
+              item.available && item.href ? (
+                <Link
+                  key={item.city}
+                  href={item.href}
+                  className="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-all group text-center"
+                >
+                  <p className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors text-sm">
+                    {item.city}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-0.5">{item.desc}</p>
+                </Link>
+              ) : (
+                <div
+                  key={item.city}
+                  className="flex flex-col items-center justify-center p-4 border border-gray-100 rounded-xl bg-gray-50 opacity-60 text-center cursor-default"
+                >
+                  <p className="font-semibold text-gray-500 text-sm">{item.city}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">Coming soon</p>
+                </div>
+              )
+            )}
           </div>
         </section>
 

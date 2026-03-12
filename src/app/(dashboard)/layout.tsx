@@ -7,6 +7,7 @@ import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
 import { LayoutDashboard, Bell, Settings, Zap, BarChart2, MapPin } from "lucide-react";
+import { MobileNav } from "@/components/mobile-nav";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -23,8 +24,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen" style={{ background: '#080D1A' }}>
-      {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 z-50 w-64" style={{ background: '#060B17', borderRight: '1px solid rgba(255,255,255,0.05)' }}>
+      {/* Sidebar — hidden on mobile, visible on md+ */}
+      <div className="hidden md:flex fixed inset-y-0 left-0 z-50 w-64" style={{ background: '#060B17', borderRight: '1px solid rgba(255,255,255,0.05)' }}>
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center px-5 h-16" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
@@ -76,9 +77,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
 
       {/* Main content */}
-      <div className="pl-64 min-h-screen" style={{ background: '#080D1A' }}>
+      <div className="md:pl-64 pb-16 md:pb-0 min-h-screen" style={{ background: '#080D1A' }}>
         <main className="min-h-screen">{children}</main>
       </div>
+
+      {/* Mobile bottom nav */}
+      <MobileNav />
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { Upload, FileText, Loader2, X, CheckCircle, AlertCircle, RotateCcw } fro
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { CameraCapture } from "@/components/camera-capture";
 
 interface DocumentUploadZoneProps {
   projectId: string;
@@ -296,6 +297,8 @@ export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
           </Button>
         </label>
       </div>
+
+      <CameraCapture onFileSelected={uploadFile} />
 
       {uploadingFiles.size > 0 && (
         <div className="space-y-2">
