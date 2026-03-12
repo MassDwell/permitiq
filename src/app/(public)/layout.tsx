@@ -18,6 +18,12 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
               >
                 Permit Guides
               </Link>
+              <Link
+                href="/tools/soft-costs-calculator"
+                className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Soft Costs Calculator
+              </Link>
             </div>
             <div className="flex items-center gap-3">
               <Link

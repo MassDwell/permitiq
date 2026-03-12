@@ -1,0 +1,580 @@
+{
+  "state": "Massachusetts",
+  "stateCode": "MA",
+  "stateCodeRef": "780 CMR",
+  "lastUpdated": "2026-03-12",
+  "sources": [
+    "https://www.mass.gov/massachusetts-state-building-code-780-cmr",
+    "https://www.permitflow.com/state/massachusetts"
+  ],
+  "stateWideRules": {
+    "whatRequiresPermit": [
+      "New construction, alteration, repair, demolition, or relocation of commercial structures",
+      "Structural framing, additions, and new builds",
+      "Electrical, plumbing, gas, mechanical, and HVAC",
+      "Fire safety systems, elevators, signage, and asbestos abatement",
+      "Demolition work and site relocations"
+    ],
+    "whatDoesNotRequirePermit": [
+      "Cosmetic repairs (paint, wallpaper, floor refinishing)"
+    ],
+    "uniqueConsiderations": [
+      "Trade permits are SEPARATE for each trade: electrical, plumbing, gas, HVAC/mechanical, fire systems — each must be submitted by a licensed contractor in that field",
+      "Strict asbestos abatement requirements — overseen by local building departments AND MassDEP",
+      "780 CMR is localized — each city/town interprets and applies it differently",
+      "Inspections must be scheduled within 48 hours of request (per 780 CMR), but may take longer in practice due to staffing",
+      "Energy code + Stretch code — Massachusetts enforces IECC but many cities also enforce a Stretch Energy Code exceeding base requirements"
+    ],
+    "applicationRequirements": [
+      { "item": "Completed application form including project valuation", "required": true },
+      { "item": "Sealed architectural/structural plans from Massachusetts-licensed professionals", "required": true },
+      { "item": "Trade permit checklists (electrical, gas, plumbing, mechanical, or fire safety)", "required": true },
+      { "item": "Asbestos abatement documentation for renovation or demolition work", "required": true },
+      { "item": "Site plan (for new buildings, relocations, or fire systems)", "required": true },
+      { "item": "Insurance certificates", "required": true },
+      { "item": "Contractor licenses", "required": true },
+      { "item": "Property ownership proof", "required": true }
+    ],
+    "processSteps": [
+      "Determine jurisdiction (city/town building department)",
+      "Pre-submittal meeting for large-scale projects (scope, trades, asbestos, stakeholders)",
+      "Submit application packet (forms, sealed plans, trade checklists, asbestos report, insurance, fees)",
+      "Plan review period — municipality issues corrections (typical 30-day window)",
+      "Pay issuance fees and pick up permit (post on-site)",
+      "Schedule inspections (footing, framing, trades, fire protection, final)",
+      "Certificate of Occupancy issuance after final inspection"
+    ]
+  },
+  "jurisdictions": {
+    "boston": {
+      "name": "Boston",
+      "county": "Suffolk",
+      "department": "Inspectional Services Department (ISD)",
+      "portal": "https://onlinepermitsandlicenses.boston.gov/isdpermits/",
+      "permitFinder": "https://permitfinder.boston.gov/",
+      "address": "1010 Massachusetts Ave, Boston, MA 02118",
+      "sources": ["https://www.boston.gov/departments/inspectional-services/what-building-permit-do-i-need"],
+      "permitTypes": {
+        "building": {
+          "whatRequiresPermit": [
+            "New construction (residential or commercial)",
+            "Additions (room, second story, etc.)",
+            "Structural changes (load-bearing walls, etc.)",
+            "Major renovations (full kitchen/bathroom remodel)",
+            "Electrical, plumbing, and mechanical work",
+            "Demolition",
+            "Exterior work (windows, siding, roof)"
+          ],
+          "applicationTypes": [
+            { "type": "Long-form", "use": "New construction and major repairs" },
+            { "type": "Short-form", "use": "Minor structural changes" }
+          ],
+          "fees": {
+            "residential": { "rate": "$50 per $1,000 of construction cost", "minimum": "$50-$100" },
+            "commercial": { "rate": "$100 per $1,000 of construction cost", "minimum": "$50-$100" },
+            "notes": "Additional fees may apply for inspections, plan reviews, or zoning approvals"
+          },
+          "applicationRequirements": [
+            { "item": "Project plans — detailed drawings or blueprints", "sourceUrl": "https://www.boston.gov/departments/inspectional-services/what-building-permit-do-i-need" },
+            { "item": "Estimated construction cost", "sourceUrl": "https://www.boston.gov/departments/inspectional-services/what-building-permit-do-i-need" },
+            { "item": "Property information (address, owner info, authorization to work)", "sourceUrl": "https://www.boston.gov/departments/inspectional-services/what-building-permit-do-i-need" },
+            { "item": "Contractor information (names and license numbers of all contractors)", "sourceUrl": "https://www.boston.gov/departments/inspectional-services/what-building-permit-do-i-need" },
+            { "item": "Zoning information (if changing use or building near property lines)", "sourceUrl": "https://www.boston.gov/departments/inspectional-services/what-building-permit-do-i-need" }
+          ],
+          "processSteps": [
+            "Register at Boston ISD portal — determine which permits you need",
+            "Prepare application with detailed project plans",
+            "Submit application online and pay fees",
+            "Wait for ISD review (allow a few weeks)",
+            "Check status via Boston Permit Finder",
+            "Once approved: schedule inspections at various stages",
+            "Complete project, pass all inspections, close the permit"
+          ]
+        },
+        "demolition": {
+          "requirements": [
+            { "item": "Article 85 Demolition Delay approval from Boston Landmarks Commission", "sourceUrl": "https://www.boston.gov/departments/landmarks-commission/how-file-article-85-demolition-review", "sourceText": "You must obtain an Article 85 Demolition Delay approval from the Boston Landmarks Commission.", "reasoning": "Required to verify building has no historic preservation status before demolition." },
+            { "item": "Utility shut-off notices (gas, electrical, telephone, cable)", "sourceUrl": "https://www.boston.gov/departments/inspectional-services/how-get-demolition-permit", "sourceText": "Shut off notices from all underground and overhead utilities, such as: gas, electrical, telephone and cable companies.", "reasoning": "All utilities must be disconnected before demolition can begin safely." },
+            { "item": "Boston Water and Sewer Commission (BWSC) closed GSA", "sourceUrl": "https://www.bwsc.org/", "sourceText": "The Boston Water and Sewer Commission closed general service agreement GSA.", "reasoning": "Water and sewer connections must be formally closed and documented." },
+            { "item": "DEP hazardous materials approval", "sourceUrl": "https://www.mass.gov/orgs/massachusetts-department-of-environmental-protection", "sourceText": "Department of Environmental Protection (DEP) approval for hazardous materials 617-292-5500", "reasoning": "Massachusetts DEP must approve hazardous material handling and disposal plan." },
+            { "item": "Dig Safe reference number", "sourceUrl": "https://www.digsafe.com", "sourceText": "Dig Safe reference number is required.", "reasoning": "State law requires Dig Safe clearance before any ground disturbance." },
+            { "item": "Pest control contractor letter", "sourceUrl": "https://www.boston.gov/departments/inspectional-services/how-get-demolition-permit", "sourceText": "A letter or bill from a pest control contractor stating the pest management will be performed before and after the demolition project begins.", "reasoning": "Boston ISD requires documented pest management before and after demolition." },
+            { "item": "Licensed builder + Workers Comp, Mattocks Higgins Affidavit, contract, liability insurance, builder's license", "sourceUrl": "https://www.boston.gov/departments/inspectional-services/how-get-demolition-permit", "sourceText": "A licensed builder is required with supporting documents, such as: the Workers' Compensation Form, Mattocks Higgins Affidavit, contract between parties, liability insurance, copy of your builder's license front and back side.", "reasoning": "Boston ISD requires licensed contractor with full documentation package." },
+            { "item": "Boston Fire Prevention permit", "sourceUrl": "https://www.boston.gov/departments/fire-prevention", "sourceText": "Obtain a permit from Boston Fire Prevention pertaining to the demolition.", "reasoning": "Separate Fire Prevention permit required in addition to ISD demolition permit." },
+            { "item": "Environmental Services Division review", "sourceUrl": "https://www.boston.gov/departments/inspectional-services/how-get-demolition-permit", "sourceText": "You will also need a review from our Environmental Services Division on the 4th floor here at 1010 Massachusetts Avenue, or isdenvironmental@boston.gov", "reasoning": "ISD Environmental Services must review the demolition plan for environmental compliance." }
+          ]
+        }
+      },
+      "keyContacts": [
+        { "name": "Boston ISD", "phone": "617-635-5300", "address": "1010 Massachusetts Ave, Boston, MA 02118" },
+        { "name": "Environmental Services Division", "email": "isdenvironmental@boston.gov", "address": "1010 Massachusetts Ave, 4th Floor" },
+        { "name": "Boston Landmarks Commission", "url": "https://www.boston.gov/departments/landmarks-commission" },
+        { "name": "Boston Fire Prevention", "url": "https://www.boston.gov/departments/fire-prevention" },
+        { "name": "Boston Water and Sewer Commission (BWSC)", "url": "https://www.bwsc.org/" }
+      ]
+    },
+    "cambridge": {
+      "name": "Cambridge",
+      "county": "Middlesex",
+      "department": "Inspectional Services Department (ISD)",
+      "portal": "https://cambridgema.portal.opengov.com",
+      "address": "831 Massachusetts Ave, Cambridge, MA 02139",
+      "sources": ["https://www.cambridgema.gov/services/buildingpermits"],
+      "permitTypes": {
+        "building": {
+          "whatRequiresPermit": [
+            "Construct, alter, remove, repair, move, or demolish a building or structure",
+            "Change the use or occupancy of a structure",
+            "Install, alter, or remove signs",
+            "Abate or disturb asbestos, and related demolition or reconstruction"
+          ],
+          "additionalApprovalsRequired": [
+            "Zoning compliance (per Cambridge zoning ordinance)",
+            "Historical Commission approval for work in historic/conservation districts or designated landmarks",
+            "Public Works or Transportation approvals for projects affecting curb cuts, sidewalks, or street access"
+          ],
+          "whatDoesNotRequirePermit": [
+            "Detached accessory structures (sheds) under 120 sq ft",
+            "Fences up to 7 ft high",
+            "Retaining walls up to 4 ft high",
+            "Water tanks"
+          ],
+          "fees": {
+            "newConstructionRepairsAlterations": "$20 per $1,000 of construction cost ($50 minimum)",
+            "demolition": "$20 per $1,000 of construction cost ($50 minimum)",
+            "certificateOfOccupancy": "$100 for first unit + $50 per additional unit; $100 + $50 per 1,000 sq ft",
+            "planReview": "$100"
+          },
+          "tradeFees": {
+            "plumbing": {
+              "fixtures": "$50 for 5 fixtures, $5 each additional",
+              "waterHeater": "$50",
+              "tanklessWaterHeater": "$100",
+              "waterPipingPerFloor": "$50",
+              "solarHybridSystem": "$100"
+            },
+            "electrical": {
+              "acUnder25ton": "$40",
+              "acOver25ton": "$60",
+              "generator": "$100",
+              "solarPerArray": "$100",
+              "swimmingPool": "$75"
+            },
+            "mechanical": {
+              "acUnder25ton": "$40",
+              "boiler": "$50",
+              "ductlessSplit": "$40",
+              "heatPumps": "$25",
+              "poolHeater": "$50"
+            }
+          },
+          "applicationRequirements": [
+            { "item": "Cambridge building permit application (via OpenGov portal)", "sourceUrl": "https://cambridgema.portal.opengov.com" },
+            { "item": "Drawings/plans (PDF format)", "sourceUrl": "https://www.cambridgema.gov/services/buildingpermits" },
+            { "item": "Construction cost estimate", "sourceUrl": "https://www.cambridgema.gov/services/buildingpermits" },
+            { "item": "Contractor and subcontractor licenses", "sourceUrl": "https://www.cambridgema.gov/services/buildingpermits" },
+            { "item": "Energy compliance forms (for new construction/renovation)", "sourceUrl": "https://www.cambridgema.gov/services/buildingpermits" },
+            { "item": "Letter of Approval from Condominium Association (if applicable)", "sourceUrl": "https://www.cambridgema.gov/services/buildingpermits" },
+            { "item": "Photographs of existing conditions (e.g., exterior decks, exterior stairs)", "sourceUrl": "https://www.cambridgema.gov/services/buildingpermits" }
+          ]
+        }
+      },
+      "keyContacts": [
+        { "name": "Cambridge ISD", "address": "831 Massachusetts Ave, Cambridge, MA 02139" }
+      ]
+    },
+    "brookline": {
+      "name": "Brookline",
+      "county": "Norfolk",
+      "department": "Brookline Building Department",
+      "portal": "https://aca-prod.accela.com/BROOKLINE/Default.aspx",
+      "address": "333 Washington St., 3rd Floor, Brookline, MA 02445",
+      "phone": "617-730-2100",
+      "fax": "617-739-7542",
+      "sources": ["https://www.brooklinema.gov/183/Permit-Fee-Schedule", "https://www.brooklinema.gov/186/FAQ"],
+      "permitTypes": {
+        "building": {
+          "whatRequiresPermit": [
+            "Constructing, reconstructing, altering, repairing, removing, or demolishing a building or structure",
+            "Changing the use or occupancy of a building or structure",
+            "Installing or modifying equipment regulated by the Massachusetts State Building Code (780 CMR)"
+          ],
+          "fees": {
+            "buildingAndDemolition": "$20 per $1,000 of construction value ($50 minimum)",
+            "workWithoutPermit": "$50 per $1,000",
+            "failureToCallFinalInspection": "$50",
+            "reInspection": "$50",
+            "planReview": {
+              "alteration": "$75 per 1,000 sq ft ($100 minimum)",
+              "newConstruction": "$150 per 1,000 sq ft ($200 minimum)",
+              "offStreetParking": "$25 per space ($100 minimum)",
+              "subdivision": "$200"
+            },
+            "tradeFees": "All trade permits (electrical, plumbing, gas, mechanical): $20 per $1,000 ($50 minimum)"
+          },
+          "applicationRequirements": [
+            { "item": "Site or architectural plans (PDF format)", "sourceUrl": "https://aca-prod.accela.com/BROOKLINE/Default.aspx" },
+            { "item": "Scope of work and valuation estimate", "sourceUrl": "https://www.brooklinema.gov/183/Permit-Fee-Schedule" },
+            { "item": "CSL (Construction Supervisor License) and/or HIC (Home Improvement Contractor Registration)", "sourceUrl": "https://www.brooklinema.gov/186/FAQ" },
+            { "item": "Energy code compliance documentation (REScheck or COMcheck)", "sourceUrl": "https://www.brooklinema.gov/186/FAQ" }
+          ],
+          "resources": [
+            { "name": "Online Permitting Portal (Accela)", "url": "https://aca-prod.accela.com/BROOKLINE/Default.aspx" },
+            { "name": "Permit & Fee Schedule", "url": "https://www.brooklinema.gov/183/Permit-Fee-Schedule" },
+            { "name": "Building & Permits FAQs", "url": "https://www.brooklinema.gov/186/FAQ" },
+            { "name": "Electrical Permit Application", "url": "https://www.brooklinema.gov/DocumentCenter/View/50868" },
+            { "name": "Gas Permit Application", "url": "https://www.brooklinema.gov/DocumentCenter/View/50866" },
+            { "name": "Plumbing Application", "url": "https://www.brooklinema.gov/DocumentCenter/View/50865" }
+          ]
+        }
+      }
+    },
+    "salem": {
+      "name": "Salem",
+      "county": "Essex",
+      "department": "Inspectional Services Department",
+      "sources": ["https://www.salemma.gov/318/Inspectional-Services-Building-Departmen"],
+      "specialConsiderations": [
+        "Numerous historic districts — many properties under historic preservation rules affecting what changes can be made",
+        "Coastal location adds complexity to certain project types"
+      ],
+      "permitTypes": {
+        "building": {
+          "whatRequiresPermit": [
+            "New buildings and additions (all occupancies)",
+            "Structural work (cutting/altering load-bearing elements; changes affecting required egress)",
+            "Decks that are attached, or over 200 sq ft, or over 30 in above grade, or serving required exit door",
+            "Sheds/accessory buildings above exemption size",
+            "Retaining walls over 4 ft high or supporting a surcharge",
+            "Swimming pools over 24 in deep",
+            "Roofing/siding/window/door replacements altering the building envelope",
+            "Change of use or occupancy"
+          ],
+          "fees": {
+            "residential": {
+              "baseFee": "$75",
+              "newWorkRenovationsDemolition": "$15 per $1,000 of total project cost",
+              "mechanical": "$15 per $1,000",
+              "adu": "$15 per $1,000"
+            },
+            "commercial": {
+              "baseFee": "$75",
+              "newWorkRenovationsDemolition": "$20 per $1,000 of total project cost",
+              "mechanical": "$20 per $1,000"
+            }
+          },
+          "tradeFees": {
+            "plumbing": {
+              "residential": {
+                "newConstruction": "$50 for first 3 fixtures + $10 each additional",
+                "kitchenBathRenovation": "$50 + $10 per added fixture",
+                "hotWaterHeater": "$25",
+                "pipingReplacement": "$25",
+                "singleFixture": "$25",
+                "reInspection": "$60",
+                "workWithoutPermitFine": "$200"
+              },
+              "commercial": {
+                "newConstruction": "$80 + $20 per fixture",
+                "existingBuildings": "$60 + $20 per fixture",
+                "reInspection": "$60",
+                "workWithoutPermitFine": "$200"
+              }
+            },
+            "electrical": {
+              "serviceOver800A": "$250 + $10 per additional meter",
+              "subFeeder": "$30",
+              "changeServicePanel": "$40",
+              "hvacControlWiring": "$50"
+            },
+            "hvac": {
+              "residential": "$15 per $1,000",
+              "commercial": "$20 per $1,000",
+              "generator": "$30"
+            }
+          }
+        }
+      }
+    },
+    "lowell": {
+      "name": "Lowell",
+      "county": "Middlesex",
+      "department": "Development Services Division",
+      "address": "375 Merrimack Street, 2nd Floor, Room 55",
+      "phone": "978-674-4144",
+      "hours": "Mon/Wed/Thu 8AM-5PM; Tue 8AM-8PM; Fri 8AM-12PM",
+      "portal": "https://www.lowellma.gov/1631/Online-Permitting",
+      "sources": [
+        "https://www.lowellma.gov/687/Apply-for-Permits",
+        "https://www.lowellma.gov/613/Building-Permit-Fees"
+      ],
+      "permitTypes": {
+        "building": {
+          "whatRequiresPermit": [
+            "New construction, reconstruction, alteration, repair, removal, or demolition of a structure",
+            "Additions",
+            "Antennas",
+            "Chimneys",
+            "Decks",
+            "Dormers",
+            "Roofing",
+            "Siding",
+            "Swimming pools (24\" or deeper)",
+            "Windows",
+            "Wood stoves"
+          ],
+          "whatDoesNotRequirePermit": [
+            "Driveways (need separate driveway permit from City Engineer's Office instead)",
+            "Fences up to 6 feet tall",
+            "Small storage sheds (≤120 sq ft and ≤16 ft tall, within setbacks, at least 10 ft from dwelling)"
+          ],
+          "fees": {
+            "newBuildingsAdditionsAlterations": "Up to $1,000 value: $50; then $10 per $1,000",
+            "demolition": "Up to $1,000 value: $50; then $10 per $1,000",
+            "foundationSingleTwoFamily": "$150 per unit",
+            "foundationOtherUnder50k": "$500 per unit",
+            "foundationOtherOver50k": "$1,000 per unit",
+            "retainingWalls": "Up to $1,000: $50; then $10 per $1,000",
+            "siding": "Up to $1,000: $50; then $10 per $1,000",
+            "swimmingPools": "Up to $1,000: $50; then $10 per $1,000",
+            "signPermit": "$5 per sq ft",
+            "fireplaceWoodStove": "$50",
+            "reInspection": "$50",
+            "workWithoutPermit": "3x original permit fee",
+            "certificateOfOccupancy": "$75 per unit"
+          },
+          "resources": [
+            { "name": "Online Permitting", "url": "https://www.lowellma.gov/1631/Online-Permitting" },
+            { "name": "Building Permit Fees", "url": "https://www.lowellma.gov/613/Building-Permit-Fees" },
+            { "name": "Building Permit Checklist", "url": "http://lowellma.gov/DocumentCenter/View/1013/Buiding-Permit-Check-List-PDF" },
+            { "name": "Trades Checklist", "url": "http://lowellma.gov/DocumentCenter/View/13461/requirements-for-applications---clerks-check-list" }
+          ]
+        }
+      }
+    },
+    "springfield": {
+      "name": "Springfield",
+      "county": "Hampden",
+      "department": "Springfield Building Department",
+      "sources": [
+        "https://ecode360.com/15362007",
+        "https://www.springfield-ma.gov/code/fileadmin/forms/Building_Permit_Fee_Schedule_07-16-2012.pdf"
+      ],
+      "permitTypes": {
+        "building": {
+          "codeRefs": ["Springfield City Ordinance § 175", "780 CMR § 105.1"],
+          "whatRequiresPermit": [
+            "New construction, additions, renovations, alterations",
+            "Demolition or moving any building or structure",
+            "Change of occupancy or use",
+            "Install, remove, or alter regulated systems (electrical, plumbing, mechanical, HVAC, gas, signs, fire protection)"
+          ],
+          "whatDoesNotRequirePermit": [
+            "Detached accessory structures (sheds) under 120 sq ft",
+            "Fences up to 7 ft high",
+            "Retaining walls up to 4 ft",
+            "Water tanks"
+          ],
+          "fees": {
+            "residential": {
+              "newOneOrTwoFamily": "$250 minimum or $8 per $1,000 of value",
+              "majorAlterations": "$80 minimum or $0.30/sq ft",
+              "accessoryStructuresAdditions": "$150 minimum or $10 per $1,000",
+              "detachedGarage": "$100",
+              "swimmingPoolInGround": "$125",
+              "aboveGroundPoolWithDeck": "$100",
+              "aboveGroundPoolWithoutDeck": "$80",
+              "fireplaceOrStove": "$80",
+              "roofingSidingDecks": "$75"
+            },
+            "commercial": {
+              "newConstructionAdditions": "$100 minimum or $12 per $1,000",
+              "alterationsRepairs": "$110 minimum or $0.55/sq ft",
+              "retainingWallTemporaryStructure": "$80",
+              "demolition": "$150 minimum or $0.10/sq ft",
+              "buildingRelocationSameLot": "$150",
+              "buildingRelocationNewLot": "$250"
+            }
+          },
+          "tradeFees": {
+            "electrical": {
+              "servicePerAmp": "$0.30/amp ($80 minimum)",
+              "newAdditionsAlterationsPerUnit": "$70 per unit (residential)",
+              "electricalWithoutBuildingPermit": "$50 minimum + $10/room (residential); $110 first floor + $50 each additional story (commercial)",
+              "alternatePowerSources": "$80 minimum or $0.03/watt (residential)"
+            },
+            "plumbing": {
+              "newAdditionsAlterationsPerUnit": "$80 + $10 per fixture (residential); $110 + $10 per fixture (commercial)",
+              "minorRepairs": "$80 + $10 per fixture",
+              "waterHeater": "$80 (residential); $110 (commercial)"
+            }
+          }
+        }
+      }
+    },
+    "somerville": {
+      "name": "Somerville",
+      "county": "Middlesex",
+      "department": "Inspectional Services Department (ISD) — Building Division",
+      "portal": "https://www.somervillema.gov/citizenserve",
+      "address": "1 Franey Road, Somerville, MA",
+      "phone": "617-625-6600 ext. 5600",
+      "email": "isd@somervillema.gov",
+      "feeScheduleUrl": "https://s3.amazonaws.com/somervillema-live/s3fs-public/building-permit-fee-schedule.pdf",
+      "constructionHours": "Mon-Fri 7AM-7PM, Sat 9AM-7PM",
+      "sources": [
+        "https://www.somervillema.gov/departments/isd/building-division",
+        "https://s3.amazonaws.com/somervillema-live/s3fs-public/building-permit-fee-schedule.pdf"
+      ],
+      "permitTypes": {
+        "building": {
+          "whatRequiresPermit": [
+            "Construct, reconstruct, alter, repair, or demolish a structure",
+            "Install a sign",
+            "Interior gutting (building permit, NOT demolition permit)",
+            "Total teardowns (demolition permit required)"
+          ],
+          "whatDoesNotRequirePermit": [
+            "Painting, tiling, and flooring (ordinary repairs)"
+          ],
+          "somervilleSpecificRules": [
+            "Interior gutting = building permit. Total teardown = demolition permit.",
+            "3-family or larger: licensed contractor required to apply",
+            "Commercial: licensed contractor required",
+            "Electrical: licensed electrician must apply for all electrical permits",
+            "Plumbing/gas: licensed plumber must apply for all permits",
+            "1-2 family owner-occupied: homeowner may obtain permit"
+          ],
+          "applicationRequirements": {
+            "homeowner": [
+              { "item": "Proof of residence", "sourceUrl": "https://www.somervillema.gov/departments/isd/building-division" },
+              { "item": "Estimated Cost Affidavit", "sourceUrl": "https://www.somervillema.gov/departments/isd/building-division" },
+              { "item": "Plans (if required by project type)", "sourceUrl": "https://www.somervillema.gov/departments/isd/building-division" },
+              { "item": "Workplace Safety Affidavit", "sourceUrl": "https://s3.amazonaws.com/somervillema-live/s3fs-public/ISD-workplace-safety-affidavit-2025.pdf" },
+              { "item": "Wage Theft Affidavit", "sourceUrl": "https://s3.amazonaws.com/somervillema-live/s3fs-public/ISD-wage-theft-affidavit-2025.pdf" }
+            ],
+            "licensedContractor": [
+              { "item": "CSL (Construction Supervisor License)", "sourceUrl": "https://www.somervillema.gov/departments/isd/building-division" },
+              { "item": "HIC (Home Improvement Contractor Registration) — if property is 1-4 units, owner-occupied", "sourceUrl": "https://www.somervillema.gov/departments/isd/building-division" },
+              { "item": "Insurance certificate", "sourceUrl": "https://www.somervillema.gov/departments/isd/building-division" },
+              { "item": "Signed contract", "sourceUrl": "https://www.somervillema.gov/departments/isd/building-division" },
+              { "item": "Plans (if required)", "sourceUrl": "https://www.somervillema.gov/departments/isd/building-division" },
+              { "item": "Workplace Safety Affidavit", "sourceUrl": "https://s3.amazonaws.com/somervillema-live/s3fs-public/ISD-workplace-safety-affidavit-2025.pdf" },
+              { "item": "Wage Theft Affidavit", "sourceUrl": "https://s3.amazonaws.com/somervillema-live/s3fs-public/ISD-wage-theft-affidavit-2025.pdf" },
+              { "item": "Site Safety Plan", "sourceUrl": "https://s3.amazonaws.com/somervillema-live/s3fs-public/site-safety-plan-2025-fillable.docx" },
+              { "item": "OSHA certification", "sourceUrl": "https://www.somervillema.gov/departments/isd/building-division" }
+            ]
+          }
+        }
+      }
+    },
+    "brockton": {
+      "name": "Brockton",
+      "county": "Plymouth",
+      "sources": ["https://www.permitflow.com/blog/brockton-building-permit"],
+      "notes": "Follows 780 CMR. Contact local building department for specifics."
+    },
+    "newBedford": {
+      "name": "New Bedford",
+      "county": "Bristol",
+      "sources": ["https://www.permitflow.com/blog/new-bedford-building-permit"],
+      "notes": "Follows 780 CMR. Contact local building department for specifics."
+    }
+  },
+  "bostonDeveloperReview": {
+    "zoningBoardOfAppeal": {
+      "description": "The ZBA hears appeals when a project is denied because it doesn't meet Boston's zoning code. Also handles variances and special permits.",
+      "jurisdiction": "City of Boston ISD",
+      "address": "1010 Massachusetts Ave, 5th Floor, Boston, MA 02118",
+      "hearingLocation": "1 City Hall Square, Room 801, Boston MA 02201",
+      "phone": "617-635-5300 / 617-635-5399",
+      "portal": "https://onlinepermitsandlicenses.cityofboston.gov/isdpermits/",
+      "zoningTracker": "https://experience.arcgis.com/experience/c019ba9a25cb4f33bb6cdd2f69b543d4/page/page_0/",
+      "zoningViewer": "http://maps.bostonredevelopmentauthority.org/zoningviewer/",
+      "hearingSchedule": "Every other Tuesday at 9:30 AM",
+      "advisorySubcommittee": "Every other Thursday",
+      "boardComposition": "7 members appointed by mayor, 3-year terms",
+      "process": [
+        { "step": 1, "name": "File Appeal", "detail": "File within 45 days of denial letter. Online or in person at 1010 Mass Ave 5th Floor.", "sourceUrl": "https://www.boston.gov/departments/inspectional-services/how-file-appeal-zoning-board" },
+        { "step": 2, "name": "Pay Fee", "detail": "Residential ≤3 units: $150 flat. All other buildings or residential >3 units: $150 per City or state violation.", "sourceUrl": "https://www.boston.gov/departments/inspectional-services/how-file-appeal-zoning-board" },
+        { "step": 3, "name": "Hearing Set", "detail": "ZBA sets hearing date. Published at least 20 days ahead in Boston Globe and Herald. Adjacent owners notified.", "sourceUrl": "https://www.boston.gov/departments/inspectional-services/how-file-appeal-zoning-board" },
+        { "step": 4, "name": "Public Hearing", "detail": "Attend in person at City Hall Room 801 with supporting documents. Attorney/architect/professional allowed.", "sourceUrl": "https://www.boston.gov/departments/inspectional-services/how-file-appeal-zoning-board" },
+        { "step": 5, "name": "Decision", "detail": "Formal decision sent ~15 days after hearing. BRA may also need to review. Additional conditions may apply.", "sourceUrl": "https://www.boston.gov/departments/inspectional-services/how-file-appeal-zoning-board" }
+      ],
+      "keyRules": [
+        "Must file within 45 days of denial",
+        "If denied: must wait 1 year before re-appeal (unless major plan changes or dismissed without prejudice)",
+        "Cannot withdraw after notices are sent (can request dismissal without prejudice before board review)"
+      ]
+    },
+    "article80": {
+      "description": "Article 80 of Boston's Zoning Code governs development review for large and small projects. Adopted 1996, most significant modernization voted July 2025.",
+      "source": "http://www.bostonplans.org/projects/development-review/what-is-article-80",
+      "contact": "article80inquiries@boston.gov",
+      "types": {
+        "largeProjectReview": {
+          "threshold": "Projects adding ≥50,000 sq ft gross floor area; projects near Boston Harbor; large projects with significant change of use without new construction",
+          "reviewAreas": [
+            "Transportation impacts",
+            "Environmental protection (wind, shadow, noise, air quality, solar glare)",
+            "LEED compliance",
+            "Affordable housing",
+            "Urban design",
+            "Historic resources",
+            "Infrastructure systems",
+            "Climate resilience"
+          ],
+          "processSteps": [
+            { "step": 1, "name": "Letter of Intent (LOI)", "detail": "Developer files LOI describing the project with Boston Planning Dept." },
+            { "step": 2, "name": "Project Notification Form (PNF)", "detail": "Developer files PNF with further project description. Open for public comment." },
+            { "step": 3, "name": "Draft Project Impact Report (DPIR)", "detail": "If required: additional analysis of project impacts. Open for public comment." },
+            { "step": 4, "name": "Final Project Impact Report (FPIR)", "detail": "If required: addresses concerns from DPIR. Open for public comment." },
+            { "step": 5, "name": "Adequacy Determination", "detail": "BPDA Board votes to approve, not approve, or approve with conditions." }
+          ],
+          "sourceUrl": "http://www.bostonplans.org/projects/development-review/large-projects"
+        },
+        "smallProjectReview": {
+          "threshold": "Projects adding ≥20,000 sq ft gross floor area OR ≥15 dwelling units (but less than 50,000 sq ft)",
+          "reviewAreas": [
+            "Urban design principles consistency",
+            "Site plan review",
+            "Signage in non-residential districts",
+            "Climate resilience"
+          ],
+          "note": "Notified by ISD or Planning Dept project manager if required",
+          "sourceUrl": "http://www.bostonplans.org/projects/development-review/small-projects"
+        }
+      },
+      "recentUpdates": "Most substantive set of changes to Article 80 since 1996 voted July 2025. Aimed at modernizing and making process more predictable and transparent."
+    }
+  },
+  "permitTypeMatrix": {
+    "demolitionPermit": {
+      "aliases": ["demo permit", "demolition", "demo", "tear down", "teardown"],
+      "description": "Required to demolish any building or structure",
+      "jurisdictionsWithFullData": ["boston"],
+      "stateRequirements": [
+        "Asbestos survey/abatement documentation (MassDEP)",
+        "Dig Safe notification (state law — call 811)",
+        "Licensed contractor required"
+      ]
+    },
+    "buildingPermit": {
+      "aliases": ["building permit", "construction permit", "new construction", "addition"],
+      "description": "Required for new construction, additions, and major renovations",
+      "jurisdictionsWithFullData": ["boston", "cambridge", "brookline", "salem", "lowell", "springfield"],
+      "stateRequirements": [
+        "Sealed architectural/structural plans from MA-licensed professional",
+        "Energy code compliance (IECC + potentially Stretch Code)",
+        "Contractor licenses (CSL)",
+        "Insurance certificates",
+        "Workers Compensation documentation"
+      ]
+    },
+    "tradePermits": {
+      "description": "Separate permits required for each trade — cannot be bundled in Massachusetts",
+      "types": ["Electrical", "Plumbing", "Gas", "Mechanical/HVAC", "Fire Protection"],
+      "keyRule": "Each trade permit must be submitted by a licensed contractor in that specific trade"
+    }
+  }
+}
