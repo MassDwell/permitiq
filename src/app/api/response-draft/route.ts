@@ -1,0 +1,68 @@
+import Anthropic from "@anthropic-ai/sdk";
+
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json() as {
+      objectionText: string;
+      projectAddress: string;
+      permitType: string;
+    };
+
+    const { objectionText, projectAddress, permitType } = body;
+
+    if (!objectionText?.trim()) {
+      return new Response(JSON.stringify({ error: "objectionText is required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const stream = await client.messages.stream({
+      model: "claude-3-5-sonnet-latest",
+      max_tokens: 1500,
+      system:
+        "You are a construction permit consultant specializing in Massachusetts building regulations (780 CMR). Draft a professional, concise response to the following permit objection. Cite specific code sections (IBC, 780 CMR, or local ordinances). Be persuasive but professional. Format as a formal letter.",
+      messages: [
+        {
+          role: "user",
+          content: `Project Address: ${projectAddress || "Unknown"}\nPermit Type: ${permitType || "Building Permit"}\n\nObjection/Comment:\n${objectionText}`,
+        },
+      ],
+    });
+
+    const encoder = new TextEncoder();
+    const readable = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of stream) {
+            if (
+              chunk.type === "content_block_delta" &&
+              chunk.delta.type === "text_delta"
+            ) {
+              controller.enqueue(encoder.encode(chunk.delta.text));
+            }
+          }
+          controller.close();
+        } catch (err) {
+          controller.error(err);
+        }
+      },
+    });
+
+    return new Response(readable, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-cache",
+      },
+    });
+  } catch (err) {
+    console.error("[response-draft]", err);
+    return new Response(JSON.stringify({ error: "Failed to generate response" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+}
