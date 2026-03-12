@@ -10,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import {
@@ -18,7 +17,6 @@ import {
   FolderOpen,
   FileText,
   Clock,
-  AlertTriangle,
   CheckCircle,
   ArrowRight,
   TrendingUp,
@@ -29,32 +27,9 @@ import {
   ShieldQuestion,
 } from "lucide-react";
 import { CreateProjectDialog } from "@/components/create-project-dialog";
+import { WelcomeBanner } from "@/components/welcome-banner";
+import { ActivityFeed } from "@/components/activity-feed";
 import { useState } from "react";
-
-function getHealthBadge(status: "green" | "yellow" | "red") {
-  switch (status) {
-    case "green":
-      return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-teal-500/20 text-teal-400 border border-teal-500/30">
-          On Track
-        </span>
-      );
-    case "yellow":
-      return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30">
-          Needs Attention
-        </span>
-      );
-    case "red":
-      return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">
-          At Risk
-        </span>
-      );
-    default:
-      return null;
-  }
-}
 
 function getHealthDot(status: "green" | "yellow" | "red") {
   switch (status) {
@@ -90,8 +65,16 @@ export default function DashboardPage() {
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
   const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+  const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
   const allComplianceItems = projects?.flatMap((p) => p.complianceItems) ?? [];
+
+  const dueSoonCount =
+    upcomingDeadlines?.filter((item) => {
+      if (!item.deadline) return false;
+      const d = new Date(item.deadline);
+      return d >= now && d <= sevenDaysFromNow;
+    }).length ?? 0;
 
   const thisWeekCompleted = allComplianceItems.filter(
     (item) => item.status === "met" && new Date(item.updatedAt) >= sevenDaysAgo
@@ -127,12 +110,19 @@ export default function DashboardPage() {
         </Button>
       </div>
 
+      {/* Welcome Banner — shown for new users with 0 projects */}
+      <WelcomeBanner
+        projectCount={totalProjects}
+        onCreateProject={() => setCreateProjectOpen(true)}
+      />
+
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        {/* Total Projects */}
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
           style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#64748B]">Active Projects</p>
+            <p className="text-sm font-medium text-[#64748B]">Total Projects</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: 'rgba(20,184,166,0.12)', boxShadow: '0 0 12px rgba(20,184,166,0.1)' }}>
               <FolderOpen className="h-4 w-4 text-[#14B8A6]" />
@@ -141,30 +131,25 @@ export default function DashboardPage() {
           <p className="text-4xl font-bold text-[#F1F5F9] tracking-tight">{totalProjects}</p>
         </div>
 
+        {/* Items Due This Week */}
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
           style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#64748B]">Total Documents</p>
+            <p className="text-sm font-medium text-[#64748B]">Due This Week</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
-              style={{ background: 'rgba(99,102,241,0.12)', boxShadow: '0 0 12px rgba(99,102,241,0.1)' }}>
-              <FileText className="h-4 w-4 text-[#6366F1]" />
+              style={{
+                background: dueSoonCount > 0 ? 'rgba(239,68,68,0.12)' : 'rgba(99,102,241,0.12)',
+                boxShadow: dueSoonCount > 0 ? '0 0 12px rgba(239,68,68,0.1)' : '0 0 12px rgba(99,102,241,0.1)',
+              }}>
+              <Clock className="h-4 w-4" style={{ color: dueSoonCount > 0 ? '#EF4444' : '#6366F1' }} />
             </div>
           </div>
-          <p className="text-4xl font-bold text-[#F1F5F9] tracking-tight">{totalDocuments}</p>
+          <p className="text-4xl font-bold tracking-tight" style={{ color: dueSoonCount > 0 ? '#EF4444' : '#F1F5F9' }}>
+            {dueSoonCount}
+          </p>
         </div>
 
-        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
-          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#64748B]">Overdue Items</p>
-            <div className="h-8 w-8 rounded-lg flex items-center justify-center"
-              style={{ background: 'rgba(239,68,68,0.12)', boxShadow: '0 0 12px rgba(239,68,68,0.1)' }}>
-              <AlertTriangle className="h-4 w-4 text-[#EF4444]" />
-            </div>
-          </div>
-          <p className="text-4xl font-bold tracking-tight" style={{ color: overdueItems > 0 ? '#EF4444' : '#F1F5F9' }}>{overdueItems}</p>
-        </div>
-
+        {/* Avg Compliance Score */}
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
           style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
@@ -174,7 +159,23 @@ export default function DashboardPage() {
               <CheckCircle className="h-4 w-4 text-[#14B8A6]" />
             </div>
           </div>
-          <p className="text-4xl font-bold text-[#F1F5F9] tracking-tight">{avgHealth}%</p>
+          <p className="text-4xl font-bold tracking-tight"
+            style={{ color: avgHealth >= 80 ? '#14B8A6' : avgHealth >= 60 ? '#F59E0B' : '#EF4444' }}>
+            {avgHealth}%
+          </p>
+        </div>
+
+        {/* Documents Processed */}
+        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
+          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-medium text-[#64748B]">Documents Processed</p>
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'rgba(99,102,241,0.12)', boxShadow: '0 0 12px rgba(99,102,241,0.1)' }}>
+              <FileText className="h-4 w-4 text-[#6366F1]" />
+            </div>
+          </div>
+          <p className="text-4xl font-bold text-[#F1F5F9] tracking-tight">{totalDocuments}</p>
         </div>
       </div>
 
@@ -514,6 +515,24 @@ export default function DashboardPage() {
                 })()}
               </CardContent>
             </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Recent Activity Feed */}
+      {projects && projects.length > 0 && (
+        <div className="mt-8">
+          <div className="rounded-xl overflow-hidden" style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <h2 className="text-base font-semibold text-[#F1F5F9]">Recent Activity</h2>
+              <p className="text-sm text-[#475569] mt-0.5">Latest updates across all projects</p>
+            </div>
+            <div className="p-2">
+              <ActivityFeed
+                projects={projects}
+                upcomingDeadlines={upcomingDeadlines ?? []}
+              />
+            </div>
           </div>
         </div>
       )}

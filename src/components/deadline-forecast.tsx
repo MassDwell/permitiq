@@ -6,14 +6,14 @@ import { AlertTriangle, TrendingUp, Clock, Zap } from "lucide-react";
 interface ComplianceItem {
   id: string;
   status: string;
-  deadline?: string | null;
-  createdAt: string;
-  updatedAt?: string | null;
+  deadline?: Date | string | null;
+  createdAt: Date | string;
+  updatedAt?: Date | string | null;
 }
 
 interface DeadlineForecastProps {
   complianceItems: ComplianceItem[];
-  projectCreatedAt: string;
+  projectCreatedAt: Date | string;
 }
 
 function getRiskLevel(

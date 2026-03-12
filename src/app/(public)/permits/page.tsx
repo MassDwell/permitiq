@@ -110,6 +110,28 @@ export default function PermitsIndexPage() {
         </p>
       </div>
 
+      {/* Zoning Lookup promo */}
+      <div className="mb-6 rounded-2xl p-6 text-white" style={{ background: 'linear-gradient(135deg, #0f2027 0%, #0d2233 50%, #0f2638 100%)', border: '1px solid rgba(20,184,166,0.25)' }}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <MapPin className="h-6 w-6 flex-shrink-0 mt-0.5" style={{ color: '#14B8A6' }} />
+            <div>
+              <p className="font-bold text-lg">Boston Zoning Intelligence — New</p>
+              <p className="text-sm mt-0.5" style={{ color: '#94A3B8' }}>
+                Enter any Boston address → instant zoning district, FAR limits, height, setbacks, ADU eligibility, and permit requirements.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/tools/zoning-lookup"
+            className="font-semibold px-5 py-2.5 rounded-xl transition-colors whitespace-nowrap flex-shrink-0 text-sm"
+            style={{ background: '#14B8A6', color: '#080D1A' }}
+          >
+            Try Zoning Lookup →
+          </Link>
+        </div>
+      </div>
+
       {/* Soft Costs Calculator promo */}
       <div className="mb-12 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-6 text-white">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

@@ -55,6 +55,7 @@ import { PermitFeeCalculator } from "@/components/permit-fee-calculator";
 import { QuickActionsPanel } from "@/components/quick-actions-panel";
 import { AddPermitDialog } from "@/components/permit-workflow/add-permit-dialog";
 import { CollaboratorsTab } from "@/components/collaborators-tab";
+import { DeadlineForecast } from "@/components/deadline-forecast";
 import {
   Dialog,
   DialogContent,
@@ -441,6 +442,7 @@ export default function ProjectDetailPage() {
               { value: "team", label: "Team" },
               { value: "inspections", label: "Inspections", href: `/projects/${projectId}/inspections` },
               { value: "response-assistant", label: "Response Assistant", href: `/projects/${projectId}/response-assistant` },
+              { value: "audit-trail", label: "Audit Trail", href: `/projects/${projectId}/audit-trail` },
             ].map((tab) => (
               tab.href ? (
                 <Link
@@ -486,10 +488,16 @@ export default function ProjectDetailPage() {
 
         {/* PERMITS TAB */}
         <TabsContent value="permits" className="mt-6">
-          <PermitWorkflowTab
-            projectId={projectId}
-            projectJurisdiction={project.jurisdiction}
-          />
+          <div className="space-y-6">
+            <DeadlineForecast
+              complianceItems={project.complianceItems}
+              projectCreatedAt={project.createdAt}
+            />
+            <PermitWorkflowTab
+              projectId={projectId}
+              projectJurisdiction={project.jurisdiction}
+            />
+          </div>
         </TabsContent>
 
         {/* COMPLIANCE TAB */}
