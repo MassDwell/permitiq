@@ -413,3 +413,28 @@ export type ProjectShare = typeof projectShares.$inferSelect;
 export type NewProjectShare = typeof projectShares.$inferInsert;
 
 export * from "./schema-inspections";
+
+// Soft Costs table (professional fees tied to the permit process)
+export const softCosts = pgTable("soft_costs", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+  category: text("category").notNull(), // 'legal' | 'architectural' | 'engineering' | 'survey' | 'permit_fees' | 'consulting' | 'other'
+  description: text("description").notNull(),
+  vendor: text("vendor"),
+  amount: integer("amount").notNull(), // cents
+  paidAt: timestamp("paid_at"),
+  isPaid: boolean("is_paid").default(false),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const softCostsRelations = relations(softCosts, ({ one }) => ({
+  project: one(projects, {
+    fields: [softCosts.projectId],
+    references: [projects.id],
+  }),
+}));
+
+export type SoftCost = typeof softCosts.$inferSelect;
+export type NewSoftCost = typeof softCosts.$inferInsert;

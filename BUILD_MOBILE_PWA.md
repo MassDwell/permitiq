@@ -1,23 +1,24 @@
-# Build: Phase 6B — Mobile PWA (PermitFlow has ZERO mobile app)
+# Build: Phase 6B — Mobile PWA (Field-First Experience)
 
 ## Why This Matters
-Construction happens on job sites. Developers visit sites. Inspectors show up. PermitFlow confirmed no mobile app.
-A PWA (Progressive Web App) is installable from the browser, works offline, and uses the device camera.
-No App Store submission needed. Ship today, install tomorrow.
+PermitFlow has ZERO mobile app. Construction happens on job sites. A developer or PM needs to check compliance on their phone while standing in front of a building inspector. MeritLayer should work perfectly on mobile — installable, fast, offline-capable.
+
+## Approach: Progressive Web App (PWA)
+No React Native needed. Add PWA capabilities to the existing Next.js app. Install on iPhone/Android home screen, works offline for read operations.
 
 ## Stack
-Next.js 15 (already supports PWA via next-pwa or manifest). Tailwind. No new major deps beyond what's needed for PWA manifest.
+Next.js 15 (existing). Add: next-pwa or manual service worker, web manifest.
 
 ---
 
-## Feature 1: PWA Manifest + Service Worker
+## What to Build
 
-### 1a. Web App Manifest — `public/manifest.json`
+### 1. Web App Manifest — `public/manifest.json`
 ```json
 {
   "name": "MeritLayer",
   "short_name": "MeritLayer",
-  "description": "AI-powered construction compliance",
+  "description": "AI-Powered Construction Compliance",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#080D1A",
@@ -25,41 +26,65 @@ Next.js 15 (already supports PWA via next-pwa or manifest). Tailwind. No new maj
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "shortcuts": [
+    {
+      "name": "My Projects",
+      "url": "/dashboard",
+      "description": "View all projects"
+    },
+    {
+      "name": "Zoning Lookup",
+      "url": "/tools/zoning-lookup",
+      "description": "Look up Boston zoning"
     }
   ]
 }
 ```
 
-### 1b. Generate placeholder icons — `public/icons/`
-Create two simple SVG-based placeholder icons (192x192 and 512x512) as PNG files.
-Since we can't run canvas in build, create them as simple colored squares with "ML" text using a Node script, OR just create the SVG files and reference them in the manifest with type "image/svg+xml":
+### 2. App Icons — generate programmatically
+Create `scripts/generate-icons.mjs`:
+```javascript
+// Generate simple placeholder PNG icons using Canvas API or just create SVG-based icons
+// For now, create simple colored square icons with "ML" text
+// Write to public/icon-192.png and public/icon-512.png
+// Use the sharp npm package if available, otherwise create a simple script note
+```
 
-Actually, simplest approach: create `public/icons/icon-192.svg` and `public/icons/icon-512.svg` as SVG files:
+Actually — skip programmatic generation. Instead create `public/icon-192.svg` and `public/icon-512.svg` as SVG files with this content:
 ```svg
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
   <rect width="192" height="192" rx="32" fill="#080D1A"/>
-  <rect x="16" y="16" width="160" height="160" rx="24" fill="#14B8A6"/>
-  <text x="96" y="120" font-family="system-ui,sans-serif" font-size="72" font-weight="800" fill="white" text-anchor="middle">M</text>
+  <rect x="16" y="16" width="160" height="160" rx="24" fill="#0F172A"/>
+  <text x="96" y="115" font-family="system-ui,sans-serif" font-size="72" font-weight="800" fill="#14B8A6" text-anchor="middle">ML</text>
 </svg>
 ```
 
-Reference them as SVG in manifest (browsers support SVG icons).
+Then in the manifest, reference the SVG files:
+```json
+"icons": [
+  { "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" },
+  { "src": "/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml" }
+]
+```
 
-### 1c. Add manifest link to layout
-In `src/app/layout.tsx`, add to the `<head>` section via Next.js metadata:
+### 3. Link manifest in layout — `src/app/layout.tsx`
+Add to the `<head>` metadata (Next.js way):
 ```typescript
 export const metadata: Metadata = {
-  // existing metadata...
+  // existing fields...
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -69,22 +94,24 @@ export const metadata: Metadata = {
   viewport: {
     width: 'device-width',
     initialScale: 1,
-    maximumScale: 1,
+    maximumScale: 1, // prevent zoom on form inputs on iOS
   },
 };
 ```
 
-Also add to the `<html>` element's head (via the layout):
+Also add to the `<html>` tag or `<head>` in layout:
 ```html
-<link rel="apple-touch-icon" href="/icons/icon-192.svg" />
-<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="MeritLayer" />
+<link rel="apple-touch-icon" href="/icon-192.svg" />
 ```
 
-### 1d. Service Worker — `public/sw.js`
-Simple offline-capable service worker:
+### 4. Service Worker — `public/sw.js`
+Simple offline-first service worker:
 ```javascript
 const CACHE_NAME = 'meritlayer-v1';
-const OFFLINE_URLS = [
+const STATIC_ASSETS = [
   '/',
   '/dashboard',
   '/offline',
@@ -92,7 +119,7 @@ const OFFLINE_URLS = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(OFFLINE_URLS))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
   );
   self.skipWaiting();
 });
@@ -107,105 +134,79 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request).catch(() => caches.match('/offline'))
-    );
+  // Network first for API calls
+  if (event.request.url.includes('/api/') || event.request.url.includes('/trpc/')) {
+    return; // Let it fail naturally if offline
   }
+  // Cache first for static assets
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      return cached || fetch(event.request).catch(() => caches.match('/offline'));
+    })
+  );
 });
 ```
 
-### 1e. Register service worker — add to layout
-In `src/app/layout.tsx`, add a client component that registers the SW:
+### 5. Register SW — `src/app/layout.tsx`
+Add a client component to register the service worker:
 
-Create `src/components/service-worker-registration.tsx`:
+Create `src/components/pwa-register.tsx`:
 ```typescript
 'use client';
 import { useEffect } from 'react';
-export function ServiceWorkerRegistration() {
+
+export function PWARegister() {
   useEffect(() => {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js');
+      navigator.serviceWorker.register('/sw.js').catch(console.error);
     }
   }, []);
   return null;
 }
 ```
-Import and add `<ServiceWorkerRegistration />` inside the body in layout.tsx.
 
-### 1f. Offline page — `src/app/offline/page.tsx`
+Import and add `<PWARegister />` to the body in layout.tsx.
+
+### 6. Offline Page — `src/app/offline/page.tsx`
 Simple page shown when offline:
 ```
-MeritLayer logo/name
-"You're offline"
-"Your compliance data is cached. Connect to sync updates."
-[Go to Dashboard] button
+📡 You're offline
+Your project data will sync when you reconnect.
+[View Cached Projects]  ← links to /dashboard
+```
+Dark theme, centered, teal accent.
+
+### 7. Mobile-Optimized Bottom Nav — `src/components/mobile-nav.tsx`
+A fixed bottom navigation bar shown ONLY on mobile (hidden on desktop):
+
+```
+[🏠 Home] [📋 Projects] [🔍 Zoning] [📊 Portfolio]
 ```
 
----
+CSS: `fixed bottom-0 left-0 right-0 md:hidden` — only shows on mobile.
+Links: /dashboard | /dashboard (projects) | /tools/zoning-lookup | /portfolio
 
-## Feature 2: Mobile-Optimized Field View — `src/app/(dashboard)/field/page.tsx`
+Wire into `src/app/(dashboard)/layout.tsx` — add MobileNav below the main content, surgical addition only.
 
-A simplified mobile-first view accessible at `/field`. Designed for phones on job sites.
-
-### Layout
-Full-height, large touch targets, minimal chrome.
-
-### Content:
-**Header:** "Field View" + project selector dropdown (select active project)
-
-**Section 1 — Today's Focus:**
-Show compliance items due within 7 days for selected project:
-- Large cards, one per item
-- Requirement name (large text)
-- Due date (color-coded: red <3 days, yellow <7 days)
-- Status toggle button (big, tap to mark complete)
-
-**Section 2 — Quick Upload:**
-Camera-ready document upload:
-```
-[📷 Capture Document]
-Tap to take a photo or choose from gallery
-```
-Uses `<input type="file" accept="image/*,application/pdf" capture="environment">` for camera access.
-On capture, auto-uploads to the project's documents via the existing upload flow.
-
-**Section 3 — Upcoming Inspections:**
-List of inspection steps from the permit workflow that are "scheduled" status.
-Large tap targets to mark as passed/failed.
-
-**Bottom nav (fixed):**
-- 🏠 Dashboard  
-- 📋 Projects
-- 📷 Field View (active)
-- 👤 Profile
-
-### Add "Field View" link to main sidebar nav
-In `src/app/(dashboard)/layout.tsx`, add Field View link with a 📱 or 🏗️ icon. Surgical addition.
-
----
-
-## Feature 3: Install Prompt Banner — `src/components/pwa-install-banner.tsx`
-
-A smart banner that appears on mobile browsers prompting installation.
+### 8. Camera Document Upload — `src/components/camera-capture.tsx`
+A mobile-specific upload button that opens the device camera directly:
 
 ```typescript
 'use client';
-// Uses the beforeinstallprompt event
-// Shows banner: "Install MeritLayer on your home screen for quick access"
-// [Install] [Not now] buttons
-// Hides after install or dismiss (stored in localStorage)
-// Only shows on mobile (check navigator.userAgent or window.innerWidth < 768)
+// A button that triggers <input type="file" accept="image/*" capture="environment" />
+// When user takes photo → converts to File object → passes to the existing upload flow
+// Shows: "📷 Scan Document" button (visible only on mobile)
+// On click: triggers hidden file input with camera capture
+// After capture: calls onFileSelected(file) prop
 ```
 
-Wire into the dashboard layout — shown once at top of page, dismissible.
+Add to `src/components/document-upload-zone.tsx` — surgical addition of the camera button below the existing drop zone, hidden on desktop (`md:hidden`).
 
 ---
 
 ## Constraints
-- New files for manifest, SW, offline page, field view, components
-- Surgical edits ONLY for: layout.tsx (metadata + SW registration)
-- Must pass `npm run build` with zero TypeScript errors
-- Field view must be actually usable on a 375px wide phone screen
-- Large tap targets (min 44px height on interactive elements)
-- No TypeScript errors
+- New files: manifest.json, sw.js, icon SVGs, offline page, mobile nav, camera capture, PWARegister
+- Surgical edits only: layout.tsx (manifest meta + PWARegister), dashboard layout (mobile nav), document-upload-zone (camera button)
+- Must pass `npm run build`
+- Zero TypeScript errors
+- All mobile UI hidden on desktop (`md:hidden` / `lg:hidden`)

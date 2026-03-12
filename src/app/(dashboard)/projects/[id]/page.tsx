@@ -253,6 +253,38 @@ export default function ProjectDetailPage() {
     },
   });
 
+  const createShare = trpc.shares.create.useMutation({
+    onSuccess: (data) => {
+      setGeneratedShareUrl(data.url);
+      utils.shares.getByProject.invalidate({ projectId });
+      toast.success("Shareable link created");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const { data: existingShares } = trpc.shares.getByProject.useQuery(
+    { projectId },
+    { enabled: shareDialogOpen }
+  );
+
+  const revokeShare = trpc.shares.revoke.useMutation({
+    onSuccess: () => {
+      utils.shares.getByProject.invalidate({ projectId });
+      toast.success("Link revoked");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const handleCopyShareUrl = (url: string) => {
+    navigator.clipboard.writeText(url);
+    setCopiedShareUrl(true);
+    setTimeout(() => setCopiedShareUrl(false), 2000);
+  };
+
   const handleStatusChange = (itemId: string, newStatus: "met" | "pending") => {
     updateComplianceItem.mutate({ id: itemId, status: newStatus });
   };
@@ -356,30 +388,44 @@ export default function ProjectDetailPage() {
           </div>
         </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              className="text-red-600"
-              onClick={() => {
-                if (
-                  confirm(
-                    "Are you sure you want to delete this project? This cannot be undone."
-                  )
-                ) {
-                  deleteProject.mutate({ id: projectId });
-                }
-              }}
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete Project
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              setShareDialogOpen(true);
+              setGeneratedShareUrl("");
+              setShareLabel("");
+            }}
+          >
+            <Share2 className="h-4 w-4 mr-2" />
+            Share Report
+          </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                className="text-red-600"
+                onClick={() => {
+                  if (
+                    confirm(
+                      "Are you sure you want to delete this project? This cannot be undone."
+                    )
+                  ) {
+                    deleteProject.mutate({ id: projectId });
+                  }
+                }}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Project
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {/* Stats */}
@@ -448,6 +494,7 @@ export default function ProjectDetailPage() {
               { value: "documents", label: `Documents (${project.documents.length})` },
               { value: "requirements", label: "Requirements" },
               { value: "submission", label: "Submission Prep" },
+              { value: "ask-ai", label: "Ask AI" },
               { value: "settings", label: "Settings" },
               { value: "team", label: "Team" },
               { value: "inspections", label: "Inspections", href: `/projects/${projectId}/inspections` },
@@ -492,6 +539,7 @@ export default function ProjectDetailPage() {
           <TabsTrigger value="documents">Documents</TabsTrigger>
           <TabsTrigger value="requirements">Requirements</TabsTrigger>
           <TabsTrigger value="submission">Submission Prep</TabsTrigger>
+          <TabsTrigger value="ask-ai">Ask AI</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
           <TabsTrigger value="team">Team</TabsTrigger>
         </TabsList>
@@ -909,7 +957,107 @@ export default function ProjectDetailPage() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* ASK AI TAB */}
+        <TabsContent value="ask-ai" className="mt-6">
+          <DocumentChat projectId={projectId} />
+        </TabsContent>
       </Tabs>
+
+      {/* SHARE REPORT DIALOG */}
+      <Dialog open={shareDialogOpen} onOpenChange={(open) => { setShareDialogOpen(open); if (!open) { setGeneratedShareUrl(""); setShareLabel(""); } }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Share2 className="h-5 w-5 text-[#14B8A6]" />
+              Create Shareable Link
+            </DialogTitle>
+            <DialogDescription>
+              Generate a read-only compliance report link for lenders, investors, or attorneys.
+            </DialogDescription>
+          </DialogHeader>
+
+          {!generatedShareUrl ? (
+            <div className="space-y-4 py-2">
+              <div className="space-y-2">
+                <Label htmlFor="share-label">Label <span className="text-muted-foreground font-normal">(optional)</span></Label>
+                <Input
+                  id="share-label"
+                  placeholder="e.g. For First Republic Bank"
+                  value={shareLabel}
+                  onChange={(e) => setShareLabel(e.target.value)}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground rounded-lg border border-white/10 bg-white/5 p-3">
+                This link gives read-only access. Anyone with the link can view this compliance report.
+              </p>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShareDialogOpen(false)}>Cancel</Button>
+                <Button
+                  onClick={() => createShare.mutate({ projectId, label: shareLabel.trim() || undefined })}
+                  disabled={createShare.isPending}
+                >
+                  {createShare.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Share2 className="h-4 w-4 mr-2" />}
+                  Generate Link
+                </Button>
+              </DialogFooter>
+            </div>
+          ) : (
+            <div className="space-y-4 py-2">
+              <div className="space-y-2">
+                <Label>Your shareable link</Label>
+                <div className="flex items-center gap-2">
+                  <Input value={generatedShareUrl} readOnly className="text-xs" />
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={() => handleCopyShareUrl(generatedShareUrl)}
+                  >
+                    {copiedShareUrl ? <Check className="h-4 w-4 text-green-400" /> : <Copy className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                This link gives read-only access. Anyone with the link can view this report.
+              </p>
+            </div>
+          )}
+
+          {existingShares && existingShares.length > 0 && (
+            <div className="border-t border-white/10 pt-4 mt-2">
+              <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">Active Links</p>
+              <div className="space-y-2">
+                {existingShares.map((s) => {
+                  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+                  const url = `${baseUrl}/share/${s.shareToken}`;
+                  return (
+                    <div key={s.id} className="flex items-center justify-between gap-2 text-xs rounded-lg border border-white/10 bg-white/5 px-3 py-2">
+                      <div className="truncate min-w-0">
+                        <p className="font-medium text-foreground truncate">{s.label ?? "Untitled link"}</p>
+                        <p className="text-muted-foreground">{s.viewCount ?? 0} views · {s.createdAt ? format(new Date(s.createdAt), "MMM d") : ""}</p>
+                      </div>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleCopyShareUrl(url)}>
+                          <Copy className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-7 w-7 text-red-500 hover:text-red-400"
+                          onClick={() => revokeShare.mutate({ shareId: s.id })}
+                          disabled={revokeShare.isPending}
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <AddComplianceItemDialog
         open={addItemOpen}
