@@ -152,7 +152,7 @@ export default function ProjectDetailPage() {
       utils.projects.get.invalidate({ id: projectId });
       setResearchOpen(false);
       toast.success(
-        `Added ${data.items.length} requirements from ${new URL(data.sourceUrl).hostname}`
+        `Added ${data.items.length} requirements for ${data.jurisdiction}`
       );
     },
     onError: (error) => {

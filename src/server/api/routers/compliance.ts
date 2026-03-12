@@ -4,6 +4,61 @@ import { complianceItems, projects, jurisdictionRules } from "@/db/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import Anthropic from "@anthropic-ai/sdk";
+import {
+  BOSTON_BUILDING_REQUIREMENTS,
+  BOSTON_TRADE_REQUIREMENTS,
+  CAMBRIDGE_BUILDING_REQUIREMENTS,
+  BROOKLINE_BUILDING_REQUIREMENTS,
+  SALEM_BUILDING_REQUIREMENTS,
+  LOWELL_BUILDING_REQUIREMENTS,
+  SPRINGFIELD_BUILDING_REQUIREMENTS,
+  MA_STATE_REQUIREMENTS,
+} from "@/lib/permit-requirements";
+
+// Detect jurisdiction from a free-text permit type string
+function detectJurisdiction(permitType: string): string {
+  const lower = permitType.toLowerCase();
+  if (/cambridge/.test(lower)) return "cambridge";
+  if (/brookline/.test(lower)) return "brookline";
+  if (/salem/.test(lower)) return "salem";
+  if (/lowell/.test(lower)) return "lowell";
+  if (/springfield/.test(lower)) return "springfield";
+  if (/\bma\b|massachusetts|statewide|state-wide/.test(lower)) return "ma_statewide";
+  return "boston"; // primary market default
+}
+
+// Detect permit category from a free-text permit type string
+function detectPermitCategory(permitType: string): string {
+  const lower = permitType.toLowerCase();
+  if (/demo(lition)?|tear.?down/.test(lower)) return "demolition";
+  if (/trade|electrical|plumbing|gas\b|mechanical|hvac/.test(lower)) return "trade";
+  if (/building|construction|new.construction|addition|renovation|alteration/.test(lower)) return "building";
+  return "unknown";
+}
+
+// Resolve requirements array for a given jurisdiction + category
+function getRequirementsForPermit(
+  jurisdiction: string,
+  category: string
+): typeof BOSTON_DEMOLITION_REQUIREMENTS | null {
+  if (jurisdiction === "boston") {
+    if (category === "demolition") return BOSTON_DEMOLITION_REQUIREMENTS;
+    if (category === "building") return BOSTON_BUILDING_REQUIREMENTS;
+    if (category === "trade") return BOSTON_TRADE_REQUIREMENTS;
+    // Boston default: building
+    return BOSTON_BUILDING_REQUIREMENTS;
+  }
+  if (jurisdiction === "cambridge") return CAMBRIDGE_BUILDING_REQUIREMENTS;
+  if (jurisdiction === "brookline") return BROOKLINE_BUILDING_REQUIREMENTS;
+  if (jurisdiction === "salem") return SALEM_BUILDING_REQUIREMENTS;
+  if (jurisdiction === "lowell") return LOWELL_BUILDING_REQUIREMENTS;
+  if (jurisdiction === "springfield") return SPRINGFIELD_BUILDING_REQUIREMENTS;
+  if (jurisdiction === "ma_statewide") return MA_STATE_REQUIREMENTS;
+  // Unknown jurisdiction — use MA state-wide as fallback before AI
+  if (category === "demolition") return BOSTON_DEMOLITION_REQUIREMENTS;
+  if (category === "trade") return BOSTON_TRADE_REQUIREMENTS;
+  return null; // trigger AI fallback
+}
 
 const BOSTON_DEMOLITION_REQUIREMENTS = [
   {
@@ -339,8 +394,19 @@ export const complianceRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
       }
 
-      const isDemolition = /demo(lition)?/i.test(input.permitType);
-      const sourceUrl = "https://www.boston.gov/departments/inspectional-services/how-get-demolition-permit";
+      const jurisdiction = detectJurisdiction(input.permitType);
+      const category = detectPermitCategory(input.permitType);
+
+      const JURISDICTION_DISPLAY: Record<string, string> = {
+        boston: "Boston, MA",
+        cambridge: "Cambridge, MA",
+        brookline: "Brookline, MA",
+        salem: "Salem, MA",
+        lowell: "Lowell, MA",
+        springfield: "Springfield, MA",
+        ma_statewide: "Massachusetts",
+      };
+      const jurisdictionDisplay = JURISDICTION_DISPLAY[jurisdiction] ?? "Boston, MA";
 
       let requirementsData: Array<{
         requirementType: string;
@@ -350,12 +416,14 @@ export const complianceRouter = createTRPCRouter({
         reasoning: string;
       }>;
 
-      if (isDemolition) {
-        requirementsData = BOSTON_DEMOLITION_REQUIREMENTS;
+      const curated = getRequirementsForPermit(jurisdiction, category);
+
+      if (curated) {
+        requirementsData = curated;
       } else {
-        // Use Anthropic to generate best-effort requirements
+        // Fall back to Claude Haiku for unknown permit types
         const client = new Anthropic();
-        const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(input.permitType + " permit requirements")}`;
+        const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(input.permitType + " permit requirements Massachusetts")}`;
 
         const message = await client.messages.create({
           model: "claude-haiku-4-5-20251001",
@@ -363,7 +431,7 @@ export const complianceRouter = createTRPCRouter({
           messages: [
             {
               role: "user",
-              content: `List the key permit requirements for a "${input.permitType}" permit in Boston, MA. Return a JSON array of objects with fields: requirementType (snake_case identifier), description (clear one-line description), sourceText (a plausible regulatory citation), reasoning (one sentence explaining why it applies). Return only valid JSON, no markdown.`,
+              content: `List the key permit requirements for a "${input.permitType}" permit in Massachusetts. Return a JSON array of objects with fields: requirementType (snake_case identifier), description (clear one-line description), sourceText (a plausible regulatory citation from 780 CMR or local code), reasoning (one sentence explaining why it applies). Return only valid JSON, no markdown.`,
             },
           ],
         });
@@ -376,12 +444,9 @@ export const complianceRouter = createTRPCRouter({
             sourceText: string;
             reasoning: string;
           }>;
-          requirementsData = parsed.map((r) => ({
-            ...r,
-            sourceUrl: googleSearchUrl,
-          }));
+          requirementsData = parsed.map((r) => ({ ...r, sourceUrl: googleSearchUrl }));
         } catch {
-          requirementsData = [];
+          requirementsData = MA_STATE_REQUIREMENTS;
         }
       }
 
@@ -392,7 +457,7 @@ export const complianceRouter = createTRPCRouter({
             projectId: input.projectId,
             requirementType: r.requirementType,
             description: r.description,
-            jurisdiction: "Boston, MA",
+            jurisdiction: jurisdictionDisplay,
             source: "rule_based",
             sourceUrl: r.sourceUrl,
             sourceText: r.sourceText,
@@ -404,9 +469,7 @@ export const complianceRouter = createTRPCRouter({
 
       return {
         items: insertedItems,
-        sourceUrl: isDemolition
-          ? sourceUrl
-          : `https://www.google.com/search?q=${encodeURIComponent(input.permitType + " permit requirements")}`,
+        jurisdiction: jurisdictionDisplay,
         permitType: input.permitType,
       };
     }),
