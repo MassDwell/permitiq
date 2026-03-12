@@ -80,7 +80,7 @@ export async function processDocumentWithAI(
       const base64Pdf = Buffer.from(pdfBuffer).toString("base64");
 
       response = await getAnthropic().messages.create({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-3-5-sonnet-20241022",
         max_tokens: 4096,
         messages: [
           {
@@ -117,7 +117,7 @@ export async function processDocumentWithAI(
             : "image/jpeg";
 
       response = await getAnthropic().messages.create({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-3-5-sonnet-20241022",
         max_tokens: 4096,
         messages: [
           {
@@ -145,7 +145,7 @@ export async function processDocumentWithAI(
       const text = await textResponse.text();
 
       response = await getAnthropic().messages.create({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-3-5-sonnet-20241022",
         max_tokens: 4096,
         messages: [
           {
@@ -195,7 +195,7 @@ export async function generateAlertMessage(
 ): Promise<string> {
   try {
     const response = await getAnthropic().messages.create({
-      model: "claude-haiku-4-5-20251001",
+      model: "claude-3-5-haiku-20241022",
       max_tokens: 256,
       messages: [
         {
