@@ -152,7 +152,7 @@ export function CreateProjectDialog({
                         {j.jurisdictionName}
                       </SelectItem>
                     ))}
-                    <SelectItem value="">Other / Unknown</SelectItem>
+                    <SelectItem value="other">Other / Unknown</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
