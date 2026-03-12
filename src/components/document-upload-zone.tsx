@@ -267,19 +267,21 @@ export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         className={cn(
-          "border-2 border-dashed rounded-xl p-8 text-center transition-all",
-          isDragging
-            ? "border-primary bg-primary/5"
-            : "border-white/20 hover:border-white/30"
+          "relative rounded-2xl p-10 text-center transition-all duration-200 cursor-pointer",
+          isDragging ? "scale-[1.01]" : ""
         )}
+        style={{
+          background: isDragging ? 'rgba(20,184,166,0.04)' : 'rgba(255,255,255,0.01)',
+          border: `2px dashed ${isDragging ? 'rgba(20,184,166,0.5)' : 'rgba(255,255,255,0.1)'}`,
+          boxShadow: isDragging ? '0 0 30px rgba(20,184,166,0.08) inset' : 'none',
+        }}
       >
-        <Upload className="h-10 w-10 text-primary mx-auto mb-4" />
-        <p className="text-lg font-medium text-foreground mb-1">
-          Drop files here or click to upload
-        </p>
-        <p className="text-sm text-muted-foreground mb-4">
-          PDF, JPEG, PNG, GIF, or WebP up to 10MB
-        </p>
+        <div className="h-12 w-12 rounded-xl flex items-center justify-center mx-auto mb-4"
+          style={{ background: 'rgba(20,184,166,0.1)', boxShadow: '0 0 20px rgba(20,184,166,0.1)' }}>
+          <Upload className="h-6 w-6 text-[#14B8A6]" />
+        </div>
+        <p className="text-sm font-semibold text-[#E2E8F0] mb-1">Drop files here or click to upload</p>
+        <p className="text-xs text-[#475569] mb-4">PDF, JPEG, PNG, GIF, or WebP — up to 10MB</p>
         <input
           type="file"
           id="file-upload"
@@ -289,7 +291,7 @@ export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
           onChange={handleFileSelect}
         />
         <label htmlFor="file-upload">
-          <Button asChild>
+          <Button asChild variant="outline" size="sm" className="border-[rgba(255,255,255,0.15)] hover:border-[#14B8A6] hover:text-[#14B8A6] transition-colors">
             <span>Select Files</span>
           </Button>
         </label>

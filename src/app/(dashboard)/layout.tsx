@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 import { Logo } from "@/components/ui/logo";
 import { LayoutDashboard, Bell, Settings } from "lucide-react";
 
@@ -15,26 +14,22 @@ const navigation = [
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { data: unreadCount } = trpc.alerts.getUnreadCount.useQuery();
 
   return (
-    <div className="min-h-screen bg-[#0A0F1E]">
+    <div className="min-h-screen" style={{ background: '#080D1A' }}>
       {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 z-50 w-64 bg-[#0A0F1E] border-r border-white/10">
+      <div className="fixed inset-y-0 left-0 z-50 w-64" style={{ background: '#060B17', borderRight: '1px solid rgba(255,255,255,0.05)' }}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center px-6 h-16 border-b border-white/10">
+          <div className="flex items-center px-5 h-16" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
             <Logo size="md" />
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-3 py-4 space-y-0.5">
+          <nav className="flex-1 px-3 py-5 space-y-0.5">
             {navigation.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
               return (
@@ -42,16 +37,17 @@ export default function DashboardLayout({
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
+                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150",
                     isActive
-                      ? "border-l-2 border-primary text-primary bg-primary/10 pl-[10px]"
-                      : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+                      ? "text-[#14B8A6] bg-[rgba(20,184,166,0.1)]"
+                      : "text-[#64748B] hover:text-[#94A3B8] hover:bg-[rgba(255,255,255,0.03)]"
                   )}
+                  style={isActive ? { boxShadow: 'inset 2px 0 0 #14B8A6' } : {}}
                 >
-                  <item.icon className="h-4 w-4 shrink-0" />
+                  <item.icon className={cn("h-4 w-4 shrink-0", isActive ? "text-[#14B8A6]" : "")} />
                   {item.name}
                   {item.name === "Alerts" && unreadCount && unreadCount > 0 ? (
-                    <span className="ml-auto bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-medium px-1.5 py-0.5 rounded-full">
+                    <span className="ml-auto text-xs font-semibold px-1.5 py-0.5 rounded-full" style={{ background: 'rgba(239,68,68,0.15)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.25)' }}>
                       {unreadCount}
                     </span>
                   ) : null}
@@ -60,24 +56,25 @@ export default function DashboardLayout({
             })}
           </nav>
 
-          {/* User section */}
-          <div className="p-4 border-t border-white/10">
-            <div className="flex items-center gap-3">
+          {/* Bottom section */}
+          <div className="px-3 pb-4 space-y-2">
+            {/* Plan badge */}
+            <div className="px-3 py-2 rounded-lg" style={{ background: 'rgba(20,184,166,0.05)', border: '1px solid rgba(20,184,166,0.15)' }}>
+              <p className="text-xs font-medium text-[#14B8A6]">Starter Plan</p>
+              <p className="text-xs text-[#475569] mt-0.5">3 active projects</p>
+            </div>
+            {/* User */}
+            <div className="flex items-center gap-3 px-2 py-2">
               <UserButton />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">Account</p>
-                <span className="inline-flex items-center mt-0.5 px-1.5 py-0.5 rounded-full text-xs font-medium bg-secondary/20 text-secondary border border-secondary/30">
-                  Starter
-                </span>
-              </div>
+              <p className="text-sm font-medium text-[#94A3B8]">Account</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main content */}
-      <div className="pl-64">
-        <main className="min-h-screen bg-[#0A0F1E]">{children}</main>
+      <div className="pl-64 min-h-screen" style={{ background: '#080D1A' }}>
+        <main className="min-h-screen">{children}</main>
       </div>
     </div>
   );

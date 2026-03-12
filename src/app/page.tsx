@@ -124,9 +124,9 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen text-[#F1F5F9]" style={{ background: '#080D1A' }}>
       {/* Navigation */}
-      <nav className="border-b border-white/10 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
+      <nav className="sticky top-0 z-50 backdrop-blur-sm" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', background: 'rgba(8,13,26,0.85)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Logo size="md" />
@@ -153,47 +153,40 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        {/* Mesh gradient background */}
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          <div
-            className="absolute -top-40 -right-40 w-96 h-96 rounded-full opacity-20 blur-3xl"
-            style={{ background: "radial-gradient(circle, #14B8A6, transparent)" }}
-          />
-          <div
-            className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full opacity-15 blur-3xl"
-            style={{ background: "radial-gradient(circle, #6366F1, transparent)" }}
-          />
-        </div>
+        <div className="absolute inset-0 -z-10" style={{ background: 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(20,184,166,0.15) 0%, transparent 60%)' }} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28">
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-medium mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium mb-6"
+              style={{ border: '1px solid rgba(20,184,166,0.3)', background: 'rgba(20,184,166,0.08)', color: '#14B8A6' }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#14B8A6] animate-pulse" />
               AI-Powered Compliance
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-foreground mb-6">
+            <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.1] text-[#F1F5F9] mb-6">
               Never miss a permit
               <br />
-              <span className="text-primary">deadline again</span>
+              <span style={{ background: 'linear-gradient(135deg, #14B8A6, #6366F1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                deadline again
+              </span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
+            <p className="text-xl max-w-2xl mx-auto mb-10" style={{ color: '#64748B' }}>
               MeritLayer is the AI brain that reads your compliance documents, tracks deadlines,
               maps requirements, and alerts you before anything falls through the cracks.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/sign-up">
-                <Button
-                  size="lg"
-                  className="text-lg px-8 bg-primary text-primary-foreground hover:bg-primary/90"
-                  style={{ boxShadow: "0 0 20px rgba(20,184,166,0.3)" }}
+                <button
+                  className="px-8 py-4 rounded-xl font-semibold text-[#080D1A] transition-all hover:scale-[1.02] flex items-center gap-2"
+                  style={{ background: 'linear-gradient(135deg, #14B8A6, #0EA5A5)', boxShadow: '0 0 30px rgba(20,184,166,0.3), 0 4px 15px rgba(0,0,0,0.3)' }}
                 >
                   Start Free Trial
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
+                  <ArrowRight className="h-5 w-5" />
+                </button>
               </Link>
               <a href="#pricing">
-                <Button size="lg" variant="outline" className="text-lg px-8 border-white/20 hover:bg-white/5">
+                <button className="px-8 py-4 rounded-xl font-semibold transition-all hover:bg-[rgba(255,255,255,0.05)]"
+                  style={{ border: '1px solid rgba(255,255,255,0.15)', color: '#94A3B8' }}>
                   View Pricing
-                </Button>
+                </button>
               </a>
             </div>
           </div>
@@ -201,7 +194,7 @@ export default function LandingPage() {
       </section>
 
       {/* Problem Section */}
-      <section className="py-20 bg-card/50">
+      <section className="py-20" style={{ background: 'rgba(14,21,37,0.5)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">
@@ -267,24 +260,22 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-2 gap-6">
             {features.map((feature, index) => (
-              <Card key={index} className="bg-card border border-white/10 rounded-xl hover:border-white/20 transition-all">
-                <CardHeader>
-                  <div className={`w-14 h-14 rounded-xl ${feature.bg} flex items-center justify-center mb-4`}>
-                    <feature.icon className={`h-7 w-7 ${feature.color}`} />
-                  </div>
-                  <CardTitle className="text-xl text-foreground">{feature.title}</CardTitle>
-                  <CardDescription className="text-base text-muted-foreground">
-                    {feature.description}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
+              <div key={index} className="rounded-2xl p-6 transition-all hover:translate-y-[-2px]"
+                style={{ background: 'rgba(14,21,37,0.8)', border: '1px solid rgba(255,255,255,0.07)', backdropFilter: 'blur(10px)' }}>
+                <div className="h-10 w-10 rounded-xl flex items-center justify-center mb-4"
+                  style={{ background: 'rgba(20,184,166,0.1)', boxShadow: '0 0 15px rgba(20,184,166,0.15)' }}>
+                  <feature.icon className="h-5 w-5 text-[#14B8A6]" />
+                </div>
+                <h3 className="text-base font-semibold text-[#F1F5F9] mb-2">{feature.title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: '#475569' }}>{feature.description}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section className="py-20 bg-card/50">
+      <section className="py-20" style={{ background: 'rgba(14,21,37,0.5)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">How it works</h2>
@@ -322,60 +313,56 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {pricingPlans.map((plan, index) => (
-              <Card
+              <div
                 key={index}
-                className={`relative bg-card rounded-xl transition-all ${
-                  plan.popular
-                    ? "border-primary border-2"
-                    : "border border-white/10 hover:border-white/20"
-                }`}
-                style={plan.popular ? { boxShadow: "0 0 30px rgba(20,184,166,0.15)" } : {}}
+                className="relative rounded-2xl p-6 transition-all"
+                style={{
+                  background: '#0E1525',
+                  border: plan.popular ? '1px solid #14B8A6' : '1px solid rgba(255,255,255,0.07)',
+                  boxShadow: plan.popular ? '0 0 30px rgba(20,184,166,0.12)' : 'none',
+                }}
               >
                 {plan.popular && (
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary text-primary-foreground">
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold text-[#080D1A]"
+                      style={{ background: 'linear-gradient(135deg, #14B8A6, #0EA5A5)' }}>
                       Most Popular
                     </span>
                   </div>
                 )}
-                <CardHeader>
-                  <CardTitle className="text-2xl text-foreground">{plan.name}</CardTitle>
-                  <CardDescription className="text-muted-foreground">{plan.description}</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold text-primary">${plan.price.toLocaleString()}</span>
-                    <span className="text-muted-foreground">/month</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-primary shrink-0" />
-                        <span className="text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Link href="/sign-up" className="block mt-6">
-                    <Button
-                      className={`w-full ${
-                        plan.popular
-                          ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                          : "border-white/20 hover:bg-white/5"
-                      }`}
-                      variant={plan.popular ? "default" : "outline"}
-                    >
-                      Get Started
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+                <h3 className="text-xl font-bold text-[#F1F5F9] mb-1">{plan.name}</h3>
+                <p className="text-sm text-[#475569] mb-4">{plan.description}</p>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold text-[#14B8A6]">${plan.price.toLocaleString()}</span>
+                  <span className="text-[#475569]">/month</span>
+                </div>
+                <ul className="space-y-3 mb-6">
+                  {plan.features.map((feature, i) => (
+                    <li key={i} className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-[#14B8A6] shrink-0" />
+                      <span className="text-sm text-[#64748B]">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/sign-up" className="block">
+                  <button
+                    className="w-full py-2.5 rounded-xl font-semibold text-sm transition-all"
+                    style={plan.popular
+                      ? { background: 'linear-gradient(135deg, #14B8A6, #0EA5A5)', color: '#080D1A', boxShadow: '0 0 20px rgba(20,184,166,0.2)' }
+                      : { border: '1px solid rgba(255,255,255,0.12)', color: '#94A3B8', background: 'transparent' }
+                    }
+                  >
+                    Get Started
+                  </button>
+                </Link>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 bg-card/50">
+      <section className="py-20" style={{ background: 'rgba(14,21,37,0.5)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">

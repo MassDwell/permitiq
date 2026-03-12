@@ -372,87 +372,94 @@ export default function ProjectDetailPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <Card className="bg-card border border-white/10 rounded-xl hover:border-white/20 transition-all">
-          <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Compliance Score
-            </CardTitle>
-            <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center">
-              <CheckCircle className="h-3.5 w-3.5 text-primary" />
+        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
+          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-medium text-[#64748B]">Compliance Score</p>
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'rgba(20,184,166,0.12)', boxShadow: '0 0 12px rgba(20,184,166,0.1)' }}>
+              <CheckCircle className="h-4 w-4 text-[#14B8A6]" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold tabular-nums text-primary mb-2">{project.healthScore}%</div>
-            <Progress value={project.healthScore} className="h-1.5 bg-white/10" />
-          </CardContent>
-        </Card>
+          </div>
+          <p className="text-4xl font-bold tracking-tight text-[#14B8A6]">{project.healthScore}%</p>
+          <div className="mt-2 h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.1)' }}>
+            <div className="h-full rounded-full bg-[#14B8A6]" style={{ width: `${project.healthScore}%` }} />
+          </div>
+        </div>
 
-        <Card className="bg-card border border-white/10 rounded-xl hover:border-white/20 transition-all">
-          <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Requirements Met
-            </CardTitle>
-            <div className="w-7 h-7 rounded-full bg-green-500/20 flex items-center justify-center">
-              <CheckCircle className="h-3.5 w-3.5 text-green-400" />
+        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
+          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-medium text-[#64748B]">Requirements Met</p>
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'rgba(16,185,129,0.12)', boxShadow: '0 0 12px rgba(16,185,129,0.1)' }}>
+              <CheckCircle className="h-4 w-4 text-[#10B981]" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold tabular-nums text-green-400">
-              {project.metItems}
-              <span className="text-muted-foreground text-xl">/{project.totalItems}</span>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+          <p className="text-4xl font-bold tracking-tight text-[#10B981]">
+            {project.metItems}<span className="text-xl text-[#475569]">/{project.totalItems}</span>
+          </p>
+        </div>
 
-        <Card className="bg-card border border-white/10 rounded-xl hover:border-white/20 transition-all">
-          <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Pending
-            </CardTitle>
-            <div className="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center">
-              <Clock className="h-3.5 w-3.5 text-amber-400" />
+        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
+          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-medium text-[#64748B]">Pending</p>
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'rgba(245,158,11,0.12)', boxShadow: '0 0 12px rgba(245,158,11,0.1)' }}>
+              <Clock className="h-4 w-4 text-[#F59E0B]" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold tabular-nums text-amber-400">
-              {project.pendingItems}
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+          <p className="text-4xl font-bold tracking-tight text-[#F59E0B]">{project.pendingItems}</p>
+        </div>
 
-        <Card className="bg-card border border-white/10 rounded-xl hover:border-white/20 transition-all">
-          <CardHeader className="pb-2 flex flex-row items-center justify-between">
-            <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Overdue
-            </CardTitle>
-            <div className="w-7 h-7 rounded-full bg-red-500/20 flex items-center justify-center">
-              <AlertTriangle className="h-3.5 w-3.5 text-red-400" />
+        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
+          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-medium text-[#64748B]">Overdue</p>
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'rgba(239,68,68,0.12)', boxShadow: '0 0 12px rgba(239,68,68,0.1)' }}>
+              <AlertTriangle className="h-4 w-4 text-[#EF4444]" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold tabular-nums text-red-400">
-              {project.overdueItems}
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+          <p className="text-4xl font-bold tracking-tight text-[#EF4444]">{project.overdueItems}</p>
+        </div>
       </div>
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="flex-wrap h-auto gap-1">
+        <div style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', marginBottom: '0' }}>
+          <div className="flex px-0 gap-0 flex-wrap">
+            {[
+              { value: "permits", label: "Permits" },
+              { value: "compliance", label: `Compliance (${project.complianceItems.length})` },
+              { value: "documents", label: `Documents (${project.documents.length})` },
+              { value: "requirements", label: "Requirements" },
+              { value: "submission", label: "Submission Prep" },
+              { value: "settings", label: "Settings" },
+            ].map((tab) => (
+              <button
+                key={tab.value}
+                onClick={() => setActiveTab(tab.value)}
+                className="px-4 py-3 text-sm font-medium transition-all border-b-2 -mb-px"
+                style={{
+                  color: activeTab === tab.value ? '#14B8A6' : '#475569',
+                  borderBottomColor: activeTab === tab.value ? '#14B8A6' : 'transparent',
+                  background: 'transparent',
+                }}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <TabsList className="hidden">
           <TabsTrigger value="permits">Permits</TabsTrigger>
-          <TabsTrigger value="compliance">
-            Compliance ({project.complianceItems.length})
-          </TabsTrigger>
-          <TabsTrigger value="documents">
-            Documents ({project.documents.length})
-          </TabsTrigger>
+          <TabsTrigger value="compliance">Compliance</TabsTrigger>
+          <TabsTrigger value="documents">Documents</TabsTrigger>
           <TabsTrigger value="requirements">Requirements</TabsTrigger>
           <TabsTrigger value="submission">Submission Prep</TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-1">
-            <Settings className="h-3.5 w-3.5" />
-            Settings
-          </TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
 
         {/* PERMITS TAB */}

@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { TRPCProvider } from "@/lib/trpc/provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
-const inter = Inter({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-jakarta",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -55,7 +56,7 @@ export default function RootLayout({
       }}
     >
       <html lang="en" className="dark">
-        <body className={`${inter.variable} font-sans antialiased bg-background text-foreground`}>
+        <body className={`${jakarta.variable} font-sans antialiased`} style={{ background: '#080D1A', color: '#F1F5F9' }}>
           <TRPCProvider>
             {children}
             <Toaster />

@@ -129,138 +129,109 @@ export default function DashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <Card className="bg-card border border-white/10 rounded-xl hover:border-white/20 transition-all">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Active Projects
-            </CardTitle>
-            <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center">
-              <FolderOpen className="h-3.5 w-3.5 text-primary" />
+        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
+          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-medium text-[#64748B]">Active Projects</p>
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'rgba(20,184,166,0.12)', boxShadow: '0 0 12px rgba(20,184,166,0.1)' }}>
+              <FolderOpen className="h-4 w-4 text-[#14B8A6]" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold tabular-nums text-foreground">{totalProjects}</div>
-          </CardContent>
-        </Card>
+          </div>
+          <p className="text-4xl font-bold text-[#F1F5F9] tracking-tight">{totalProjects}</p>
+        </div>
 
-        <Card className="bg-card border border-white/10 rounded-xl hover:border-white/20 transition-all">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Total Documents
-            </CardTitle>
-            <div className="w-7 h-7 rounded-full bg-secondary/20 flex items-center justify-center">
-              <FileText className="h-3.5 w-3.5 text-secondary" />
+        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
+          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-medium text-[#64748B]">Total Documents</p>
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'rgba(99,102,241,0.12)', boxShadow: '0 0 12px rgba(99,102,241,0.1)' }}>
+              <FileText className="h-4 w-4 text-[#6366F1]" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold tabular-nums text-foreground">{totalDocuments}</div>
-          </CardContent>
-        </Card>
+          </div>
+          <p className="text-4xl font-bold text-[#F1F5F9] tracking-tight">{totalDocuments}</p>
+        </div>
 
-        <Card className="bg-card border border-white/10 rounded-xl hover:border-white/20 transition-all">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Overdue Items
-            </CardTitle>
-            <div className="w-7 h-7 rounded-full bg-red-500/20 flex items-center justify-center">
-              <AlertTriangle className="h-3.5 w-3.5 text-red-400" />
+        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
+          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-medium text-[#64748B]">Overdue Items</p>
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'rgba(239,68,68,0.12)', boxShadow: '0 0 12px rgba(239,68,68,0.1)' }}>
+              <AlertTriangle className="h-4 w-4 text-[#EF4444]" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold tabular-nums text-red-400">{overdueItems}</div>
-          </CardContent>
-        </Card>
+          </div>
+          <p className="text-4xl font-bold tracking-tight" style={{ color: overdueItems > 0 ? '#EF4444' : '#F1F5F9' }}>{overdueItems}</p>
+        </div>
 
-        <Card className="bg-card border border-white/10 rounded-xl hover:border-white/20 transition-all">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Avg Compliance
-            </CardTitle>
-            <div className="w-7 h-7 rounded-full bg-teal-500/20 flex items-center justify-center">
-              <CheckCircle className="h-3.5 w-3.5 text-teal-400" />
+        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
+          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-medium text-[#64748B]">Avg Compliance</p>
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'rgba(20,184,166,0.12)', boxShadow: '0 0 12px rgba(20,184,166,0.1)' }}>
+              <CheckCircle className="h-4 w-4 text-[#14B8A6]" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold tabular-nums text-foreground">{avgHealth}%</div>
-          </CardContent>
-        </Card>
+          </div>
+          <p className="text-4xl font-bold text-[#F1F5F9] tracking-tight">{avgHealth}%</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Projects List */}
         <div className="lg:col-span-2">
-          <Card className="bg-card border border-white/10 rounded-xl">
-            <CardHeader>
-              <CardTitle className="text-foreground">Projects</CardTitle>
-              <CardDescription className="text-muted-foreground">
-                Your active construction projects
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+          <div className="rounded-xl overflow-hidden" style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <h2 className="text-base font-semibold text-[#F1F5F9]">Projects</h2>
+              <p className="text-sm text-[#475569] mt-0.5">Your active construction projects</p>
+            </div>
+            <div className="p-4">
               {projectsLoading ? (
                 <div className="space-y-4">
                   {[1, 2, 3].map((i) => (
-                    <Skeleton key={i} className="h-24 w-full" />
+                    <Skeleton key={i} className="h-16 w-full" />
                   ))}
                 </div>
               ) : projects && projects.length > 0 ? (
-                <div className="space-y-3">
-                  {projects.map((project) => (
-                    <Link
-                      key={project.id}
-                      href={`/projects/${project.id}`}
-                      className="block"
-                    >
-                      <div className="flex items-center gap-4 p-4 rounded-xl border border-white/10 hover:border-white/20 hover:-translate-y-px hover:shadow-lg transition-all bg-white/[0.02]">
-                        <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${getHealthDot(project.healthStatus)}`} />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="font-semibold text-foreground truncate">
-                              {project.name}
-                            </h3>
-                            {getHealthBadge(project.healthStatus)}
+                <div className="space-y-2">
+                  {projects.map((project) => {
+                    const dotColor = project.healthStatus === 'green' ? '#14B8A6' : project.healthStatus === 'yellow' ? '#F59E0B' : '#EF4444';
+                    const dotGlow = project.healthStatus === 'green' ? 'rgba(20,184,166,0.6)' : project.healthStatus === 'yellow' ? 'rgba(245,158,11,0.6)' : 'rgba(239,68,68,0.6)';
+                    return (
+                      <Link key={project.id} href={`/projects/${project.id}`} className="block">
+                        <div className="flex items-center gap-4 px-4 py-3.5 rounded-lg cursor-pointer transition-all duration-150 hover:bg-[rgba(255,255,255,0.03)]"
+                          style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
+                          <div className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: dotColor, boxShadow: `0 0 6px ${dotGlow}` }} />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-[#F1F5F9] truncate">{project.name}</p>
+                            <p className="text-xs text-[#475569] truncate">{project.address || "No address"}</p>
                           </div>
-                          <p className="text-sm text-muted-foreground truncate mt-0.5">
-                            {project.address || "No address"}
-                          </p>
-                          <div className="flex items-center gap-4 mt-1.5 text-xs text-muted-foreground">
-                            <span>{project.documentCount} docs</span>
-                            <span>
-                              {project.metItems}/{project.totalItems} requirements met
-                            </span>
+                          <div className="w-20 shrink-0">
+                            <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.1)' }}>
+                              <div className="h-full rounded-full" style={{ width: `${project.healthScore}%`, background: '#14B8A6' }} />
+                            </div>
+                            <p className="text-xs text-[#475569] text-right mt-0.5">{project.healthScore}%</p>
                           </div>
+                          <ArrowRight className="h-4 w-4 text-[#334155] shrink-0" />
                         </div>
-                        <div className="text-right shrink-0">
-                          <Progress
-                            value={project.healthScore}
-                            className="w-24 h-1.5 bg-white/10"
-                          />
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {project.healthScore}%
-                          </p>
-                        </div>
-                        <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <FolderOpen className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-foreground mb-2">
-                    No projects yet
-                  </h3>
-                  <p className="text-muted-foreground mb-4">
-                    Create your first project to start tracking compliance
-                  </p>
+                  <FolderOpen className="h-12 w-12 mx-auto mb-4" style={{ color: 'rgba(100,116,139,0.4)' }} />
+                  <h3 className="text-lg font-medium text-[#F1F5F9] mb-2">No projects yet</h3>
+                  <p className="text-[#475569] mb-4">Create your first project to start tracking compliance</p>
                   <Button onClick={() => setCreateProjectOpen(true)}>
                     <Plus className="h-4 w-4 mr-2" />
                     Create Project
                   </Button>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
         {/* Upcoming Deadlines */}
