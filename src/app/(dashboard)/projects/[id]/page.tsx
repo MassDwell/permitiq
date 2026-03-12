@@ -42,10 +42,16 @@ import {
   Search,
   Settings,
   Save,
+  Share2,
+  Copy,
+  Check,
+  X,
+  MessageSquare,
 } from "lucide-react";
 import Link from "next/link";
 import { DocumentUploadZone } from "@/components/document-upload-zone";
 import { AddComplianceItemDialog } from "@/components/add-compliance-item-dialog";
+import { DocumentChat } from "@/components/document-chat";
 import { PermitWorkflowTab } from "@/components/permit-workflow/permit-workflow-tab";
 import { ComplianceReadinessScore } from "@/components/compliance-readiness-score";
 import { SubmissionPrepChecklist } from "@/components/submission-prep-checklist";
@@ -148,6 +154,10 @@ export default function ProjectDetailPage() {
   const [researchOpen, setResearchOpen] = useState(false);
   const [researchPermitType, setResearchPermitType] = useState("");
   const [activeTab, setActiveTab] = useState("permits");
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [shareLabel, setShareLabel] = useState("");
+  const [generatedShareUrl, setGeneratedShareUrl] = useState("");
+  const [copiedShareUrl, setCopiedShareUrl] = useState(false);
 
   // Settings form state
   const [settingsName, setSettingsName] = useState("");
