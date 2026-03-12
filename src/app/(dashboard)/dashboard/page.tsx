@@ -66,6 +66,7 @@ export default function DashboardPage() {
   const { data: upcomingDeadlines, isLoading: deadlinesLoading } =
     trpc.projects.getUpcomingDeadlines.useQuery({ days: 30 });
   const { data: profile } = trpc.settings.getProfile.useQuery();
+  const { data: velocityData } = trpc.projects.getComplianceVelocity.useQuery();
 
   // Calculate stats
   const totalProjects = projects?.length || 0;
@@ -440,55 +441,123 @@ export default function DashboardPage() {
                   Compliance Velocity
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Requirements completed week-over-week
+                  Avg health score — last 4 weeks
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center gap-3 mb-4">
-                  {velocityTrend === "improving" ? (
-                    <TrendingUp className="h-8 w-8 text-green-500" />
-                  ) : velocityTrend === "declining" ? (
-                    <TrendingDown className="h-8 w-8 text-red-500" />
-                  ) : (
-                    <Minus className="h-8 w-8 text-gray-400" />
-                  )}
-                  <div>
-                    <p className={`text-lg font-bold ${
-                      velocityTrend === "improving" ? "text-green-600" :
-                      velocityTrend === "declining" ? "text-red-600" :
-                      "text-gray-600"
-                    }`}>
-                      {velocityTrend === "improving" ? "Improving" :
-                       velocityTrend === "declining" ? "Declining" :
-                       "Stable"}
-                    </p>
-                    <p className="text-xs text-gray-500">compliance pace</p>
-                  </div>
-                </div>
+                {(() => {
+                  const hasSnapshots = velocityData?.some((w) => w.snapshotCount > 0);
 
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">This week</span>
-                    <span className="font-semibold">{thisWeekCompleted} items</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Last week</span>
-                    <span className="font-semibold">{lastWeekCompleted} items</span>
-                  </div>
-                  {velocityTrend !== "stable" && (
-                    <p className="text-xs text-gray-400 pt-1">
-                      {velocityTrend === "improving"
-                        ? `+${thisWeekCompleted - lastWeekCompleted} more than last week`
-                        : `${lastWeekCompleted - thisWeekCompleted} fewer than last week`}
-                    </p>
-                  )}
-                </div>
+                  if (!hasSnapshots) {
+                    // Fall back to item-count display
+                    return (
+                      <>
+                        <div className="flex items-center gap-3 mb-4">
+                          {velocityTrend === "improving" ? (
+                            <TrendingUp className="h-8 w-8 text-green-500" />
+                          ) : velocityTrend === "declining" ? (
+                            <TrendingDown className="h-8 w-8 text-red-500" />
+                          ) : (
+                            <Minus className="h-8 w-8 text-gray-400" />
+                          )}
+                          <div>
+                            <p className={`text-lg font-bold ${
+                              velocityTrend === "improving" ? "text-green-600" :
+                              velocityTrend === "declining" ? "text-red-600" :
+                              "text-gray-600"
+                            }`}>
+                              {velocityTrend === "improving" ? "Improving" :
+                               velocityTrend === "declining" ? "Declining" :
+                               "Stable"}
+                            </p>
+                            <p className="text-xs text-gray-500">compliance pace</p>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">This week</span>
+                            <span className="font-semibold">{thisWeekCompleted} items</span>
+                          </div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Last week</span>
+                            <span className="font-semibold">{lastWeekCompleted} items</span>
+                          </div>
+                        </div>
+                        {allComplianceItems.length === 0 && (
+                          <p className="text-xs text-gray-400 mt-3">
+                            Upload your first document to start tracking compliance velocity.
+                          </p>
+                        )}
+                      </>
+                    );
+                  }
 
-                {allComplianceItems.length === 0 && (
-                  <p className="text-xs text-gray-400 mt-2">
-                    Add compliance items to track velocity.
-                  </p>
-                )}
+                  // Sparkline mode using snapshot data
+                  const weeks = velocityData ?? [];
+                  const scores = weeks.map((w) => w.avgScore ?? 0);
+                  const maxScore = Math.max(...scores, 1);
+                  const lastScore = scores[3] ?? 0;
+                  const prevScore = scores[2] ?? 0;
+                  const delta = lastScore - prevScore;
+                  const BAR_H = 48;
+
+                  return (
+                    <>
+                      {/* Trend indicator */}
+                      <div className="flex items-center gap-2 mb-4">
+                        {delta > 0 ? (
+                          <TrendingUp className="h-5 w-5 text-green-500" />
+                        ) : delta < 0 ? (
+                          <TrendingDown className="h-5 w-5 text-red-500" />
+                        ) : (
+                          <Minus className="h-5 w-5 text-gray-400" />
+                        )}
+                        <span className={`text-sm font-semibold ${
+                          delta > 0 ? "text-green-600" : delta < 0 ? "text-red-600" : "text-gray-500"
+                        }`}>
+                          {delta > 0 ? `Up +${delta} pts this week` :
+                           delta < 0 ? `Down ${delta} pts this week` :
+                           "Stable this week"}
+                        </span>
+                      </div>
+
+                      {/* Sparkline bar chart */}
+                      <div className="flex items-end gap-2 mb-3" style={{ height: BAR_H + 4 }}>
+                        {weeks.map((w, i) => {
+                          const score = w.avgScore ?? 0;
+                          const barH = w.avgScore !== null ? Math.max(4, Math.round((score / 100) * BAR_H)) : 4;
+                          const isLatest = i === weeks.length - 1;
+                          return (
+                            <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1" style={{ height: BAR_H + 4 }}>
+                              <div
+                                style={{ height: barH }}
+                                className={`w-full rounded-t transition-all ${
+                                  w.avgScore === null ? "bg-gray-200" :
+                                  isLatest ? "bg-blue-500" :
+                                  score >= 80 ? "bg-green-400" :
+                                  score >= 60 ? "bg-yellow-400" :
+                                  "bg-red-400"
+                                }`}
+                                title={w.avgScore !== null ? `${w.label}: ${score}%` : `${w.label}: no data`}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Week labels */}
+                      <div className="flex gap-2 text-xs text-gray-400">
+                        {weeks.map((w, i) => (
+                          <div key={i} className="flex-1 text-center truncate">{w.label}</div>
+                        ))}
+                      </div>
+
+                      <p className="text-xs text-gray-400 mt-2">
+                        Current avg: <span className="font-medium text-gray-600">{lastScore}%</span>
+                      </p>
+                    </>
+                  );
+                })()}
               </CardContent>
             </Card>
           </div>

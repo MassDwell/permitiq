@@ -49,6 +49,10 @@ import { PermitWorkflowTab } from "@/components/permit-workflow/permit-workflow-
 import { ComplianceReadinessScore } from "@/components/compliance-readiness-score";
 import { SubmissionPrepChecklist } from "@/components/submission-prep-checklist";
 import { PermitRequirementsPanel } from "@/components/permit-requirements-panel";
+import { AHJContactDirectory } from "@/components/ahj-contact-directory";
+import { PermitFeeCalculator } from "@/components/permit-fee-calculator";
+import { QuickActionsPanel } from "@/components/quick-actions-panel";
+import { AddPermitDialog } from "@/components/permit-workflow/add-permit-dialog";
 import {
   Dialog,
   DialogContent,
@@ -137,8 +141,10 @@ export default function ProjectDetailPage() {
   const projectId = params.id as string;
 
   const [addItemOpen, setAddItemOpen] = useState(false);
+  const [addPermitOpen, setAddPermitOpen] = useState(false);
   const [researchOpen, setResearchOpen] = useState(false);
   const [researchPermitType, setResearchPermitType] = useState("");
+  const [activeTab, setActiveTab] = useState("permits");
 
   // Settings form state
   const [settingsName, setSettingsName] = useState("");
@@ -285,7 +291,16 @@ export default function ProjectDetailPage() {
   }
 
   return (
-    <div className="p-8">
+    <div>
+      {/* Quick Actions sticky bar */}
+      <QuickActionsPanel
+        projectId={projectId}
+        onUploadClick={() => setActiveTab("documents")}
+        onAddComplianceItem={() => setAddItemOpen(true)}
+        onAddPermit={() => setAddPermitOpen(true)}
+      />
+
+      <div className="p-8">
       {/* Header */}
       <div className="flex items-start justify-between mb-8">
         <div>
@@ -414,7 +429,7 @@ export default function ProjectDetailPage() {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="permits">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex-wrap h-auto gap-1">
           <TabsTrigger value="permits">Permits</TabsTrigger>
           <TabsTrigger value="compliance">
@@ -690,11 +705,18 @@ export default function ProjectDetailPage() {
 
         {/* REQUIREMENTS TAB */}
         <TabsContent value="requirements" className="mt-6">
-          <PermitRequirementsPanel
-            projectId={projectId}
-            jurisdiction={project.jurisdiction}
-            projectType={project.projectType}
-          />
+          <div className="space-y-6">
+            <PermitRequirementsPanel
+              projectId={projectId}
+              jurisdiction={project.jurisdiction}
+              projectType={project.projectType}
+            />
+            <AHJContactDirectory jurisdiction={project.jurisdiction} />
+            <PermitFeeCalculator
+              jurisdiction={project.jurisdiction ?? "boston"}
+              showSignupCTA={false}
+            />
+          </div>
         </TabsContent>
 
         {/* SUBMISSION PREP TAB */}
@@ -834,6 +856,13 @@ export default function ProjectDetailPage() {
         projectId={projectId}
       />
 
+      <AddPermitDialog
+        open={addPermitOpen}
+        onOpenChange={setAddPermitOpen}
+        projectId={projectId}
+        defaultJurisdiction={project.jurisdiction ?? undefined}
+      />
+
       <Dialog open={researchOpen} onOpenChange={setResearchOpen}>
         <DialogContent>
           <DialogHeader>
@@ -879,6 +908,7 @@ export default function ProjectDetailPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </div> {/* end p-8 */}
     </div>
   );
 }

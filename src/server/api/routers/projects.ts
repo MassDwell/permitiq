@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { projects, documents, complianceItems } from "@/db/schema";
-import { eq, and, desc, count, sql } from "drizzle-orm";
+import { projects, documents, complianceItems, complianceSnapshots } from "@/db/schema";
+import { eq, and, desc, count, sql, gte } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 export const projectsRouter = createTRPCRouter({
@@ -191,6 +191,65 @@ export const projectsRouter = createTRPCRouter({
 
       return { success: true };
     }),
+
+  takeSnapshot: protectedProcedure.mutation(async ({ ctx }) => {
+    const userProjects = await ctx.db.query.projects.findMany({
+      where: eq(projects.userId, ctx.dbUser.id),
+      with: { complianceItems: true },
+    });
+
+    const snapshots = [];
+    for (const project of userProjects) {
+      const totalItems = project.complianceItems.length;
+      const metItems = project.complianceItems.filter((i) => i.status === "met").length;
+      const healthScore = totalItems > 0 ? Math.round((metItems / totalItems) * 100) : 100;
+
+      const [snapshot] = await ctx.db
+        .insert(complianceSnapshots)
+        .values({
+          projectId: project.id,
+          userId: ctx.dbUser.id,
+          healthScore,
+          totalItems,
+          metItems,
+        })
+        .returning();
+      snapshots.push(snapshot);
+    }
+
+    return snapshots;
+  }),
+
+  getComplianceVelocity: protectedProcedure.query(async ({ ctx }) => {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 28); // last 4 weeks
+
+    const snapshots = await ctx.db.query.complianceSnapshots.findMany({
+      where: and(
+        eq(complianceSnapshots.userId, ctx.dbUser.id),
+        gte(complianceSnapshots.snapshotDate, startDate)
+      ),
+      orderBy: [complianceSnapshots.snapshotDate],
+    });
+
+    // Bucket into 4 weekly buckets
+    const now = new Date();
+    const weeks: { label: string; scores: number[] }[] = Array.from({ length: 4 }, (_, i) => {
+      const weekStart = new Date(now.getTime() - (3 - i + 1) * 7 * 24 * 60 * 60 * 1000);
+      const weekEnd = new Date(now.getTime() - (3 - i) * 7 * 24 * 60 * 60 * 1000);
+      const label = i === 3 ? "This week" : `${3 - i}w ago`;
+      const scores = snapshots
+        .filter((s) => s.snapshotDate >= weekStart && s.snapshotDate < weekEnd)
+        .map((s) => s.healthScore);
+      return { label, scores };
+    });
+
+    return weeks.map((w) => ({
+      label: w.label,
+      avgScore: w.scores.length > 0 ? Math.round(w.scores.reduce((a, b) => a + b, 0) / w.scores.length) : null,
+      snapshotCount: w.scores.length,
+    }));
+  }),
 
   getUpcomingDeadlines: protectedProcedure
     .input(z.object({ days: z.number().default(30) }))

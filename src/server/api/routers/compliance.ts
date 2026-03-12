@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { complianceItems, projects, jurisdictionRules } from "@/db/schema";
+import { complianceItems, projects, jurisdictionRules, complianceSnapshots } from "@/db/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import Anthropic from "@anthropic-ai/sdk";
@@ -260,6 +260,21 @@ export const complianceRouter = createTRPCRouter({
         })
         .where(eq(complianceItems.id, id))
         .returning();
+
+      // Auto-snapshot: record health score after status change
+      const allItems = await ctx.db.query.complianceItems.findMany({
+        where: eq(complianceItems.projectId, existing.projectId),
+      });
+      const totalItems = allItems.length;
+      const metItems = allItems.filter((i) => i.status === "met").length;
+      const healthScore = totalItems > 0 ? Math.round((metItems / totalItems) * 100) : 100;
+      await ctx.db.insert(complianceSnapshots).values({
+        projectId: existing.projectId,
+        userId: ctx.dbUser.id,
+        healthScore,
+        totalItems,
+        metItems,
+      });
 
       return updated;
     }),

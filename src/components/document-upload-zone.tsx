@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { upload } from "@vercel/blob/client";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
-import { Upload, FileText, Loader2, X } from "lucide-react";
+import { Upload, FileText, Loader2, X, CheckCircle, AlertCircle, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -18,6 +18,8 @@ interface UploadingFile {
   progress: number;
   status: "uploading" | "processing" | "complete" | "error";
   error?: string;
+  docId?: string;
+  extractedCount?: number;
 }
 
 const ALLOWED_TYPES = [
@@ -32,31 +34,127 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const [uploadingFiles, setUploadingFiles] = useState<Map<string, UploadingFile>>(
-    new Map()
-  );
+  const [uploadingFiles, setUploadingFiles] = useState<Map<string, UploadingFile>>(new Map());
+  const pollingIntervals = useRef<Map<string, ReturnType<typeof setInterval>>>(new Map());
 
   const utils = trpc.useUtils();
-
   const createDocument = trpc.documents.create.useMutation();
   const processDocument = trpc.documents.processDocument.useMutation();
+
+  const startPolling = (fileId: string, docId: string) => {
+    // Clear existing interval for this file
+    const existing = pollingIntervals.current.get(fileId);
+    if (existing) clearInterval(existing);
+
+    const interval = setInterval(async () => {
+      try {
+        const result = await utils.documents.getStatus.fetch({ id: docId });
+
+        if (result.processingStatus === "completed") {
+          clearInterval(interval);
+          pollingIntervals.current.delete(fileId);
+
+          const extractedCount =
+            (result.extractedData?.deadlines?.length ?? 0) +
+            (result.extractedData?.requiredInspections?.length ?? 0) +
+            (result.extractedData?.complianceRequirements?.length ?? 0);
+
+          setUploadingFiles((prev) => {
+            const next = new Map(prev);
+            const existing = next.get(fileId);
+            if (existing) {
+              next.set(fileId, { ...existing, status: "complete", extractedCount, progress: 100 });
+            }
+            return next;
+          });
+
+          utils.projects.get.invalidate({ id: projectId });
+          toast.success(
+            extractedCount > 0
+              ? `Extracted ${extractedCount} compliance requirement${extractedCount === 1 ? "" : "s"}`
+              : "Document processed successfully"
+          );
+
+          // Remove from list after 3s
+          setTimeout(() => {
+            setUploadingFiles((prev) => {
+              const next = new Map(prev);
+              next.delete(fileId);
+              return next;
+            });
+          }, 3000);
+        } else if (result.processingStatus === "failed") {
+          clearInterval(interval);
+          pollingIntervals.current.delete(fileId);
+
+          setUploadingFiles((prev) => {
+            const next = new Map(prev);
+            const existing = next.get(fileId);
+            if (existing) {
+              next.set(fileId, {
+                ...existing,
+                status: "error",
+                error: result.processingError ?? "Processing failed",
+                docId,
+              });
+            }
+            return next;
+          });
+
+          toast.error("Document processing failed", {
+            action: {
+              label: "Retry",
+              onClick: () => retryProcessing(fileId, docId),
+            },
+          });
+        }
+      } catch {
+        clearInterval(interval);
+        pollingIntervals.current.delete(fileId);
+      }
+    }, 3000);
+
+    pollingIntervals.current.set(fileId, interval);
+  };
+
+  const retryProcessing = async (fileId: string, docId: string) => {
+    setUploadingFiles((prev) => {
+      const next = new Map(prev);
+      const existing = next.get(fileId);
+      if (existing) {
+        next.set(fileId, { ...existing, status: "processing", error: undefined });
+      }
+      return next;
+    });
+
+    try {
+      await processDocument.mutateAsync({ documentId: docId });
+      startPolling(fileId, docId);
+    } catch {
+      setUploadingFiles((prev) => {
+        const next = new Map(prev);
+        const existing = next.get(fileId);
+        if (existing) {
+          next.set(fileId, { ...existing, status: "error", error: "Retry failed" });
+        }
+        return next;
+      });
+    }
+  };
 
   const uploadFile = async (file: File) => {
     const fileId = `${file.name}-${Date.now()}`;
 
-    // Validate file type
     if (!ALLOWED_TYPES.includes(file.type)) {
       toast.error(`${file.name}: Invalid file type. Allowed: PDF, JPEG, PNG, GIF, WebP`);
       return;
     }
 
-    // Validate file size
     if (file.size > MAX_FILE_SIZE) {
       toast.error(`${file.name}: File too large. Maximum size is 10MB`);
       return;
     }
 
-    // Add to uploading files
     setUploadingFiles((prev) => {
       const next = new Map(prev);
       next.set(fileId, { file, progress: 0, status: "uploading" });
@@ -64,7 +162,6 @@ export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
     });
 
     try {
-      // Direct client-side upload to Vercel Blob (bypasses 4.5MB serverless limit)
       const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
       const pathname = `documents/${projectId}/${Date.now()}-${sanitizedName}`;
 
@@ -73,10 +170,6 @@ export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
         handleUploadUrl: "/api/upload",
       });
 
-      const url = blob.url;
-      const filename = file.name;
-
-      // Update progress
       setUploadingFiles((prev) => {
         const next = new Map(prev);
         const existing = next.get(fileId);
@@ -89,36 +182,27 @@ export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
       // Create document record
       const doc = await createDocument.mutateAsync({
         projectId,
-        filename,
-        storageUrl: url,
+        filename: file.name,
+        storageUrl: blob.url,
       });
 
-      // Auto-process the document
-      await processDocument.mutateAsync({ documentId: doc.id });
-
-      // Mark as complete
+      // Update with docId
       setUploadingFiles((prev) => {
         const next = new Map(prev);
         const existing = next.get(fileId);
         if (existing) {
-          next.set(fileId, { ...existing, progress: 100, status: "complete" });
+          next.set(fileId, { ...existing, docId: doc.id });
         }
         return next;
       });
 
-      // Refresh data
-      utils.projects.get.invalidate({ id: projectId });
+      // Fire document processing (don't await — poller tracks completion)
+      processDocument.mutateAsync({ documentId: doc.id }).catch(() => {
+        // Error state will be caught by poller detecting "failed" status
+      });
 
-      toast.success(`${filename} uploaded and processed`);
-
-      // Remove from list after a delay
-      setTimeout(() => {
-        setUploadingFiles((prev) => {
-          const next = new Map(prev);
-          next.delete(fileId);
-          return next;
-        });
-      }, 2000);
+      // Start polling for this document
+      startPolling(fileId, doc.id);
     } catch (error) {
       setUploadingFiles((prev) => {
         const next = new Map(prev);
@@ -140,9 +224,7 @@ export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
     (e: React.DragEvent) => {
       e.preventDefault();
       setIsDragging(false);
-
-      const files = Array.from(e.dataTransfer.files);
-      files.forEach(uploadFile);
+      Array.from(e.dataTransfer.files).forEach(uploadFile);
     },
     [projectId]
   );
@@ -159,14 +241,18 @@ export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
 
   const handleFileSelect = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(e.target.files || []);
-      files.forEach(uploadFile);
+      Array.from(e.target.files || []).forEach(uploadFile);
       e.target.value = "";
     },
     [projectId]
   );
 
   const removeUploadingFile = (fileId: string) => {
+    const interval = pollingIntervals.current.get(fileId);
+    if (interval) {
+      clearInterval(interval);
+      pollingIntervals.current.delete(fileId);
+    }
     setUploadingFiles((prev) => {
       const next = new Map(prev);
       next.delete(fileId);
@@ -182,9 +268,7 @@ export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
         onDragLeave={handleDragLeave}
         className={cn(
           "border-2 border-dashed rounded-lg p-8 text-center transition-colors",
-          isDragging
-            ? "border-blue-500 bg-blue-50"
-            : "border-gray-300 hover:border-gray-400"
+          isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400"
         )}
       >
         <Upload className="h-10 w-10 text-gray-400 mx-auto mb-4" />
@@ -209,7 +293,6 @@ export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
         </label>
       </div>
 
-      {/* Uploading Files */}
       {uploadingFiles.size > 0 && (
         <div className="space-y-2">
           {Array.from(uploadingFiles.entries()).map(([fileId, item]) => (
@@ -217,37 +300,60 @@ export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
               key={fileId}
               className="flex items-center gap-3 p-3 rounded-lg border bg-gray-50"
             >
-              <FileText className="h-6 w-6 text-blue-600" />
+              <FileText className="h-6 w-6 text-blue-600 shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{item.file.name}</p>
                 {item.status === "uploading" && (
-                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
                     <Loader2 className="h-3 w-3 animate-spin" />
                     Uploading...
                   </div>
                 )}
                 {item.status === "processing" && (
-                  <div className="flex items-center gap-2 text-xs text-blue-600">
+                  <div className="flex items-center gap-2 text-xs text-blue-600 mt-0.5">
                     <Loader2 className="h-3 w-3 animate-spin" />
-                    Processing with AI...
+                    Analyzing document with AI...
                   </div>
                 )}
                 {item.status === "complete" && (
-                  <p className="text-xs text-green-600">Complete</p>
+                  <div className="flex items-center gap-1.5 text-xs text-green-600 mt-0.5">
+                    <CheckCircle className="h-3 w-3" />
+                    {item.extractedCount && item.extractedCount > 0
+                      ? `Extracted ${item.extractedCount} compliance requirement${item.extractedCount === 1 ? "" : "s"}`
+                      : "Complete"}
+                  </div>
                 )}
                 {item.status === "error" && (
-                  <p className="text-xs text-red-600">{item.error}</p>
+                  <div className="flex items-center gap-1.5 text-xs text-red-600 mt-0.5">
+                    <AlertCircle className="h-3 w-3" />
+                    {item.error}
+                  </div>
+                )}
+                {(item.status === "uploading" || item.status === "processing") && (
+                  <Progress
+                    value={item.status === "uploading" ? item.progress : 75}
+                    className="h-1 mt-1.5"
+                  />
                 )}
               </div>
-              {item.status !== "uploading" && item.status !== "processing" && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => removeUploadingFile(fileId)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
+              <div className="flex items-center gap-1 shrink-0">
+                {item.status === "error" && item.docId && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => retryProcessing(fileId, item.docId!)}
+                    className="text-xs gap-1"
+                  >
+                    <RotateCcw className="h-3 w-3" />
+                    Retry
+                  </Button>
+                )}
+                {item.status !== "uploading" && item.status !== "processing" && (
+                  <Button size="sm" variant="ghost" onClick={() => removeUploadingFile(fileId)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </div>
           ))}
         </div>

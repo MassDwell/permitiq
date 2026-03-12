@@ -237,6 +237,32 @@ export const documentsRouter = createTRPCRouter({
       }
     }),
 
+  getStatus: protectedProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const doc = await ctx.db.query.documents.findFirst({
+        where: and(
+          eq(documents.id, input.id),
+          eq(documents.userId, ctx.dbUser.id)
+        ),
+        columns: {
+          id: true,
+          processingStatus: true,
+          processingError: true,
+          extractedData: true,
+        },
+      });
+
+      if (!doc) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Document not found",
+        });
+      }
+
+      return doc;
+    }),
+
   delete: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .mutation(async ({ ctx, input }) => {

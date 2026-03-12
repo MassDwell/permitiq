@@ -113,6 +113,7 @@ export type FeeBreakdownItem = {
   label: string;
   amount: number;
   note?: string;
+  timeline?: string;
 };
 
 export type FeeCalculationResult = {
@@ -120,6 +121,186 @@ export type FeeCalculationResult = {
   total: number;
   disclaimer: string;
 };
+
+// Boston ISD 2024 fee schedule — all permit types
+export interface BostonISDFeeInput {
+  permitType:
+    | "new_construction_residential"
+    | "new_construction_commercial"
+    | "alteration"
+    | "demolition"
+    | "electrical"
+    | "plumbing"
+    | "gas"
+    | "hvac"
+    | "zba_filing"
+    | "article_80_small"
+    | "article_80_large";
+  projectCost?: number;       // for new_construction / alteration
+  sqFt?: number;              // for demolition, article_80_large
+  circuits?: number;          // for electrical
+  fixtures?: number;          // for plumbing
+  appliances?: number;        // for gas
+  tonsOfCooling?: number;     // for hvac
+  variancesRequested?: number; // for zba_filing
+}
+
+export const BOSTON_ISD_PERMIT_TYPES: Array<{ value: BostonISDFeeInput["permitType"]; label: string }> = [
+  { value: "new_construction_residential", label: "New Construction (Residential)" },
+  { value: "new_construction_commercial", label: "New Construction (Commercial)" },
+  { value: "alteration", label: "Alteration / Addition" },
+  { value: "demolition", label: "Demolition" },
+  { value: "electrical", label: "Electrical" },
+  { value: "plumbing", label: "Plumbing" },
+  { value: "gas", label: "Gas" },
+  { value: "hvac", label: "Mechanical / HVAC" },
+  { value: "zba_filing", label: "ZBA Filing Fee" },
+  { value: "article_80_small", label: "Article 80 Small Project Review" },
+  { value: "article_80_large", label: "Article 80 Large Project Review" },
+];
+
+export function calculateBostonISDFee(input: BostonISDFeeInput): FeeCalculationResult {
+  const items: FeeBreakdownItem[] = [];
+
+  switch (input.permitType) {
+    case "new_construction_residential": {
+      const cost = input.projectCost ?? 0;
+      const fee = Math.max(100, (cost / 1000) * 15);
+      items.push({
+        label: "Building Permit — New Construction (Residential)",
+        amount: fee,
+        note: "$15 per $1,000 of construction cost (min $100)",
+        timeline: "4–8 weeks for plan review",
+      });
+      break;
+    }
+    case "new_construction_commercial": {
+      const cost = input.projectCost ?? 0;
+      const fee = Math.max(100, (cost / 1000) * 15);
+      items.push({
+        label: "Building Permit — New Construction (Commercial)",
+        amount: fee,
+        note: "$15 per $1,000 of construction cost (min $100)",
+        timeline: "8–12 weeks for plan review",
+      });
+      break;
+    }
+    case "alteration": {
+      const cost = input.projectCost ?? 0;
+      const fee = Math.max(50, (cost / 1000) * 12);
+      items.push({
+        label: "Building Permit — Alteration / Addition",
+        amount: fee,
+        note: "$12 per $1,000 of construction cost (min $50)",
+        timeline: "2–6 weeks for plan review",
+      });
+      break;
+    }
+    case "demolition": {
+      const sqFt = input.sqFt ?? 0;
+      const fee = Math.max(50, sqFt * 0.10);
+      items.push({
+        label: "Demolition Permit",
+        amount: fee,
+        note: "$0.10 per SF (min $50)",
+        timeline: "2–4 weeks; Article 85 review may add 30–90 days",
+      });
+      items.push({
+        label: "Fire Prevention Permit (estimated)",
+        amount: 150,
+        note: "Separate Boston Fire Prevention permit required",
+        timeline: "1–2 weeks",
+      });
+      break;
+    }
+    case "electrical": {
+      const circuits = input.circuits ?? 0;
+      const fee = 50 + circuits * 2;
+      items.push({
+        label: "Electrical Permit",
+        amount: fee,
+        note: `$50 base + $2 per circuit (${circuits} circuits)`,
+        timeline: "1–3 weeks",
+      });
+      break;
+    }
+    case "plumbing": {
+      const fixtures = input.fixtures ?? 0;
+      const fee = 50 + fixtures * 15;
+      items.push({
+        label: "Plumbing Permit",
+        amount: fee,
+        note: `$50 base + $15 per fixture (${fixtures} fixtures)`,
+        timeline: "1–3 weeks",
+      });
+      break;
+    }
+    case "gas": {
+      const appliances = input.appliances ?? 0;
+      const fee = 50 + appliances * 25;
+      items.push({
+        label: "Gas Permit",
+        amount: fee,
+        note: `$50 base + $25 per appliance (${appliances} appliances)`,
+        timeline: "1–2 weeks",
+      });
+      break;
+    }
+    case "hvac": {
+      const tons = input.tonsOfCooling ?? 0;
+      const fee = 50 + tons * 2;
+      items.push({
+        label: "Mechanical / HVAC Permit",
+        amount: fee,
+        note: `$50 base + $2 per ton of cooling (${tons} tons)`,
+        timeline: "1–3 weeks",
+      });
+      break;
+    }
+    case "zba_filing": {
+      const variances = input.variancesRequested ?? 1;
+      const fee = 200 + variances * 100;
+      items.push({
+        label: "ZBA Filing Fee",
+        amount: fee,
+        note: `$200 base + $100 per variance requested (${variances} variances)`,
+        timeline: "6–10 weeks to hearing date; 10-day filing deadline before hearing",
+      });
+      break;
+    }
+    case "article_80_small": {
+      items.push({
+        label: "Article 80 Small Project Review",
+        amount: 3500,
+        note: "Flat fee — projects under BPDA threshold",
+        timeline: "3–6 months",
+      });
+      break;
+    }
+    case "article_80_large": {
+      const sqFt = input.sqFt ?? 0;
+      const overage = Math.max(0, sqFt - 50000);
+      const fee = 10000 + overage * 0.50;
+      items.push({
+        label: "Article 80 Large Project Review",
+        amount: fee,
+        note: sqFt > 50000
+          ? `$10,000 flat + $0.50/SF over 50,000 SF (${sqFt.toLocaleString()} SF total)`
+          : "$10,000 flat (under 50,000 SF)",
+        timeline: "12–24 months for full Large Project Review",
+      });
+      break;
+    }
+  }
+
+  const total = items.reduce((sum, i) => sum + i.amount, 0);
+  return {
+    items,
+    total,
+    disclaimer:
+      "Estimates based on Boston ISD 2024 fee schedule. Actual fees must be confirmed with the relevant department before submission.",
+  };
+}
 
 export function calculatePermitFee(
   jurisdiction: string,
@@ -135,25 +316,37 @@ export function calculatePermitFee(
 
   switch (jurisdiction) {
     case "boston":
+    case "BOSTON_ISD":
       if (permitTypeSlug === "building-permit") {
-        const rate = projectType === "residential" ? 50 : 100;
-        const fee = Math.max(50, (projectCost / 1000) * rate);
+        const rate = 15;
+        const fee = Math.max(100, (projectCost / 1000) * rate);
         items.push({
           label: "Building Permit Fee",
           amount: fee,
-          note: `$${rate} per $1,000 of construction cost`,
+          note: `$${rate} per $1,000 of construction cost (min $100)`,
+          timeline: projectType === "residential" ? "4–8 weeks" : "8–12 weeks",
         });
       } else if (permitTypeSlug === "demolition-permit") {
-        const fee = Math.max(100, (projectCost / 1000) * 50);
+        const fee = Math.max(50, projectCost * 0.0001); // rough SF estimate
         items.push({
           label: "Demolition Permit Fee",
           amount: fee,
-          note: "$50 per $1,000 (residential estimate)",
+          note: "$0.10 per SF (min $50) — enter SF as project cost for accurate estimate",
+          timeline: "2–4 weeks; Article 85 may add 30–90 days",
         });
         items.push({
           label: "Fire Prevention Permit",
           amount: 150,
           note: "Estimated — separate Boston Fire Prevention permit required",
+          timeline: "1–2 weeks",
+        });
+      } else if (permitTypeSlug === "trade-permit") {
+        const fee = Math.max(50, (projectCost / 1000) * 12);
+        items.push({
+          label: "Trade / Alteration Permit Fee",
+          amount: fee,
+          note: "$12 per $1,000 of construction cost (min $50)",
+          timeline: "2–6 weeks",
         });
       }
       break;

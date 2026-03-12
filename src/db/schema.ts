@@ -143,6 +143,7 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
   complianceItems: many(complianceItems),
   alerts: many(alerts),
   permitWorkflows: many(permitWorkflows),
+  complianceSnapshots: many(complianceSnapshots),
 }));
 
 export const documentsRelations = relations(documents, ({ one, many }) => ({
@@ -242,6 +243,17 @@ export const permitWorkflows = pgTable("permit_workflows", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+// Compliance Snapshots table (for velocity tracking)
+export const complianceSnapshots = pgTable("compliance_snapshots", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  healthScore: integer("health_score").notNull(),
+  totalItems: integer("total_items").notNull(),
+  metItems: integer("met_items").notNull(),
+  snapshotDate: timestamp("snapshot_date").notNull().defaultNow(),
+});
+
 // Permit Comments table
 export const permitComments = pgTable("permit_comments", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -277,6 +289,17 @@ export const permitCommentsRelations = relations(permitComments, ({ one }) => ({
   }),
 }));
 
+export const complianceSnapshotsRelations = relations(complianceSnapshots, ({ one }) => ({
+  project: one(projects, {
+    fields: [complianceSnapshots.projectId],
+    references: [projects.id],
+  }),
+  user: one(users, {
+    fields: [complianceSnapshots.userId],
+    references: [users.id],
+  }),
+}));
+
 // Types
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -296,6 +319,8 @@ export type PermitWorkflow = typeof permitWorkflows.$inferSelect;
 export type NewPermitWorkflow = typeof permitWorkflows.$inferInsert;
 export type PermitComment = typeof permitComments.$inferSelect;
 export type NewPermitComment = typeof permitComments.$inferInsert;
+export type ComplianceSnapshot = typeof complianceSnapshots.$inferSelect;
+export type NewComplianceSnapshot = typeof complianceSnapshots.$inferInsert;
 
 // JSON Types
 export interface ExtractedDocumentData {
