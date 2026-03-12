@@ -1,5 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
+import * as pdfParseModule from "pdf-parse";
+const pdfParse = (pdfParseModule as any).default ?? pdfParseModule;
 import { ExtractedDocumentData } from "@/db/schema";
+
+const MAX_PDF_BASE64_BYTES = 8 * 1024 * 1024; // ~6MB PDF = ~8MB base64, Claude's soft limit before page count issues
 
 const getAnthropic = () => new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY ?? "",
@@ -74,34 +78,52 @@ export async function processDocumentWithAI(
     let response;
 
     if (isPdf) {
-      // For PDFs, we need to fetch and encode as base64
+      // Fetch the PDF
       const pdfResponse = await fetch(storageUrl);
-      const pdfBuffer = await pdfResponse.arrayBuffer();
-      const base64Pdf = Buffer.from(pdfBuffer).toString("base64");
+      const pdfBuffer = Buffer.from(await pdfResponse.arrayBuffer());
+      const base64Pdf = pdfBuffer.toString("base64");
 
-      response = await getAnthropic().messages.create({
-        model: "claude-sonnet-4-5",
-        max_tokens: 4096,
-        messages: [
-          {
-            role: "user",
-            content: [
-              {
-                type: "document",
-                source: {
-                  type: "base64",
-                  media_type: "application/pdf",
-                  data: base64Pdf,
+      // If PDF is small enough, send natively; otherwise extract text first
+      if (base64Pdf.length <= MAX_PDF_BASE64_BYTES) {
+        response = await getAnthropic().messages.create({
+          model: "claude-sonnet-4-5",
+          max_tokens: 4096,
+          messages: [
+            {
+              role: "user",
+              content: [
+                {
+                  type: "document",
+                  source: {
+                    type: "base64",
+                    media_type: "application/pdf",
+                    data: base64Pdf,
+                  },
                 },
-              },
-              {
-                type: "text",
-                text: EXTRACTION_PROMPT,
-              },
-            ],
-          },
-        ],
-      });
+                {
+                  type: "text",
+                  text: EXTRACTION_PROMPT,
+                },
+              ],
+            },
+          ],
+        });
+      } else {
+        // Large PDF — extract text and send as plain text (truncated to ~100k chars)
+        const parsed = await pdfParse(pdfBuffer);
+        const extractedText = parsed.text.slice(0, 100000);
+        response = await getAnthropic().messages.create({
+          model: "claude-sonnet-4-5",
+          max_tokens: 4096,
+          messages: [
+            {
+              role: "user",
+              content: `${EXTRACTION_PROMPT}\n\n---\nDOCUMENT TEXT:\n${extractedText}`,
+            },
+          ],
+        });
+      }
+
     } else if (isImage) {
       // For images, fetch and encode as base64
       const imageResponse = await fetch(storageUrl);
