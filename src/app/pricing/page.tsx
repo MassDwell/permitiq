@@ -14,9 +14,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Building2, CheckCircle, ArrowLeft } from "lucide-react";
+import { CheckCircle, ArrowLeft } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
+import { Logo } from "@/components/ui/logo";
 
 const pricingPlans = [
   {
@@ -95,19 +95,18 @@ function PricingContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
-      <nav className="border-b bg-white">
+      <nav className="border-b border-white/10 bg-background/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <Building2 className="h-8 w-8 text-blue-600" />
-              <span className="text-xl font-bold">MeritLayer</span>
+            <Link href="/">
+              <Logo size="md" />
             </Link>
             <div className="flex items-center gap-4">
               {isSignedIn ? (
                 <Link href="/dashboard">
-                  <Button variant="outline">
+                  <Button variant="outline" className="border-white/20 hover:bg-white/5">
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Back to Dashboard
                   </Button>
@@ -115,10 +114,14 @@ function PricingContent() {
               ) : (
                 <>
                   <Link href="/sign-in">
-                    <Button variant="ghost">Sign In</Button>
+                    <Button variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-white/5">
+                      Sign In
+                    </Button>
                   </Link>
                   <Link href="/sign-up">
-                    <Button>Get Started</Button>
+                    <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                      Get Started
+                    </Button>
                   </Link>
                 </>
               )}
@@ -130,10 +133,10 @@ function PricingContent() {
       {/* Pricing */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold tracking-tight text-foreground mb-4">
             Choose your plan
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             All plans include AI-powered document processing and deadline alerts.
             Choose the plan that fits your business.
           </p>
@@ -143,36 +146,45 @@ function PricingContent() {
           {pricingPlans.map((plan) => (
             <Card
               key={plan.id}
-              className={`relative ${
-                plan.popular ? "border-2 border-blue-600 shadow-lg" : ""
+              className={`relative bg-card rounded-xl transition-all ${
+                plan.popular
+                  ? "border-primary border-2"
+                  : "border border-white/10 hover:border-white/20"
               }`}
+              style={plan.popular ? { boxShadow: "0 0 30px rgba(20,184,166,0.15)" } : {}}
             >
               {plan.popular && (
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  Most Popular
-                </Badge>
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary text-primary-foreground">
+                    Most Popular
+                  </span>
+                </div>
               )}
               <CardHeader>
-                <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                <CardDescription>{plan.description}</CardDescription>
+                <CardTitle className="text-2xl text-foreground">{plan.name}</CardTitle>
+                <CardDescription className="text-muted-foreground">{plan.description}</CardDescription>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold">
+                  <span className="text-4xl font-bold text-primary">
                     ${plan.price.toLocaleString()}
                   </span>
-                  <span className="text-gray-600">/month</span>
+                  <span className="text-muted-foreground">/month</span>
                 </div>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-3 mb-6">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                      <span>{feature}</span>
+                      <CheckCircle className="h-4 w-4 text-primary shrink-0" />
+                      <span className="text-muted-foreground">{feature}</span>
                     </li>
                   ))}
                 </ul>
                 <Button
-                  className="w-full"
+                  className={`w-full ${
+                    plan.popular
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                      : "border-white/20 hover:bg-white/5"
+                  }`}
                   variant={plan.popular ? "default" : "outline"}
                   onClick={() => handleSelectPlan(plan.id)}
                   disabled={createCheckout.isPending}
@@ -185,14 +197,14 @@ function PricingContent() {
         </div>
 
         <div className="mt-16 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl font-bold text-foreground mb-4">
             Enterprise needs?
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-muted-foreground mb-6">
             Custom compliance rules, dedicated support, and API access for
             large-scale operations.
           </p>
-          <Button variant="outline" size="lg">
+          <Button variant="outline" size="lg" className="border-white/20 hover:bg-white/5">
             Contact Sales
           </Button>
         </div>
@@ -203,7 +215,11 @@ function PricingContent() {
 
 export default function PricingPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-muted-foreground">Loading...</div>
+      </div>
+    }>
       <PricingContent />
     </Suspense>
   );

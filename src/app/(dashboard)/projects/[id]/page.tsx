@@ -29,6 +29,7 @@ import {
   FileText,
   Clock,
   CheckCircle,
+  AlertTriangle,
   MoreVertical,
   Trash2,
   Calendar,
@@ -108,13 +109,13 @@ const PROJECT_STATUS_OPTIONS = [
 function getStatusBadge(status: string) {
   switch (status) {
     case "met":
-      return <Badge className="bg-green-100 text-green-800">Met</Badge>;
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">Met</span>;
     case "pending":
-      return <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>;
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30">Pending</span>;
     case "overdue":
-      return <Badge className="bg-red-100 text-red-800">Overdue</Badge>;
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">Overdue</span>;
     case "not_applicable":
-      return <Badge className="bg-gray-100 text-gray-800">N/A</Badge>;
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-white/10 text-muted-foreground border border-white/10">N/A</span>;
     default:
       return null;
   }
@@ -123,13 +124,13 @@ function getStatusBadge(status: string) {
 function getProcessingBadge(status: string) {
   switch (status) {
     case "completed":
-      return <Badge className="bg-green-100 text-green-800">Processed</Badge>;
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">Processed</span>;
     case "processing":
-      return <Badge className="bg-blue-100 text-blue-800">Processing...</Badge>;
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-secondary/20 text-secondary border border-secondary/30">Processing...</span>;
     case "failed":
-      return <Badge className="bg-red-100 text-red-800">Failed</Badge>;
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">Failed</span>;
     case "pending":
-      return <Badge className="bg-yellow-100 text-yellow-800">Pending</Badge>;
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30">Pending</span>;
     default:
       return null;
   }
@@ -274,10 +275,10 @@ export default function ProjectDetailPage() {
   if (!project) {
     return (
       <div className="p-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold text-foreground mb-2">
           Project not found
         </h1>
-        <p className="text-gray-500 mb-4">
+        <p className="text-muted-foreground mb-4">
           This project doesn&apos;t exist or you don&apos;t have access to it.
         </p>
         <Link href="/dashboard">
@@ -306,26 +307,24 @@ export default function ProjectDetailPage() {
         <div>
           <Link
             href="/dashboard"
-            className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1 mb-2"
+            className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 mb-2 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
           </Link>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-gray-900">{project.name}</h1>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">{project.name}</h1>
             {project.healthStatus === "green" && (
-              <Badge className="bg-green-100 text-green-800">On Track</Badge>
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-teal-500/20 text-teal-400 border border-teal-500/30">On Track</span>
             )}
             {project.healthStatus === "yellow" && (
-              <Badge className="bg-yellow-100 text-yellow-800">
-                Needs Attention
-              </Badge>
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30">Needs Attention</span>
             )}
             {project.healthStatus === "red" && (
-              <Badge className="bg-red-100 text-red-800">At Risk</Badge>
+              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">At Risk</span>
             )}
           </div>
-          <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+          <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground flex-wrap">
             {project.address && (
               <span className="flex items-center gap-1">
                 <MapPin className="h-4 w-4" />
@@ -373,55 +372,65 @@ export default function ProjectDetailPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">
+        <Card className="bg-card border border-white/10 rounded-xl hover:border-white/20 transition-all">
+          <CardHeader className="pb-2 flex flex-row items-center justify-between">
+            <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Compliance Score
             </CardTitle>
+            <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center">
+              <CheckCircle className="h-3.5 w-3.5 text-primary" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-3">
-              <div className="text-2xl font-bold">{project.healthScore}%</div>
-              <Progress value={project.healthScore} className="flex-1" />
-            </div>
+            <div className="text-3xl font-bold tabular-nums text-primary mb-2">{project.healthScore}%</div>
+            <Progress value={project.healthScore} className="h-1.5 bg-white/10" />
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">
+        <Card className="bg-card border border-white/10 rounded-xl hover:border-white/20 transition-all">
+          <CardHeader className="pb-2 flex flex-row items-center justify-between">
+            <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Requirements Met
             </CardTitle>
+            <div className="w-7 h-7 rounded-full bg-green-500/20 flex items-center justify-center">
+              <CheckCircle className="h-3.5 w-3.5 text-green-400" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-3xl font-bold tabular-nums text-green-400">
               {project.metItems}
-              <span className="text-gray-400 text-lg">/{project.totalItems}</span>
+              <span className="text-muted-foreground text-xl">/{project.totalItems}</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">
+        <Card className="bg-card border border-white/10 rounded-xl hover:border-white/20 transition-all">
+          <CardHeader className="pb-2 flex flex-row items-center justify-between">
+            <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Pending
             </CardTitle>
+            <div className="w-7 h-7 rounded-full bg-amber-500/20 flex items-center justify-center">
+              <Clock className="h-3.5 w-3.5 text-amber-400" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">
+            <div className="text-3xl font-bold tabular-nums text-amber-400">
               {project.pendingItems}
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">
+        <Card className="bg-card border border-white/10 rounded-xl hover:border-white/20 transition-all">
+          <CardHeader className="pb-2 flex flex-row items-center justify-between">
+            <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Overdue
             </CardTitle>
+            <div className="w-7 h-7 rounded-full bg-red-500/20 flex items-center justify-center">
+              <AlertTriangle className="h-3.5 w-3.5 text-red-400" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-3xl font-bold tabular-nums text-red-400">
               {project.overdueItems}
             </div>
           </CardContent>
@@ -495,11 +504,11 @@ export default function ProjectDetailPage() {
               </CardHeader>
               <CardContent>
                 {project.complianceItems.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {project.complianceItems.map((item) => (
                       <div
                         key={item.id}
-                        className="flex items-start gap-4 p-4 rounded-lg border"
+                        className="flex items-start gap-4 p-4 rounded-lg border border-white/10 hover:bg-white/5 transition-colors"
                       >
                         <Checkbox
                           checked={item.status === "met"}
@@ -516,8 +525,8 @@ export default function ProjectDetailPage() {
                             <p
                               className={`font-medium ${
                                 item.status === "met"
-                                  ? "line-through text-gray-400"
-                                  : ""
+                                  ? "line-through text-muted-foreground"
+                                  : "text-foreground"
                               }`}
                             >
                               {item.description}
@@ -570,7 +579,7 @@ export default function ProjectDetailPage() {
                               </Popover>
                             )}
                           </div>
-                          <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
+                          <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
                             <span className="capitalize">
                               {item.requirementType.replace(/_/g, " ")}
                             </span>
@@ -588,7 +597,7 @@ export default function ProjectDetailPage() {
                             )}
                           </div>
                           {item.notes && (
-                            <p className="text-sm text-gray-500 mt-2">
+                            <p className="text-sm text-muted-foreground mt-2">
                               {item.notes}
                             </p>
                           )}
@@ -598,11 +607,11 @@ export default function ProjectDetailPage() {
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <CheckCircle className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    <CheckCircle className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-foreground mb-2">
                       No compliance items yet
                     </h3>
-                    <p className="text-gray-500 mb-4">
+                    <p className="text-muted-foreground mb-4">
                       Upload documents to auto-extract requirements, or add them
                       manually.
                     </p>
@@ -634,15 +643,15 @@ export default function ProjectDetailPage() {
                   {project.documents.map((doc) => (
                     <div
                       key={doc.id}
-                      className="flex items-center gap-4 p-4 rounded-lg border"
+                      className="flex items-center gap-4 p-4 rounded-lg border border-white/10 hover:bg-white/5 transition-colors"
                     >
-                      <FileText className="h-8 w-8 text-blue-600" />
+                      <FileText className="h-8 w-8 text-red-400/70 shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium truncate">{doc.filename}</p>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-medium text-foreground truncate">{doc.filename}</p>
                           {getProcessingBadge(doc.processingStatus)}
                         </div>
-                        <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
+                        <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
                           {doc.docType && (
                             <span className="capitalize">
                               {doc.docType.replace(/_/g, " ")}
@@ -811,7 +820,7 @@ export default function ProjectDetailPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   Setting a jurisdiction enables permit rules lookups and requirements research.
                 </p>
               </div>

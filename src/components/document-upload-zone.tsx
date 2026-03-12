@@ -267,15 +267,17 @@ export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         className={cn(
-          "border-2 border-dashed rounded-lg p-8 text-center transition-colors",
-          isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400"
+          "border-2 border-dashed rounded-xl p-8 text-center transition-all",
+          isDragging
+            ? "border-primary bg-primary/5"
+            : "border-white/20 hover:border-white/30"
         )}
       >
-        <Upload className="h-10 w-10 text-gray-400 mx-auto mb-4" />
-        <p className="text-lg font-medium text-gray-900 mb-1">
+        <Upload className="h-10 w-10 text-primary mx-auto mb-4" />
+        <p className="text-lg font-medium text-foreground mb-1">
           Drop files here or click to upload
         </p>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-muted-foreground mb-4">
           PDF, JPEG, PNG, GIF, or WebP up to 10MB
         </p>
         <input
@@ -298,25 +300,25 @@ export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
           {Array.from(uploadingFiles.entries()).map(([fileId, item]) => (
             <div
               key={fileId}
-              className="flex items-center gap-3 p-3 rounded-lg border bg-gray-50"
+              className="flex items-center gap-3 p-3 rounded-lg border border-white/10 bg-white/5"
             >
-              <FileText className="h-6 w-6 text-blue-600 shrink-0" />
+              <FileText className="h-6 w-6 text-red-400/70 shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{item.file.name}</p>
                 {item.status === "uploading" && (
-                  <div className="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
                     <Loader2 className="h-3 w-3 animate-spin" />
                     Uploading...
                   </div>
                 )}
                 {item.status === "processing" && (
-                  <div className="flex items-center gap-2 text-xs text-blue-600 mt-0.5">
+                  <div className="flex items-center gap-2 text-xs text-secondary mt-0.5">
                     <Loader2 className="h-3 w-3 animate-spin" />
                     Analyzing document with AI...
                   </div>
                 )}
                 {item.status === "complete" && (
-                  <div className="flex items-center gap-1.5 text-xs text-green-600 mt-0.5">
+                  <div className="flex items-center gap-1.5 text-xs text-teal-400 mt-0.5">
                     <CheckCircle className="h-3 w-3" />
                     {item.extractedCount && item.extractedCount > 0
                       ? `Extracted ${item.extractedCount} compliance requirement${item.extractedCount === 1 ? "" : "s"}`
@@ -324,7 +326,7 @@ export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
                   </div>
                 )}
                 {item.status === "error" && (
-                  <div className="flex items-center gap-1.5 text-xs text-red-600 mt-0.5">
+                  <div className="flex items-center gap-1.5 text-xs text-red-400 mt-0.5">
                     <AlertCircle className="h-3 w-3" />
                     {item.error}
                   </div>

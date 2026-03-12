@@ -34,8 +34,27 @@ export default function RootLayout({
       signUpFallbackRedirectUrl="/dashboard"
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
+      appearance={{
+        variables: {
+          colorBackground: '#0A0F1E',
+          colorInputBackground: '#111827',
+          colorInputText: '#F9FAFB',
+          colorText: '#F9FAFB',
+          colorTextSecondary: '#9CA3AF',
+          colorPrimary: '#14B8A6',
+          colorDanger: '#EF4444',
+          borderRadius: '0.5rem',
+        },
+        elements: {
+          card: 'bg-[#111827] border border-white/10 shadow-2xl',
+          headerTitle: 'text-white',
+          socialButtonsBlockButton: 'bg-white/5 border-white/10 text-white hover:bg-white/10',
+          formFieldInput: 'bg-[#111827] border-white/10 text-white',
+          footerActionLink: 'text-teal-400',
+        },
+      }}
     >
-      <html lang="en">
+      <html lang="en" className="dark">
         <body className={`${inter.variable} font-sans antialiased`}>
           <TRPCProvider>
             {children}
