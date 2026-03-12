@@ -54,6 +54,7 @@ import { AHJContactDirectory } from "@/components/ahj-contact-directory";
 import { PermitFeeCalculator } from "@/components/permit-fee-calculator";
 import { QuickActionsPanel } from "@/components/quick-actions-panel";
 import { AddPermitDialog } from "@/components/permit-workflow/add-permit-dialog";
+import { CollaboratorsTab } from "@/components/collaborators-tab";
 import {
   Dialog,
   DialogContent,
@@ -437,6 +438,7 @@ export default function ProjectDetailPage() {
               { value: "requirements", label: "Requirements" },
               { value: "submission", label: "Submission Prep" },
               { value: "settings", label: "Settings" },
+              { value: "team", label: "Team" },
               { value: "inspections", label: "Inspections", href: `/projects/${projectId}/inspections` },
               { value: "response-assistant", label: "Response Assistant", href: `/projects/${projectId}/response-assistant` },
             ].map((tab) => (
@@ -479,6 +481,7 @@ export default function ProjectDetailPage() {
           <TabsTrigger value="requirements">Requirements</TabsTrigger>
           <TabsTrigger value="submission">Submission Prep</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsTrigger value="team">Team</TabsTrigger>
         </TabsList>
 
         {/* PERMITS TAB */}
@@ -757,6 +760,11 @@ export default function ProjectDetailPage() {
         {/* SUBMISSION PREP TAB */}
         <TabsContent value="submission" className="mt-6">
           <SubmissionPrepChecklist projectId={projectId} />
+        </TabsContent>
+
+        {/* TEAM TAB */}
+        <TabsContent value="team" className="mt-6">
+          <CollaboratorsTab projectId={projectId} />
         </TabsContent>
 
         {/* SETTINGS TAB */}

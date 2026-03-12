@@ -39,6 +39,30 @@ const DEVELOPER_GUIDES = [
     badgeColor: "green",
   },
   {
+    href: "/permits/boston/building-permit",
+    title: "Boston Building Permit Guide",
+    description: "ISD requirements, stamped plans, energy compliance, fee schedule, 4–8 week review",
+    badge: "ISD Guide",
+    icon: FileText,
+    badgeColor: "blue",
+  },
+  {
+    href: "/permits/boston/article-85-demolition",
+    title: "Article 85 Demolition Delay",
+    description: "18-month delay for structures 50+ years old — triggers, exemptions, BPDA process",
+    badge: "Demolition",
+    icon: Building2,
+    badgeColor: "orange",
+  },
+  {
+    href: "/permits/boston/certificate-of-occupancy",
+    title: "Certificate of Occupancy Guide",
+    description: "Final inspection sequence, sign-offs, Temporary CO vs. permanent CO, common delays",
+    badge: "CO Guide",
+    icon: Home,
+    badgeColor: "green",
+  },
+  {
     href: "/permits/massachusetts/adu-permit",
     title: "Massachusetts ADU Permit Guide",
     description: "By-right ADUs post-MBTA Act, Boston rules since 2020, fees & timeline",
@@ -69,6 +93,7 @@ const badgeStyles: Record<string, string> = {
   blue: "bg-blue-100 text-blue-700",
   green: "bg-green-100 text-green-700",
   purple: "bg-purple-100 text-purple-700",
+  orange: "bg-orange-100 text-orange-700",
 };
 
 export default function PermitsIndexPage() {

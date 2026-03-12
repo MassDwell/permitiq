@@ -390,4 +390,26 @@ export const projectMembersRelations = relations(projectMembers, ({ one }) => ({
 export type ProjectMember = typeof projectMembers.$inferSelect;
 export type NewProjectMember = typeof projectMembers.$inferInsert;
 
+// Project Shares table (for lender/investor compliance reports)
+export const projectShares = pgTable("project_shares", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  projectId: uuid("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+  shareToken: text("share_token").notNull().unique().$defaultFn(() => crypto.randomUUID()),
+  createdBy: text("created_by").notNull(),
+  label: text("label"),
+  expiresAt: timestamp("expires_at"),
+  viewCount: integer("view_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const projectSharesRelations = relations(projectShares, ({ one }) => ({
+  project: one(projects, {
+    fields: [projectShares.projectId],
+    references: [projects.id],
+  }),
+}));
+
+export type ProjectShare = typeof projectShares.$inferSelect;
+export type NewProjectShare = typeof projectShares.$inferInsert;
+
 export * from "./schema-inspections";
