@@ -133,6 +133,38 @@ export default function PermitsIndexPage() {
         </div>
       </div>
 
+      {/* ADU Eligibility promo */}
+      <div className="mb-6 rounded-2xl p-6 text-white" style={{ background: 'linear-gradient(135deg, #042f2e 0%, #0d3b38 50%, #042f2e 100%)', border: '1px solid rgba(20,184,166,0.35)' }}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <Home className="h-6 w-6 flex-shrink-0 mt-0.5" style={{ color: '#14B8A6' }} />
+            <div>
+              <p className="font-bold text-lg">ADU (Accessory Dwelling Units) — 2024 MA Law</p>
+              <p className="text-sm mt-0.5" style={{ color: '#94A3B8' }}>
+                Massachusetts&apos; 2024 ADU law changed everything. Every single-family and two-family home now has
+                by-right ADU access — no ZBA, no special permit. Here&apos;s what you need to know.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 flex-shrink-0">
+            <Link
+              href="/tools/adu-eligibility"
+              className="font-semibold px-4 py-2 rounded-xl transition-colors whitespace-nowrap text-sm text-center"
+              style={{ background: '#14B8A6', color: '#080D1A' }}
+            >
+              Check Your Eligibility →
+            </Link>
+            <Link
+              href="/permits/boston/adu-permit"
+              className="font-semibold px-4 py-2 rounded-xl transition-colors whitespace-nowrap text-sm text-center"
+              style={{ background: 'rgba(20,184,166,0.12)', color: '#14B8A6', border: '1px solid rgba(20,184,166,0.3)' }}
+            >
+              ADU Permit Guide →
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* Soft Costs Calculator promo */}
       <div className="mb-12 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-6 text-white">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

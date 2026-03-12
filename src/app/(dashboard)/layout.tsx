@@ -6,13 +6,14 @@ import { UserButton } from "@clerk/nextjs";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
-import { LayoutDashboard, Bell, Settings, Zap, BarChart2, MapPin } from "lucide-react";
+import { LayoutDashboard, Bell, Settings, Zap, BarChart2, MapPin, Home } from "lucide-react";
 import { MobileNav } from "@/components/mobile-nav";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Portfolio", href: "/portfolio", icon: BarChart2 },
   { name: "Zoning Lookup", href: "/tools/zoning-lookup", icon: MapPin },
+  { name: "ADU Tools", href: "/tools/adu-eligibility", icon: Home },
   { name: "Alerts", href: "/alerts", icon: Bell },
   { name: "Settings", href: "/settings", icon: Settings },
   { name: "Upgrade Plan", href: "/pricing", icon: Zap },
