@@ -1,225 +1,547 @@
 "use client";
 
-import { Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { trpc } from "@/lib/trpc/client";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { CheckCircle, ArrowLeft } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
+import { Check, Zap, ChevronDown, ChevronUp } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 
-const pricingPlans = [
+// ---------------------------------------------------------------------------
+// Data
+// ---------------------------------------------------------------------------
+
+const SPOTS_REMAINING = 47;
+const SPOTS_TOTAL = 50;
+const DEADLINE = "April 15, 2026";
+
+const TIERS = [
   {
-    id: "starter" as const,
-    name: "Starter",
-    price: 999,
-    description: "Perfect for small contractors",
+    id: "solo",
+    name: "Solo",
+    founderPrice: 49,
+    regularPrice: 149,
+    founderPriceId: "price_1TAIiZ94ePmNThnDeO2t68pI",
+    regularPriceId: "price_1TAIiZ94ePmNThnD8A8bjdVn",
+    description: "For independent contractors and solo operators.",
+    popular: false,
     features: [
-      "1 active project",
-      "100 documents/month",
-      "AI document processing",
-      "Deadline alerts",
+      "Up to 3 active projects",
+      "AI document extraction",
+      "Compliance checklist tracking",
+      "Permit workflow tracker",
+      "Public permit guides",
+      "Soft costs calculator",
       "Email support",
     ],
   },
   {
-    id: "professional" as const,
-    name: "Professional",
-    price: 2499,
-    description: "For growing construction firms",
-    features: [
-      "5 active projects",
-      "Unlimited documents",
-      "AI document processing",
-      "Priority deadline alerts",
-      "Compliance reports",
-      "Priority support",
-    ],
+    id: "developer",
+    name: "Developer",
+    founderPrice: 99,
+    regularPrice: 349,
+    founderPriceId: "price_1TAIia94ePmNThnDTO9Lb7Vo",
+    regularPriceId: "price_1TAIia94ePmNThnD1mr2KDJT",
+    description: "For development teams managing multiple projects.",
     popular: true,
+    features: [
+      "Everything in Solo",
+      "Up to 10 active projects",
+      "3 team members",
+      "AI permit research with source citations",
+      "Inspection tracker (14-step Boston sequence)",
+      "Comment response assistant",
+      "AHJ contact directory",
+      "Priority email support",
+    ],
   },
   {
-    id: "enterprise" as const,
-    name: "Enterprise",
-    price: 4999,
-    description: "For large-scale operations",
+    id: "portfolio",
+    name: "Portfolio",
+    founderPrice: 199,
+    regularPrice: 749,
+    founderPriceId: "price_1TAIib94ePmNThnDIK80HmLd",
+    regularPriceId: "price_1TAIib94ePmNThnDBfqopr9e",
+    description: "For firms managing large project portfolios.",
+    popular: false,
     features: [
+      "Everything in Developer",
       "Unlimited projects",
-      "Unlimited documents",
-      "Custom compliance rules",
+      "Unlimited team members",
       "API access",
-      "Dedicated account manager",
-      "Custom integrations",
+      "White-label option",
+      "Custom AHJ integrations",
+      "Dedicated onboarding call",
+      "Phone + email support",
     ],
   },
 ];
 
-function PricingContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const { isSignedIn } = useAuth();
+const FAQS = [
+  {
+    q: "What is Founding Member pricing?",
+    a: "Founding Member pricing locks in a significantly discounted rate for early supporters of MeritLayer. You pay the founder price for as long as you remain a subscriber — when regular pricing launches at higher rates, your price never changes.",
+  },
+  {
+    q: "How long is the founding member offer available?",
+    a: `The offer expires on ${DEADLINE} or when all ${SPOTS_TOTAL} founding member spots are claimed — whichever comes first. Once the spots are gone, pricing reverts to regular rates.`,
+  },
+  {
+    q: "Can I upgrade or downgrade my plan?",
+    a: "Yes. You can upgrade or downgrade at any time from your account settings. If you upgrade while on a founder plan, your new plan will also lock in at the founder rate for that tier.",
+  },
+  {
+    q: "Is there a free trial?",
+    a: "Yes — every new account gets a 14-day free trial. No credit card required to start. Your founding member discount is applied when you subscribe at the end of your trial.",
+  },
+  {
+    q: "What payment methods do you accept?",
+    a: "We accept all major credit and debit cards via Stripe. All payments are processed securely and receipts are sent automatically.",
+  },
+  {
+    q: "Can I cancel anytime?",
+    a: "Absolutely. There are no long-term contracts. Cancel anytime from your account settings and you won't be charged again.",
+  },
+];
 
-  const createCheckout = trpc.billing.createCheckoutSession.useMutation({
-    onSuccess: (data) => {
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
 
-  useEffect(() => {
-    const checkout = searchParams.get("checkout");
-    if (checkout === "cancelled") {
-      toast.info("Checkout cancelled");
-    }
-  }, [searchParams]);
+function savingsPercent(founder: number, regular: number) {
+  return Math.round(((regular - founder) / regular) * 100);
+}
 
-  const handleSelectPlan = (planId: "starter" | "professional" | "enterprise") => {
-    if (!isSignedIn) {
-      router.push("/sign-up");
-      return;
-    }
-    createCheckout.mutate({ plan: planId });
-  };
+// ---------------------------------------------------------------------------
+// Components
+// ---------------------------------------------------------------------------
+
+function SpotsBar() {
+  const used = SPOTS_TOTAL - SPOTS_REMAINING;
+  const pct = (used / SPOTS_TOTAL) * 100;
+  return (
+    <div className="w-full max-w-xs mx-auto">
+      <div className="flex justify-between text-xs mb-1.5" style={{ color: "#94A3B8" }}>
+        <span>{SPOTS_REMAINING} of {SPOTS_TOTAL} spots remaining</span>
+        <span>{used} claimed</span>
+      </div>
+      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
+        <div
+          className="h-full rounded-full"
+          style={{
+            width: `${pct}%`,
+            background: "linear-gradient(90deg, #14B8A6, #0EA5E9)",
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function PricingCard({
+  tier,
+  isAnnual,
+  onCheckout,
+  loading,
+}: {
+  tier: typeof TIERS[0];
+  isAnnual: boolean;
+  onCheckout: (priceId: string) => void;
+  loading: boolean;
+}) {
+  const founder = isAnnual ? Math.round(tier.founderPrice * 0.833) : tier.founderPrice;
+  const regular = isAnnual ? Math.round(tier.regularPrice * 0.833) : tier.regularPrice;
+  const savings = savingsPercent(tier.founderPrice, tier.regularPrice);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Navigation */}
-      <nav className="border-b border-white/10 bg-background/80 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/">
-              <Logo size="md" />
-            </Link>
-            <div className="flex items-center gap-4">
-              {isSignedIn ? (
-                <Link href="/dashboard">
-                  <Button variant="outline" className="border-white/20 hover:bg-white/5">
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Back to Dashboard
-                  </Button>
-                </Link>
-              ) : (
-                <>
-                  <Link href="/sign-in">
-                    <Button variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-white/5">
-                      Sign In
-                    </Button>
-                  </Link>
-                  <Link href="/sign-up">
-                    <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-                      Get Started
-                    </Button>
-                  </Link>
-                </>
-              )}
-            </div>
+    <div
+      className="relative flex flex-col rounded-2xl overflow-hidden"
+      style={{
+        background: tier.popular ? "linear-gradient(160deg, #0D1A2E 0%, #0D1526 100%)" : "#0D1526",
+        border: tier.popular ? "1px solid rgba(20,184,166,0.5)" : "1px solid rgba(255,255,255,0.08)",
+        boxShadow: tier.popular ? "0 0 40px rgba(20,184,166,0.12), inset 0 1px 0 rgba(20,184,166,0.15)" : "none",
+      }}
+    >
+      {/* Popular badge */}
+      {tier.popular && (
+        <div className="absolute top-0 left-0 right-0 flex justify-center">
+          <span
+            className="text-xs font-semibold px-4 py-1 rounded-b-lg"
+            style={{ background: "#14B8A6", color: "#fff", letterSpacing: "0.05em" }}
+          >
+            MOST POPULAR
+          </span>
+        </div>
+      )}
+
+      <div className={`flex-1 flex flex-col p-7 ${tier.popular ? "pt-10" : ""}`}>
+        {/* Header */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-lg font-bold" style={{ color: "#F1F5F9" }}>
+              {tier.name}
+            </h3>
+            <span
+              className="text-xs font-bold px-2.5 py-1 rounded-full"
+              style={{
+                background: "rgba(20,184,166,0.15)",
+                color: "#14B8A6",
+                border: "1px solid rgba(20,184,166,0.3)",
+              }}
+            >
+              SAVE {savings}%
+            </span>
+          </div>
+          <p className="text-sm" style={{ color: "#64748B" }}>
+            {tier.description}
+          </p>
+        </div>
+
+        {/* Price */}
+        <div className="mb-6">
+          <div className="flex items-end gap-2 mb-1">
+            <span className="text-5xl font-extrabold tracking-tight" style={{ color: "#14B8A6" }}>
+              ${founder}
+            </span>
+            <span className="text-sm pb-2" style={{ color: "#64748B" }}>
+              /mo{isAnnual ? " (billed annually)" : ""}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm line-through" style={{ color: "#475569" }}>
+              ${regular}/mo regular
+            </span>
+            <span className="text-xs font-semibold" style={{ color: "#EF4444" }}>
+              ↑ after founding offer ends
+            </span>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <button
+          onClick={() => onCheckout(tier.founderPriceId)}
+          disabled={loading}
+          className="w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-150 mb-7"
+          style={
+            tier.popular
+              ? {
+                  background: loading ? "rgba(20,184,166,0.5)" : "#14B8A6",
+                  color: "#fff",
+                  boxShadow: loading ? "none" : "0 4px 14px rgba(20,184,166,0.35)",
+                }
+              : {
+                  background: "transparent",
+                  color: "#14B8A6",
+                  border: "1px solid rgba(20,184,166,0.4)",
+                }
+          }
+        >
+          {loading ? "Redirecting..." : "Get Founding Member Access"}
+        </button>
+
+        {/* Features */}
+        <ul className="space-y-3">
+          {tier.features.map((f) => (
+            <li key={f} className="flex items-start gap-2.5">
+              <Check className="h-4 w-4 shrink-0 mt-0.5" style={{ color: "#14B8A6" }} />
+              <span className="text-sm" style={{ color: "#94A3B8" }}>
+                {f}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div
+      className="rounded-xl overflow-hidden"
+      style={{ border: "1px solid rgba(255,255,255,0.07)", background: "#0D1526" }}
+    >
+      <button
+        className="w-full flex items-center justify-between px-5 py-4 text-left gap-4"
+        onClick={() => setOpen(!open)}
+      >
+        <span className="font-medium text-sm" style={{ color: "#F1F5F9" }}>
+          {q}
+        </span>
+        {open ? (
+          <ChevronUp className="h-4 w-4 shrink-0" style={{ color: "#64748B" }} />
+        ) : (
+          <ChevronDown className="h-4 w-4 shrink-0" style={{ color: "#64748B" }} />
+        )}
+      </button>
+      {open && (
+        <div className="px-5 pb-4">
+          <p className="text-sm leading-relaxed" style={{ color: "#64748B" }}>
+            {a}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Main page
+// ---------------------------------------------------------------------------
+
+function PricingContent() {
+  const [isAnnual, setIsAnnual] = useState(false);
+  const [loadingTier, setLoadingTier] = useState<string | null>(null);
+  const { isSignedIn } = useAuth();
+
+  async function handleCheckout(priceId: string, tierId: string) {
+    setLoadingTier(tierId);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ priceId }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error("Checkout error:", data.error);
+        setLoadingTier(null);
+      }
+    } catch (err) {
+      console.error("Checkout failed:", err);
+      setLoadingTier(null);
+    }
+  }
+
+  return (
+    <div className="min-h-screen" style={{ background: "#080D1A", color: "#F1F5F9", fontFamily: "var(--font-jakarta, sans-serif)" }}>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Nav */}
+      {/* ------------------------------------------------------------------ */}
+      <nav
+        className="sticky top-0 z-50"
+        style={{ background: "rgba(8,13,26,0.85)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+      >
+        <div className="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
+          <Link href="/">
+            <Logo size="md" />
+          </Link>
+          <div className="flex items-center gap-3">
+            {isSignedIn ? (
+              <Link
+                href="/dashboard"
+                className="text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                style={{ color: "#94A3B8", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link
+                href="/sign-in"
+                className="text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                style={{ color: "#94A3B8", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
+              >
+                Sign in
+              </Link>
+            )}
           </div>
         </div>
       </nav>
 
-      {/* Pricing */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground mb-4">
-            Choose your plan
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            All plans include AI-powered document processing and deadline alerts.
-            Choose the plan that fits your business.
-          </p>
+      {/* ------------------------------------------------------------------ */}
+      {/* Urgency banner */}
+      {/* ------------------------------------------------------------------ */}
+      <div
+        className="text-center py-2.5 text-sm font-medium"
+        style={{
+          background: "linear-gradient(90deg, rgba(20,184,166,0.15), rgba(14,165,233,0.15))",
+          borderBottom: "1px solid rgba(20,184,166,0.2)",
+          color: "#14B8A6",
+        }}
+      >
+        <Zap className="inline h-3.5 w-3.5 mr-1.5 -mt-0.5" />
+        Founding Member offer — only {SPOTS_REMAINING} spots left · Expires {DEADLINE}
+      </div>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Hero */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="max-w-4xl mx-auto px-5 pt-16 pb-12 text-center">
+        <div
+          className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full mb-5"
+          style={{
+            background: "rgba(20,184,166,0.1)",
+            border: "1px solid rgba(20,184,166,0.25)",
+            color: "#14B8A6",
+          }}
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-teal-400 animate-pulse" />
+          FOUNDING MEMBER PRICING
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {pricingPlans.map((plan) => (
-            <Card
-              key={plan.id}
-              className={`relative bg-card rounded-xl transition-all ${
-                plan.popular
-                  ? "border-primary border-2"
-                  : "border border-white/10 hover:border-white/20"
-              }`}
-              style={plan.popular ? { boxShadow: "0 0 30px rgba(20,184,166,0.15)" } : {}}
+        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4" style={{ color: "#F1F5F9", lineHeight: 1.1 }}>
+          Lock in your rate before <br className="hidden sm:block" />
+          <span style={{ color: "#14B8A6" }}>prices go up permanently</span>
+        </h1>
+
+        <p className="text-lg max-w-xl mx-auto mb-8" style={{ color: "#64748B" }}>
+          First {SPOTS_TOTAL} members lock in founder pricing forever. After that,
+          regular pricing applies — no exceptions.
+        </p>
+
+        <SpotsBar />
+
+        {/* Annual toggle */}
+        <div className="flex items-center justify-center gap-3 mt-10">
+          <span className="text-sm font-medium" style={{ color: isAnnual ? "#475569" : "#F1F5F9" }}>
+            Monthly
+          </span>
+          <button
+            role="switch"
+            aria-checked={isAnnual}
+            onClick={() => setIsAnnual(!isAnnual)}
+            className="relative w-11 h-6 rounded-full transition-colors duration-200"
+            style={{ background: isAnnual ? "#14B8A6" : "rgba(255,255,255,0.12)" }}
+          >
+            <span
+              className="absolute top-1 left-1 h-4 w-4 rounded-full bg-white transition-transform duration-200"
+              style={{ transform: isAnnual ? "translateX(20px)" : "translateX(0)" }}
+            />
+          </button>
+          <span className="text-sm font-medium" style={{ color: isAnnual ? "#F1F5F9" : "#475569" }}>
+            Annual
+            <span
+              className="ml-1.5 text-xs font-semibold px-1.5 py-0.5 rounded"
+              style={{ background: "rgba(20,184,166,0.15)", color: "#14B8A6" }}
             >
-              {plan.popular && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary text-primary-foreground">
-                    Most Popular
-                  </span>
-                </div>
-              )}
-              <CardHeader>
-                <CardTitle className="text-2xl text-foreground">{plan.name}</CardTitle>
-                <CardDescription className="text-muted-foreground">{plan.description}</CardDescription>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold text-primary">
-                    ${plan.price.toLocaleString()}
-                  </span>
-                  <span className="text-muted-foreground">/month</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3 mb-6">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-primary shrink-0" />
-                      <span className="text-muted-foreground">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  className={`w-full ${
-                    plan.popular
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                      : "border-white/20 hover:bg-white/5"
-                  }`}
-                  variant={plan.popular ? "default" : "outline"}
-                  onClick={() => handleSelectPlan(plan.id)}
-                  disabled={createCheckout.isPending}
-                >
-                  {createCheckout.isPending ? "Loading..." : "Get Started"}
-                </Button>
-              </CardContent>
-            </Card>
+              2 months free
+            </span>
+          </span>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Pricing cards */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="max-w-6xl mx-auto px-5 pb-20">
+        <div className="grid md:grid-cols-3 gap-5">
+          {TIERS.map((tier) => (
+            <PricingCard
+              key={tier.id}
+              tier={tier}
+              isAnnual={isAnnual}
+              onCheckout={(priceId) => handleCheckout(priceId, tier.id)}
+              loading={loadingTier === tier.id}
+            />
           ))}
         </div>
 
-        <div className="mt-16 text-center">
-          <h2 className="text-2xl font-bold text-foreground mb-4">
-            Enterprise needs?
+        {/* Trust line */}
+        <p className="text-center text-xs mt-6" style={{ color: "#334155" }}>
+          No credit card required for 14-day trial · Cancel anytime · Secure checkout via Stripe
+        </p>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* What you get section */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="max-w-4xl mx-auto px-5 pb-20">
+        <div
+          className="rounded-2xl p-8"
+          style={{ background: "rgba(20,184,166,0.05)", border: "1px solid rgba(20,184,166,0.15)" }}
+        >
+          <h2 className="text-xl font-bold mb-1" style={{ color: "#F1F5F9" }}>
+            Why become a Founding Member?
           </h2>
-          <p className="text-muted-foreground mb-6">
-            Custom compliance rules, dedicated support, and API access for
-            large-scale operations.
+          <p className="text-sm mb-6" style={{ color: "#64748B" }}>
+            You&apos;re betting on us early — we reward that with permanent savings.
           </p>
-          <Button variant="outline" size="lg" className="border-white/20 hover:bg-white/5">
-            Contact Sales
-          </Button>
+          <div className="grid sm:grid-cols-3 gap-6">
+            {[
+              { label: "Price locked forever", desc: "Your founder rate never increases, even as we add features." },
+              { label: "Early feature access", desc: "Founding members get new features before public release." },
+              { label: "Founding member badge", desc: "Recognized permanently in your account as a founder." },
+            ].map(({ label, desc }) => (
+              <div key={label}>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Check className="h-4 w-4" style={{ color: "#14B8A6" }} />
+                  <span className="text-sm font-semibold" style={{ color: "#F1F5F9" }}>
+                    {label}
+                  </span>
+                </div>
+                <p className="text-xs pl-6" style={{ color: "#475569" }}>
+                  {desc}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* FAQ */}
+      {/* ------------------------------------------------------------------ */}
+      <section className="max-w-2xl mx-auto px-5 pb-24">
+        <h2 className="text-2xl font-bold text-center mb-8" style={{ color: "#F1F5F9" }}>
+          Frequently asked questions
+        </h2>
+        <div className="space-y-3">
+          {FAQS.map((faq) => (
+            <FaqItem key={faq.q} q={faq.q} a={faq.a} />
+          ))}
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Bottom CTA */}
+      {/* ------------------------------------------------------------------ */}
+      <section
+        className="text-center py-16 px-5"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
+      >
+        <h2 className="text-2xl font-bold mb-2" style={{ color: "#F1F5F9" }}>
+          {SPOTS_REMAINING} founding spots left
+        </h2>
+        <p className="text-sm mb-6" style={{ color: "#64748B" }}>
+          Offer expires {DEADLINE}. After that, regular pricing applies.
+        </p>
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm"
+          style={{ background: "#14B8A6", color: "#fff", boxShadow: "0 4px 14px rgba(20,184,166,0.35)" }}
+        >
+          <Zap className="h-4 w-4" />
+          Claim your founding spot
+        </a>
+      </section>
+
+      {/* Footer */}
+      <footer
+        className="text-center py-8 text-xs"
+        style={{ color: "#334155", borderTop: "1px solid rgba(255,255,255,0.04)" }}
+      >
+        © {new Date().getFullYear()} MeritLayer · AI-Powered Construction Compliance
+      </footer>
     </div>
   );
 }
 
 export default function PricingPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-muted-foreground">Loading...</div>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center" style={{ background: "#080D1A" }}>
+          <div style={{ color: "#475569" }}>Loading...</div>
+        </div>
+      }
+    >
       <PricingContent />
     </Suspense>
   );

@@ -6,12 +6,13 @@ import { UserButton } from "@clerk/nextjs";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
-import { LayoutDashboard, Bell, Settings } from "lucide-react";
+import { LayoutDashboard, Bell, Settings, Zap } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Alerts", href: "/alerts", icon: Bell },
   { name: "Settings", href: "/settings", icon: Settings },
+  { name: "Upgrade Plan", href: "/pricing", icon: Zap },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
