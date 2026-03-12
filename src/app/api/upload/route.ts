@@ -1,76 +1,52 @@
-import { put } from "@vercel/blob";
+import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const ALLOWED_TYPES = [
-  "application/pdf",
-  "image/jpeg",
-  "image/png",
-  "image/gif",
-  "image/webp",
-];
+export const maxDuration = 60;
 
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<NextResponse> {
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const body = (await request.json()) as HandleUploadBody;
+
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const formData = await request.formData();
-    const file = formData.get("file") as File | null;
-    const projectId = formData.get("projectId") as string | null;
-
-    if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
-    }
-
-    if (!projectId) {
-      return NextResponse.json(
-        { error: "Project ID required" },
-        { status: 400 }
-      );
-    }
-
-    // Validate file type
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      return NextResponse.json(
-        {
-          error: "Invalid file type. Allowed: PDF, JPEG, PNG, GIF, WebP",
-        },
-        { status: 400 }
-      );
-    }
-
-    // Validate file size
-    if (file.size > MAX_FILE_SIZE) {
-      return NextResponse.json(
-        { error: "File too large. Maximum size is 10MB" },
-        { status: 400 }
-      );
-    }
-
-    // Generate unique filename
-    const timestamp = Date.now();
-    const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const pathname = `documents/${userId}/${projectId}/${timestamp}-${sanitizedName}`;
-
-    // Upload to Vercel Blob
-    const blob = await put(pathname, file, {
-      access: "public",
-      addRandomSuffix: false,
+    const jsonResponse = await handleUpload({
+      body,
+      request,
+      onBeforeGenerateToken: async (pathname) => {
+        // Validate file type from pathname extension
+        const ext = pathname.split(".").pop()?.toLowerCase();
+        const allowedExts = ["pdf", "jpg", "jpeg", "png", "gif", "webp"];
+        if (!ext || !allowedExts.includes(ext)) {
+          throw new Error("Invalid file type");
+        }
+        return {
+          allowedContentTypes: [
+            "application/pdf",
+            "image/jpeg",
+            "image/png",
+            "image/gif",
+            "image/webp",
+          ],
+          maximumSizeInBytes: 10 * 1024 * 1024, // 10MB
+          tokenPayload: JSON.stringify({ userId }),
+        };
+      },
+      onUploadCompleted: async ({ blob, tokenPayload }) => {
+        // Called after upload completes — blob.url is the final URL
+        console.log("Upload completed:", blob.url, tokenPayload);
+      },
     });
 
-    return NextResponse.json({
-      url: blob.url,
-      filename: file.name,
-    });
+    return NextResponse.json(jsonResponse);
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json(
-      { error: "Failed to upload file" },
-      { status: 500 }
+      { error: (error as Error).message },
+      { status: 400 }
     );
   }
 }

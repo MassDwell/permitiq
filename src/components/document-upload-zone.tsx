@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { upload } from "@vercel/blob/client";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { Upload, FileText, Loader2, X } from "lucide-react";
@@ -63,22 +64,17 @@ export function DocumentUploadZone({ projectId }: DocumentUploadZoneProps) {
     });
 
     try {
-      // Upload to Vercel Blob
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("projectId", projectId);
+      // Direct client-side upload to Vercel Blob (bypasses 4.5MB serverless limit)
+      const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+      const pathname = `documents/${projectId}/${Date.now()}-${sanitizedName}`;
 
-      const uploadResponse = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
+      const blob = await upload(pathname, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
       });
 
-      if (!uploadResponse.ok) {
-        const error = await uploadResponse.json();
-        throw new Error(error.error || "Upload failed");
-      }
-
-      const { url, filename } = await uploadResponse.json();
+      const url = blob.url;
+      const filename = file.name;
 
       // Update progress
       setUploadingFiles((prev) => {
