@@ -29,7 +29,7 @@ export const inspectionsRouter = createTRPCRouter({
       const project = await ctx.db.query.projects.findFirst({
         where: and(
           eq(projects.id, input.projectId),
-          eq(projects.userId, ctx.userId as string)
+          eq(projects.userId, ctx.dbUser.id)
         ),
       });
       if (!project) throw new TRPCError({ code: "NOT_FOUND" });
@@ -59,7 +59,7 @@ export const inspectionsRouter = createTRPCRouter({
       const project = await ctx.db.query.projects.findFirst({
         where: and(
           eq(projects.id, input.projectId),
-          eq(projects.userId, ctx.userId as string)
+          eq(projects.userId, ctx.dbUser.id)
         ),
       });
       if (!project) throw new TRPCError({ code: "NOT_FOUND" });
@@ -104,7 +104,7 @@ export const inspectionsRouter = createTRPCRouter({
       const project = await ctx.db.query.projects.findFirst({
         where: and(
           eq(projects.id, existing.projectId),
-          eq(projects.userId, ctx.userId as string)
+          eq(projects.userId, ctx.dbUser.id)
         ),
       });
       if (!project) throw new TRPCError({ code: "FORBIDDEN" });
@@ -139,7 +139,7 @@ export const inspectionsRouter = createTRPCRouter({
       const project = await ctx.db.query.projects.findFirst({
         where: and(
           eq(projects.id, existing.projectId),
-          eq(projects.userId, ctx.userId as string)
+          eq(projects.userId, ctx.dbUser.id)
         ),
       });
       if (!project) throw new TRPCError({ code: "FORBIDDEN" });
@@ -154,7 +154,7 @@ export const inspectionsRouter = createTRPCRouter({
       const project = await ctx.db.query.projects.findFirst({
         where: and(
           eq(projects.id, input.projectId),
-          eq(projects.userId, ctx.userId as string)
+          eq(projects.userId, ctx.dbUser.id)
         ),
       });
       if (!project) throw new TRPCError({ code: "NOT_FOUND" });

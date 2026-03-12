@@ -437,19 +437,38 @@ export default function ProjectDetailPage() {
               { value: "requirements", label: "Requirements" },
               { value: "submission", label: "Submission Prep" },
               { value: "settings", label: "Settings" },
+              { value: "inspections", label: "Inspections", href: `/projects/${projectId}/inspections` },
+              { value: "response-assistant", label: "Response Assistant", href: `/projects/${projectId}/response-assistant` },
             ].map((tab) => (
-              <button
-                key={tab.value}
-                onClick={() => setActiveTab(tab.value)}
-                className="px-4 py-3 text-sm font-medium transition-all border-b-2 -mb-px"
-                style={{
-                  color: activeTab === tab.value ? '#14B8A6' : '#475569',
-                  borderBottomColor: activeTab === tab.value ? '#14B8A6' : 'transparent',
-                  background: 'transparent',
-                }}
-              >
-                {tab.label}
-              </button>
+              tab.href ? (
+                <Link
+                  key={tab.value}
+                  href={tab.href}
+                  className="px-4 py-3 text-sm font-medium transition-all border-b-2 -mb-px"
+                  style={{
+                    color: '#475569',
+                    borderBottomColor: 'transparent',
+                    background: 'transparent',
+                    textDecoration: 'none',
+                    display: 'inline-block',
+                  }}
+                >
+                  {tab.label}
+                </Link>
+              ) : (
+                <button
+                  key={tab.value}
+                  onClick={() => setActiveTab(tab.value)}
+                  className="px-4 py-3 text-sm font-medium transition-all border-b-2 -mb-px"
+                  style={{
+                    color: activeTab === tab.value ? '#14B8A6' : '#475569',
+                    borderBottomColor: activeTab === tab.value ? '#14B8A6' : 'transparent',
+                    background: 'transparent',
+                  }}
+                >
+                  {tab.label}
+                </button>
+              )
             ))}
           </div>
         </div>
