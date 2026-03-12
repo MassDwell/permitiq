@@ -7,6 +7,7 @@ import { settingsRouter } from "./routers/settings";
 import { waitlistRouter } from "./routers/waitlist";
 import { billingRouter } from "./routers/billing";
 import { permitWorkflowsRouter } from "./routers/permitWorkflows";
+import { jurisdictionRulesRouter } from "./routers/jurisdictionRules";
 
 export const appRouter = createTRPCRouter({
   projects: projectsRouter,
@@ -17,6 +18,7 @@ export const appRouter = createTRPCRouter({
   waitlist: waitlistRouter,
   billing: billingRouter,
   permitWorkflows: permitWorkflowsRouter,
+  jurisdictionRules: jurisdictionRulesRouter,
 });
 
 export type AppRouter = typeof appRouter;

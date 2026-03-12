@@ -33,10 +33,16 @@ PermitFlow serves builders. MeritLayer serves developers.
 - [ ] Fee calculator per permit type
 
 ## Phase 4: Workflow (Collaboration)
+- [ ] **Collaborators** — Invite GC, architect, PM, attorney, investor to a project
+  - projectMembers table (projectId, userId, email, role, inviteStatus)
+  - Roles: owner | editor | viewer
+  - Email invite flow via Clerk (creates account if needed)
+  - Permit assignments notify the assigned collaborator
+  - Role-based access: owners see everything, editors update/upload, viewers read-only
+- [ ] Stamped plans checklist — required-from-professional items with assign + upload slots
 - [ ] Inspection tracker (schedule → pass/fail → CO)
 - [ ] Comment response assistant (AI drafts responses to permit objections)
-- [ ] Team collaboration (invite GC, architect, attorney)
-- [ ] Document request workflow (request docs from team members)
+- [ ] Document request workflow (request docs from team members with upload link)
 
 ## Phase 5: Intelligence (Kill Shots)
 - [ ] Permit status scraper (Boston ISD portal live status)

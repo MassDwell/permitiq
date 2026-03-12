@@ -37,6 +37,20 @@ const projectTypes = [
   { value: "renovation", label: "Renovation" },
 ];
 
+// Static Boston-area jurisdiction options — always shown as primary options
+const BOSTON_AREA_JURISDICTIONS = [
+  { value: "BOSTON_ISD", label: "Boston, MA (ISD)" },
+  { value: "BOSTON_BPDA", label: "Boston, MA (BPDA)" },
+  { value: "BOSTON_ZBA", label: "Boston, MA (ZBA)" },
+  { value: "CAMBRIDGE_MA", label: "Cambridge, MA" },
+  { value: "SOMERVILLE_MA", label: "Somerville, MA" },
+  { value: "NEWTON_MA", label: "Newton, MA" },
+  { value: "BROOKLINE_MA", label: "Brookline, MA" },
+  { value: "QUINCY_MA", label: "Quincy, MA" },
+  { value: "MA_GENERIC", label: "Generic MA" },
+];
+const STATIC_JURISDICTION_CODES = new Set(BOSTON_AREA_JURISDICTIONS.map((j) => j.value));
+
 export function CreateProjectDialog({
   open,
   onOpenChange,
@@ -147,11 +161,20 @@ export function CreateProjectDialog({
                     <SelectValue placeholder="Select jurisdiction" />
                   </SelectTrigger>
                   <SelectContent>
-                    {jurisdictions?.map((j) => (
-                      <SelectItem key={j.id} value={j.jurisdictionCode}>
-                        {j.jurisdictionName}
+                    {/* Static Boston-area options — always visible */}
+                    {BOSTON_AREA_JURISDICTIONS.map((j) => (
+                      <SelectItem key={j.value} value={j.value}>
+                        {j.label}
                       </SelectItem>
                     ))}
+                    {/* Additional DB jurisdictions not already in the static list */}
+                    {jurisdictions
+                      ?.filter((j) => !STATIC_JURISDICTION_CODES.has(j.jurisdictionCode))
+                      .map((j) => (
+                        <SelectItem key={j.id} value={j.jurisdictionCode}>
+                          {j.jurisdictionName}
+                        </SelectItem>
+                      ))}
                     <SelectItem value="other">Other / Unknown</SelectItem>
                   </SelectContent>
                 </Select>

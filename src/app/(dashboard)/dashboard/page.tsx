@@ -22,6 +22,12 @@ import {
   AlertTriangle,
   CheckCircle,
   ArrowRight,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  ShieldAlert,
+  ShieldCheck,
+  ShieldQuestion,
 } from "lucide-react";
 import { CreateProjectDialog } from "@/components/create-project-dialog";
 import { useState } from "react";
@@ -71,6 +77,36 @@ export default function DashboardPage() {
           projects.reduce((acc, p) => acc + p.healthScore, 0) / projects.length
         )
       : 100;
+
+  // Portfolio risk breakdown
+  const atRiskCount = projects?.filter((p) => p.healthStatus === "red").length ?? 0;
+  const needsAttentionCount = projects?.filter((p) => p.healthStatus === "yellow").length ?? 0;
+  const onTrackCount = projects?.filter((p) => p.healthStatus === "green").length ?? 0;
+
+  // Compliance velocity — items completed this week vs. last week
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+  const allComplianceItems = projects?.flatMap((p) => p.complianceItems) ?? [];
+
+  const thisWeekCompleted = allComplianceItems.filter(
+    (item) => item.status === "met" && new Date(item.updatedAt) >= sevenDaysAgo
+  ).length;
+
+  const lastWeekCompleted = allComplianceItems.filter(
+    (item) =>
+      item.status === "met" &&
+      new Date(item.updatedAt) >= fourteenDaysAgo &&
+      new Date(item.updatedAt) < sevenDaysAgo
+  ).length;
+
+  const velocityTrend =
+    thisWeekCompleted > lastWeekCompleted
+      ? "improving"
+      : thisWeekCompleted < lastWeekCompleted
+      ? "declining"
+      : "stable";
 
   return (
     <div className="p-8">
@@ -307,6 +343,157 @@ export default function DashboardPage() {
           </Card>
         </div>
       </div>
+
+      {/* Portfolio Risk Section */}
+      {projects && projects.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Portfolio Risk</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Risk stat cards */}
+            <div className="grid grid-cols-3 gap-4 lg:col-span-2">
+              <Card className="border-red-200">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-medium text-red-600">At Risk</CardTitle>
+                    <ShieldAlert className="h-4 w-4 text-red-400" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-red-600">{atRiskCount}</div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {atRiskCount === 1 ? "project" : "projects"} with overdue items
+                  </p>
+                  {atRiskCount > 0 && (
+                    <div className="mt-2 space-y-1">
+                      {projects
+                        .filter((p) => p.healthStatus === "red")
+                        .slice(0, 2)
+                        .map((p) => (
+                          <Link key={p.id} href={`/projects/${p.id}`}>
+                            <p className="text-xs text-red-600 hover:underline truncate">{p.name}</p>
+                          </Link>
+                        ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="border-yellow-200">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-medium text-yellow-600">Needs Attention</CardTitle>
+                    <ShieldQuestion className="h-4 w-4 text-yellow-400" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-yellow-600">{needsAttentionCount}</div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {needsAttentionCount === 1 ? "project" : "projects"} below 80%
+                  </p>
+                  {needsAttentionCount > 0 && (
+                    <div className="mt-2 space-y-1">
+                      {projects
+                        .filter((p) => p.healthStatus === "yellow")
+                        .slice(0, 2)
+                        .map((p) => (
+                          <Link key={p.id} href={`/projects/${p.id}`}>
+                            <p className="text-xs text-yellow-600 hover:underline truncate">{p.name}</p>
+                          </Link>
+                        ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="border-green-200">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-medium text-green-600">On Track</CardTitle>
+                    <ShieldCheck className="h-4 w-4 text-green-400" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-green-600">{onTrackCount}</div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {onTrackCount === 1 ? "project" : "projects"} on track
+                  </p>
+                  {onTrackCount > 0 && (
+                    <div className="mt-2 space-y-1">
+                      {projects
+                        .filter((p) => p.healthStatus === "green")
+                        .slice(0, 2)
+                        .map((p) => (
+                          <Link key={p.id} href={`/projects/${p.id}`}>
+                            <p className="text-xs text-green-600 hover:underline truncate">{p.name}</p>
+                          </Link>
+                        ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Compliance Velocity */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-gray-500">
+                  Compliance Velocity
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  Requirements completed week-over-week
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-3 mb-4">
+                  {velocityTrend === "improving" ? (
+                    <TrendingUp className="h-8 w-8 text-green-500" />
+                  ) : velocityTrend === "declining" ? (
+                    <TrendingDown className="h-8 w-8 text-red-500" />
+                  ) : (
+                    <Minus className="h-8 w-8 text-gray-400" />
+                  )}
+                  <div>
+                    <p className={`text-lg font-bold ${
+                      velocityTrend === "improving" ? "text-green-600" :
+                      velocityTrend === "declining" ? "text-red-600" :
+                      "text-gray-600"
+                    }`}>
+                      {velocityTrend === "improving" ? "Improving" :
+                       velocityTrend === "declining" ? "Declining" :
+                       "Stable"}
+                    </p>
+                    <p className="text-xs text-gray-500">compliance pace</p>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">This week</span>
+                    <span className="font-semibold">{thisWeekCompleted} items</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">Last week</span>
+                    <span className="font-semibold">{lastWeekCompleted} items</span>
+                  </div>
+                  {velocityTrend !== "stable" && (
+                    <p className="text-xs text-gray-400 pt-1">
+                      {velocityTrend === "improving"
+                        ? `+${thisWeekCompleted - lastWeekCompleted} more than last week`
+                        : `${lastWeekCompleted - thisWeekCompleted} fewer than last week`}
+                    </p>
+                  )}
+                </div>
+
+                {allComplianceItems.length === 0 && (
+                  <p className="text-xs text-gray-400 mt-2">
+                    Add compliance items to track velocity.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
 
       <CreateProjectDialog
         open={createProjectOpen}
