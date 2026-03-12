@@ -62,6 +62,9 @@ import { QuickActionsPanel } from "@/components/quick-actions-panel";
 import { AddPermitDialog } from "@/components/permit-workflow/add-permit-dialog";
 import { CollaboratorsTab } from "@/components/collaborators-tab";
 import { DeadlineForecast } from "@/components/deadline-forecast";
+import { HoldCostCalculator } from "@/components/hold-cost-calculator";
+import { PermitFeeEstimator } from "@/components/permit-fee-estimator";
+import { SoftCostsTab } from "@/components/soft-costs-tab";
 import {
   Dialog,
   DialogContent,
