@@ -117,7 +117,8 @@ export const projectsRouter = createTRPCRouter({
           )
         );
 
-      const maxProjects = ctx.dbUser.plan === "starter" ? 1 : ctx.dbUser.plan === "professional" ? 5 : Infinity;
+      // AUDIT-FIX: Updated limits to match pricing page — Solo(starter)=3, Developer(professional)=10, Portfolio(enterprise)=unlimited
+      const maxProjects = ctx.dbUser.plan === "starter" ? 3 : ctx.dbUser.plan === "professional" ? 10 : Infinity;
 
       if (projectCount[0].count >= maxProjects) {
         throw new TRPCError({

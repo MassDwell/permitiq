@@ -35,9 +35,8 @@ export async function POST(request: Request): Promise<NextResponse> {
           tokenPayload: JSON.stringify({ userId }),
         };
       },
-      onUploadCompleted: async ({ blob, tokenPayload }) => {
-        // Called after upload completes — blob.url is the final URL
-        console.log("Upload completed:", blob.url, tokenPayload);
+      onUploadCompleted: async () => {
+        // AUDIT-FIX: Removed console.log that logged blob URL and token payload to server logs
       },
     });
 

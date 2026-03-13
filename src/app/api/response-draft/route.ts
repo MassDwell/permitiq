@@ -1,8 +1,18 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { auth } from "@clerk/nextjs/server";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export async function POST(req: Request) {
+  // AUDIT-FIX: Added authentication — endpoint was previously unauthenticated, allowing anyone to burn Anthropic API credits
+  const { userId } = await auth();
+  if (!userId) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   try {
     const body = await req.json() as {
       objectionText: string;

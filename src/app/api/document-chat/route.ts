@@ -1,7 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db";
-import { projects, complianceItems, documents, permitWorkflows } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { users, projects, complianceItems, documents, permitWorkflows } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 import { format } from "date-fns";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -12,6 +13,15 @@ interface HistoryMessage {
 }
 
 export async function POST(req: Request) {
+  // AUDIT-FIX: Added authentication — endpoint was previously unauthenticated, exposing any project's data and burning API credits
+  const { userId: clerkUserId } = await auth();
+  if (!clerkUserId) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   try {
     const body = (await req.json()) as {
       projectId: string;
@@ -28,9 +38,21 @@ export async function POST(req: Request) {
       });
     }
 
-    // Load project data
+    // AUDIT-FIX: Verify ownership — look up DB user and scope project query to their ID
+    const dbUser = await db.query.users.findFirst({
+      where: eq(users.clerkId, clerkUserId),
+    });
+
+    if (!dbUser) {
+      return new Response(JSON.stringify({ error: "User not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Load project data scoped to the authenticated user
     const project = await db.query.projects.findFirst({
-      where: eq(projects.id, projectId),
+      where: and(eq(projects.id, projectId), eq(projects.userId, dbUser.id)),
       with: {
         complianceItems: {
           orderBy: (ci, { asc }) => [asc(ci.deadline)],

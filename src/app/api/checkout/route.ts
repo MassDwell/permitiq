@@ -52,11 +52,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid price ID" }, { status: 400 });
     }
 
+    // AUDIT-FIX: Use NEXT_PUBLIC_APP_URL env var instead of hardcoded domain — works correctly in staging/preview
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://meritlayer.ai";
     const session = await getStripe().checkout.sessions.create({
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: "https://meritlayer.ai/dashboard?welcome=true",
-      cancel_url: "https://meritlayer.ai/pricing",
+      success_url: `${appUrl}/dashboard?welcome=true`,
+      cancel_url: `${appUrl}/pricing`,
       allow_promotion_codes: true,
       metadata: {
         userId: user.id,

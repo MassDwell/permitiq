@@ -6,13 +6,17 @@ import { generateAlertMessage } from "@/lib/ai/document-processor";
 import { sendDeadlineAlertEmail, sendOverdueAlertEmail } from "@/lib/email";
 
 export async function GET(request: Request) {
-  // Verify cron secret for security
+  // AUDIT-FIX: Tightened cron auth — previously accessible in prod if CRON_SECRET was unset.
+  // Now always requires valid Bearer token in production; only open in dev when no secret is configured.
   const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    // Allow in development or if no secret is set
-    if (process.env.NODE_ENV === "production" && process.env.CRON_SECRET) {
+  const cronSecret = process.env.CRON_SECRET;
+
+  if (process.env.NODE_ENV === "production") {
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+  } else if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {

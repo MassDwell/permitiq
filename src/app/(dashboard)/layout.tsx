@@ -75,7 +75,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="px-3 py-2 rounded-lg" style={{ background: 'rgba(20,184,166,0.05)', border: '1px solid rgba(20,184,166,0.15)' }}>
               <p className="text-xs font-medium text-[#14B8A6]">{planLabel} Plan</p>
               <p className="text-xs text-[#475569] mt-0.5">
-                {profile?.plan === "starter" ? "1 project limit" : profile?.plan === "professional" ? "Up to 5 projects" : "Unlimited projects"}
+                {/* AUDIT-FIX: Updated sidebar labels to match pricing page (3 / 10 / unlimited) */}
+              {profile?.plan === "starter" ? "Up to 3 projects" : profile?.plan === "professional" ? "Up to 10 projects" : "Unlimited projects"}
               </p>
             </div>
             {/* User */}
