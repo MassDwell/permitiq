@@ -1,10 +1,272 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { projects, documents, complianceItems, complianceSnapshots, projectMembers } from "@/db/schema";
+import { projects, documents, complianceItems, complianceSnapshots, projectMembers, jurisdictionRules, jurisdictionRequests } from "@/db/schema";
 import { eq, and, desc, count, sql, gte, lte, inArray } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { sendProjectCreatedEmail } from "@/lib/email";
 import { assertProjectAccess } from "../project-access";
+import type { Context } from "../trpc";
+import Anthropic from "@anthropic-ai/sdk";
+import {
+  BOSTON_BUILDING_REQUIREMENTS,
+  BOSTON_DEMOLITION_REQUIREMENTS,
+  BOSTON_TRADE_REQUIREMENTS,
+  CAMBRIDGE_BUILDING_REQUIREMENTS,
+  BROOKLINE_BUILDING_REQUIREMENTS,
+  SALEM_BUILDING_REQUIREMENTS,
+  LOWELL_BUILDING_REQUIREMENTS,
+  SPRINGFIELD_BUILDING_REQUIREMENTS,
+  MA_STATE_REQUIREMENTS,
+  BOSTON_ARTICLE_80_LARGE_REQUIREMENTS,
+  BOSTON_ARTICLE_80_SMALL_REQUIREMENTS,
+} from "@/lib/permit-requirements";
+
+// Helper functions for auto-triggering requirements research
+
+function normalizeJurisdiction(jurisdiction: string): string {
+  const lower = jurisdiction.toLowerCase();
+  if (/cambridge/.test(lower)) return "cambridge";
+  if (/somerville/.test(lower)) return "somerville";
+  if (/quincy/.test(lower)) return "quincy";
+  if (/newton/.test(lower)) return "newton";
+  if (/waltham/.test(lower)) return "waltham";
+  if (/dedham/.test(lower)) return "dedham";
+  if (/westwood/.test(lower)) return "westwood";
+  if (/needham/.test(lower)) return "needham";
+  if (/norwood/.test(lower)) return "norwood";
+  if (/canton/.test(lower)) return "canton";
+  if (/brookline/.test(lower)) return "brookline";
+  if (/salem/.test(lower)) return "salem";
+  if (/lowell/.test(lower)) return "lowell";
+  if (/springfield/.test(lower)) return "springfield";
+  if (/\bma\b|massachusetts|statewide/.test(lower)) return "ma_statewide";
+  if (/boston/.test(lower)) return "boston";
+  return lower.split(/[,\s]/)[0] ?? "boston";
+}
+
+function detectJurisdiction(address: string): string {
+  const lower = address.toLowerCase();
+  if (/cambridge/.test(lower)) return "cambridge";
+  if (/brookline/.test(lower)) return "brookline";
+  if (/salem/.test(lower)) return "salem";
+  if (/lowell/.test(lower)) return "lowell";
+  if (/springfield/.test(lower)) return "springfield";
+  if (/\bma\b|massachusetts|statewide|state-wide/.test(lower)) return "ma_statewide";
+  return "boston";
+}
+
+function detectPermitCategory(projectType: string): string {
+  const lower = projectType.toLowerCase();
+  if (/demo(lition)?|tear.?down/.test(lower)) return "demolition";
+  if (/trade|electrical|plumbing|gas\b|mechanical|hvac/.test(lower)) return "trade";
+  if (/article.?80.*(large|lpr)|lpr|large.project.review/.test(lower)) return "article_80_large";
+  if (/article.?80.*(small|spr)|spr|small.project.review/.test(lower)) return "article_80_small";
+  if (/article.?80|bpda.review/.test(lower)) return "article_80_large";
+  if (/building|construction|new.construction|addition|renovation|alteration|residential|commercial|adu|mixed_use/.test(lower)) return "building";
+  return "building";
+}
+
+function getRequirementsForPermit(
+  jurisdiction: string,
+  category: string
+): typeof BOSTON_DEMOLITION_REQUIREMENTS | null {
+  if (jurisdiction === "boston") {
+    if (category === "demolition") return BOSTON_DEMOLITION_REQUIREMENTS;
+    if (category === "building") return BOSTON_BUILDING_REQUIREMENTS;
+    if (category === "trade") return BOSTON_TRADE_REQUIREMENTS;
+    if (category === "article_80_large") return BOSTON_ARTICLE_80_LARGE_REQUIREMENTS;
+    if (category === "article_80_small") return BOSTON_ARTICLE_80_SMALL_REQUIREMENTS;
+    return BOSTON_BUILDING_REQUIREMENTS;
+  }
+  if (jurisdiction === "cambridge") return CAMBRIDGE_BUILDING_REQUIREMENTS;
+  if (jurisdiction === "brookline") return BROOKLINE_BUILDING_REQUIREMENTS;
+  if (jurisdiction === "salem") return SALEM_BUILDING_REQUIREMENTS;
+  if (jurisdiction === "lowell") return LOWELL_BUILDING_REQUIREMENTS;
+  if (jurisdiction === "springfield") return SPRINGFIELD_BUILDING_REQUIREMENTS;
+  if (jurisdiction === "ma_statewide") return MA_STATE_REQUIREMENTS;
+  if (category === "demolition") return BOSTON_DEMOLITION_REQUIREMENTS;
+  if (category === "trade") return BOSTON_TRADE_REQUIREMENTS;
+  if (category === "article_80_large") return BOSTON_ARTICLE_80_LARGE_REQUIREMENTS;
+  if (category === "article_80_small") return BOSTON_ARTICLE_80_SMALL_REQUIREMENTS;
+  return null;
+}
+
+// Auto-trigger requirements research for a new project (fire-and-forget)
+async function autoTriggerRequirementsResearch(
+  db: Context["db"],
+  projectId: string,
+  projectType: string,
+  address?: string,
+  savedJurisdiction?: string
+) {
+  try {
+    const jurisdiction = savedJurisdiction
+      ? normalizeJurisdiction(savedJurisdiction)
+      : address
+      ? detectJurisdiction(address)
+      : "boston";
+
+    const category = detectPermitCategory(projectType);
+
+    const JURISDICTION_DISPLAY: Record<string, string> = {
+      boston: "Boston, MA",
+      cambridge: "Cambridge, MA",
+      brookline: "Brookline, MA",
+      salem: "Salem, MA",
+      lowell: "Lowell, MA",
+      springfield: "Springfield, MA",
+      ma_statewide: "Massachusetts",
+    };
+    const jurisdictionDisplay = JURISDICTION_DISPLAY[jurisdiction] ?? "Boston, MA";
+
+    let requirementsData: Array<{
+      requirementType: string;
+      description: string;
+      sourceUrl: string;
+      sourceText: string;
+      reasoning: string;
+    }>;
+
+    const curated = getRequirementsForPermit(jurisdiction, category);
+    let isAiGenerated = false;
+
+    if (curated) {
+      requirementsData = curated;
+    } else {
+      // Unknown jurisdiction — check AI cache first
+      const cacheKey = `AI_${jurisdiction.toUpperCase()}_${category.toUpperCase()}`;
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+      const cached = await db.query.jurisdictionRules.findFirst({
+        where: eq(jurisdictionRules.jurisdictionCode, cacheKey),
+      });
+
+      if (
+        cached &&
+        cached.source === "ai_generated" &&
+        cached.cachedAt &&
+        cached.cachedAt > thirtyDaysAgo
+      ) {
+        requirementsData = cached.rules.map((r) => ({
+          requirementType: r.requirementType,
+          description: r.description,
+          sourceUrl: (r as { sourceUrl?: string }).sourceUrl ?? "",
+          sourceText: r.notes ?? "",
+          reasoning: (r as { reasoning?: string }).reasoning ?? "",
+        }));
+        isAiGenerated = true;
+      } else {
+        // Fall back to Claude Haiku for unknown permit types
+        const client = new Anthropic();
+        const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(projectType + " permit requirements Massachusetts")}`;
+
+        const message = await client.messages.create({
+          model: "claude-haiku-4-5-20251001",
+          max_tokens: 1024,
+          messages: [
+            {
+              role: "user",
+              content: `List the key permit requirements for a "${projectType}" permit in Massachusetts. Return a JSON array of objects with fields: requirementType (snake_case identifier), description (clear one-line description), sourceText (a plausible regulatory citation from 780 CMR or local code), reasoning (one sentence explaining why it applies). Return only valid JSON, no markdown.`,
+            },
+          ],
+        });
+
+        try {
+          const text =
+            message.content[0].type === "text" ? message.content[0].text : "[]";
+          const parsed = JSON.parse(text) as Array<{
+            requirementType: string;
+            description: string;
+            sourceText: string;
+            reasoning: string;
+          }>;
+          requirementsData = parsed.map((r) => ({
+            ...r,
+            sourceUrl: googleSearchUrl,
+          }));
+        } catch {
+          requirementsData = MA_STATE_REQUIREMENTS;
+        }
+
+        // Cache the AI-generated rules
+        const rulesToCache = requirementsData.map((r, i) => ({
+          id: `${cacheKey.toLowerCase()}-${i + 1}`,
+          requirementType: r.requirementType,
+          description: r.description,
+          isRequired: true,
+          notes: r.sourceText,
+          sourceUrl: r.sourceUrl,
+          reasoning: r.reasoning,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        })) as any;
+
+        if (cached) {
+          await db
+            .update(jurisdictionRules)
+            .set({
+              rules: rulesToCache,
+              source: "ai_generated",
+              cachedAt: new Date(),
+              updatedAt: new Date(),
+            })
+            .where(eq(jurisdictionRules.jurisdictionCode, cacheKey));
+        } else {
+          await db.insert(jurisdictionRules).values({
+            jurisdictionCode: cacheKey,
+            jurisdictionName: `${jurisdictionDisplay} (AI-generated)`,
+            projectTypes: ["residential", "commercial", "adu", "mixed_use", "renovation"],
+            rules: rulesToCache,
+            source: "ai_generated",
+            cachedAt: new Date(),
+          });
+        }
+
+        isAiGenerated = true;
+
+        // Upsert jurisdiction request queue
+        const existing = await db.query.jurisdictionRequests.findFirst({
+          where: eq(jurisdictionRequests.jurisdictionCode, cacheKey),
+        });
+        if (existing) {
+          await db
+            .update(jurisdictionRequests)
+            .set({
+              requestCount: existing.requestCount + 1,
+              lastRequestedAt: new Date(),
+            })
+            .where(eq(jurisdictionRequests.jurisdictionCode, cacheKey));
+        } else {
+          await db.insert(jurisdictionRequests).values({
+            jurisdictionCode: cacheKey,
+            jurisdictionName: jurisdictionDisplay,
+            requestCount: 1,
+          });
+        }
+      }
+    }
+
+    // Insert compliance items
+    await db
+      .insert(complianceItems)
+      .values(
+        requirementsData.map((r) => ({
+          projectId,
+          requirementType: r.requirementType,
+          description: r.description,
+          jurisdiction: jurisdictionDisplay,
+          source: isAiGenerated ? "ai_generated" : "rule_based",
+          sourceUrl: r.sourceUrl,
+          sourceText: r.sourceText,
+          reasoning: r.reasoning,
+          status: "pending" as const,
+        }))
+      );
+
+    console.log(`[auto-research] Successfully generated ${requirementsData.length} requirements for project ${projectId}`);
+  } catch (err) {
+    console.error(`[auto-research] Failed to auto-generate requirements for project ${projectId}:`, err);
+  }
+}
 
 export const projectsRouter = createTRPCRouter({
   list: protectedProcedure.query(async ({ ctx }) => {
@@ -182,6 +444,15 @@ export const projectsRouter = createTRPCRouter({
         projectName: newProject.name,
         projectId: newProject.id,
       }).catch((err) => console.error("[email] project created email failed:", err));
+
+      // Auto-trigger requirements research (fire-and-forget)
+      autoTriggerRequirementsResearch(
+        ctx.db,
+        newProject.id,
+        input.projectType,
+        input.address,
+        input.jurisdiction
+      ).catch((err) => console.error("[auto-research] requirements research failed:", err));
 
       return newProject;
     }),
