@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { CheckCircle2, Circle, Clock } from "lucide-react";
 
 type ReviewType = "lpr" | "spr";
@@ -143,6 +144,9 @@ export function Article80Tracker({
   activeStepIds = [],
   onStepClick,
 }: Article80TrackerProps) {
+  const [expandedStepId, setExpandedStepId] = useState<string | null>(null);
+  const toggleExpand = (id: string) => setExpandedStepId((prev) => (prev === id ? null : id));
+
   const steps = reviewType === "lpr" ? LPR_STEPS : SPR_STEPS;
   const completedSet = new Set(completedStepIds);
   const activeSet = new Set(activeStepIds);
@@ -220,112 +224,82 @@ export function Article80Tracker({
         {steps.map((step, idx) => {
           const isCompleted = completedSet.has(step.id);
           const isActive = activeSet.has(step.id);
-          const isUpcoming = !isCompleted && !isActive;
+          const isExpanded = expandedStepId === step.id;
 
-          let iconColor = "#334155"; // upcoming
-          if (isCompleted) iconColor = "#14B8A6";
-          else if (isActive) iconColor = "#F59E0B";
-
-          let labelColor = "#64748B";
-          if (isCompleted) labelColor = "#94A3B8";
-          else if (isActive) labelColor = "#F1F5F9";
-
+          const dotColor = isCompleted ? "#14B8A6" : isActive ? "#F59E0B" : "#334155";
+          const labelColor = isCompleted ? "#64748B" : isActive ? "#FDE68A" : "#CBD5E1";
           const isLast = idx === steps.length - 1;
-
           const currentStatus = isCompleted ? "met" : isActive ? "in_progress" : "pending";
+          const statusLabel = isCompleted ? "Complete" : isActive ? "In Progress" : "Pending";
 
           return (
             <div key={step.id} style={{ display: "flex", gap: 12 }}>
-              {/* Timeline line + icon */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+              {/* Timeline spine */}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, width: 20 }}>
                 <button
                   onClick={() => onStepClick?.(step.id, currentStatus, step.description)}
-                  title={
-                    currentStatus === "pending"
-                      ? "Mark as in progress"
-                      : currentStatus === "in_progress"
-                      ? "Mark as complete"
-                      : "Mark as pending"
-                  }
-                  style={{
-                    background: "none",
-                    border: "none",
-                    padding: 0,
-                    cursor: onStepClick ? "pointer" : "default",
-                    color: iconColor,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: "50%",
-                    transition: "opacity 0.15s",
-                  }}
+                  title={currentStatus === "pending" ? "Mark in progress" : currentStatus === "in_progress" ? "Mark complete" : "Mark pending"}
+                  style={{ background: "none", border: "none", padding: 0, cursor: onStepClick ? "pointer" : "default", color: dotColor, display: "flex", alignItems: "center", justifyContent: "center", transition: "opacity 0.15s", marginTop: 2 }}
                   onMouseEnter={(e) => { if (onStepClick) (e.currentTarget as HTMLButtonElement).style.opacity = "0.7"; }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
                 >
                   {isCompleted ? (
                     <CheckCircle2 style={{ width: 18, height: 18 }} />
                   ) : isActive ? (
-                    <div
-                      style={{
-                        width: 18,
-                        height: 18,
-                        borderRadius: "50%",
-                        border: "2px solid #F59E0B",
-                        background: "rgba(245,158,11,0.15)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
+                    <div style={{ width: 18, height: 18, borderRadius: "50%", border: "2px solid #F59E0B", background: "rgba(245,158,11,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#F59E0B" }} />
                     </div>
                   ) : (
                     <Circle style={{ width: 18, height: 18 }} />
                   )}
                 </button>
-                
                 {!isLast && (
-                  <div
-                    style={{
-                      width: 1,
-                      flex: 1,
-                      minHeight: 16,
-                      background: isCompleted ? "rgba(20,184,166,0.3)" : "rgba(51,65,85,0.5)",
-                      margin: "2px 0",
-                    }}
-                  />
+                  <div style={{ width: 1, flex: 1, minHeight: 16, background: isCompleted ? "rgba(20,184,166,0.3)" : "rgba(51,65,85,0.5)", margin: "3px 0" }} />
                 )}
               </div>
 
               {/* Content */}
               <div style={{ paddingBottom: isLast ? 0 : 12, flex: 1 }}>
-                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
-                  <span
-                    style={{
-                      fontSize: 13,
-                      fontWeight: isActive ? 600 : 500,
-                      color: labelColor,
-                      textDecoration: isCompleted ? "line-through" : "none",
-                    }}
-                  >
+                {/* Clickable header */}
+                <div onClick={() => toggleExpand(step.id)} style={{ cursor: "pointer", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
+                  <span style={{ fontSize: 13, fontWeight: isActive ? 600 : 500, color: labelColor, textDecoration: isCompleted ? "line-through" : "none", flex: 1, lineHeight: "1.45" }}>
                     {idx + 1}. {step.label}
                   </span>
-                  <span
-                    style={{
-                      fontSize: 11,
-                      color: "#475569",
-                      whiteSpace: "nowrap",
-                      flexShrink: 0,
-                    }}
-                  >
-                    {step.estimatedWeeks}
-                  </span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0, marginTop: 1 }}>
+                    <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 100, background: `${dotColor}22`, color: dotColor, whiteSpace: "nowrap" }}>{statusLabel}</span>
+                    <span style={{ fontSize: 10, color: "#475569", display: "inline-block", transition: "transform 0.15s", transform: isExpanded ? "rotate(180deg)" : "none" }}>▼</span>
+                  </div>
                 </div>
-                {isActive && (
-                  <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 2 }}>{step.description}</div>
-                )}
-                {isUpcoming && idx === steps.findIndex((s) => !completedSet.has(s.id) && !activeSet.has(s.id)) && (
-                  <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>Next step</div>
+                {/* Expanded panel */}
+                {isExpanded && (
+                  <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+                    <p style={{ fontSize: 12, color: "#94A3B8", marginBottom: 10, lineHeight: 1.55 }}>{step.description}</p>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, color: "#64748B" }}>⏱ {step.estimatedWeeks}</span>
+                    </div>
+                    {onStepClick && (
+                      <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
+                        {currentStatus !== "in_progress" && (
+                          <button onClick={() => onStepClick(step.id, currentStatus, step.description)}
+                            style={{ fontSize: 11, padding: "4px 10px", borderRadius: 5, background: "rgba(245,158,11,0.15)", color: "#FDE68A", border: "1px solid rgba(245,158,11,0.3)", cursor: "pointer", fontWeight: 600 }}>
+                            → Mark In Progress
+                          </button>
+                        )}
+                        {currentStatus !== "met" && (
+                          <button onClick={() => onStepClick(step.id, "in_progress", step.description)}
+                            style={{ fontSize: 11, padding: "4px 10px", borderRadius: 5, background: "rgba(20,184,166,0.15)", color: "#5EEAD4", border: "1px solid rgba(20,184,166,0.3)", cursor: "pointer", fontWeight: 600 }}>
+                            ✓ Mark Complete
+                          </button>
+                        )}
+                        {(currentStatus === "met" || currentStatus === "in_progress") && (
+                          <button onClick={() => onStepClick(step.id, currentStatus, step.description)}
+                            style={{ fontSize: 11, padding: "4px 10px", borderRadius: 5, background: "rgba(255,255,255,0.05)", color: "#64748B", border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer" }}>
+                            ↩ Reset to Pending
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             </div>

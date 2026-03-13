@@ -169,6 +169,8 @@ export default function ProjectDetailPage() {
   const [copiedShareUrl, setCopiedShareUrl] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const toggleItemExpand = (id: string) => setExpandedItems((prev) => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [upgradeModalConfig, setUpgradeModalConfig] = useState<{ title: string; description: string }>({
     title: "Upgrade to Professional",
@@ -844,110 +846,101 @@ export default function ProjectDetailPage() {
                                 </button>
                               )}
                               {!collapsed && (
-                                <div className="space-y-3">
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
                                   {groupItems.map((item, gIdx) => {
-                                    const idx = items.indexOf(item);
-                                    const isNext = idx === nextActionIdx;
-                      const sc =
-                        item.status === "met"      ? { border: 'rgba(16,185,129,0.3)', bg: 'rgba(16,185,129,0.04)', num: '#10B981', badge: 'rgba(16,185,129,0.15)', badgeText: '#4ADE80' }
-                        : item.status === "overdue"   ? { border: 'rgba(239,68,68,0.4)', bg: 'rgba(239,68,68,0.05)', num: '#EF4444', badge: 'rgba(239,68,68,0.15)', badgeText: '#F87171' }
-                        : item.status === "in_progress" ? { border: 'rgba(59,130,246,0.4)', bg: 'rgba(59,130,246,0.05)', num: '#3B82F6', badge: 'rgba(59,130,246,0.15)', badgeText: '#60A5FA' }
-                        : { border: 'rgba(255,255,255,0.09)', bg: 'transparent', num: '#475569', badge: 'rgba(255,255,255,0.07)', badgeText: '#64748B' };
-                      const statusLabel =
-                        item.status === "met" ? "✓ Complete" : item.status === "in_progress" ? "→ In Progress"
-                        : item.status === "overdue" ? "⚠ Overdue" : item.status === "not_applicable" ? "N/A" : "○ Pending";
-
-                      return (
-                        <div key={item.id} className="rounded-xl overflow-hidden"
-                          style={{ border: isNext ? '1px solid rgba(14,165,233,0.45)' : `1px solid ${sc.border}`, background: isNext ? 'rgba(14,165,233,0.04)' : sc.bg, boxShadow: isNext ? '0 0 0 1px rgba(14,165,233,0.12)' : 'none' }}>
-                          <div className="p-4">
-                            <div className="flex items-start gap-3">
-                              {/* Step number */}
-                              <div className="h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold"
-                                style={{ background: `${sc.num}20`, color: sc.num, border: `1px solid ${sc.num}40` }}>
-                                {item.status === "met" ? "✓" : gIdx + 1}
-                              </div>
-
-                              <div className="flex-1 min-w-0">
-                                {/* Description + status */}
-                                <div className="flex items-start gap-2 flex-wrap">
-                                  <p className="font-medium text-sm flex-1 min-w-0"
-                                    style={{ color: item.status === "met" ? '#64748B' : '#F1F5F9', textDecoration: item.status === "met" ? 'line-through' : 'none' }}>
-                                    {item.description}
-                                  </p>
-                                  <div className="flex items-center gap-2 flex-shrink-0">
-                                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: sc.badge, color: sc.badgeText }}>{statusLabel}</span>
-                                    <select value={item.status} onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                                      className="text-xs rounded-md px-2 py-1 font-medium border cursor-pointer"
-                                      style={{ background: '#0F172A', borderColor: 'rgba(255,255,255,0.12)', color: '#94A3B8', outline: 'none' }}>
-                                      <option value="pending">Pending</option>
-                                      <option value="in_progress">In Progress</option>
-                                      <option value="met">Complete</option>
-                                      <option value="overdue">Overdue</option>
-                                      <option value="not_applicable">N/A</option>
-                                    </select>
-                                  </div>
-                                </div>
-
-                                {/* Meta: type, due, source, doc */}
-                                <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-                                  <span className="text-xs capitalize text-muted-foreground">{item.requirementType.replace(/_/g, " ")}</span>
-                                  {item.deadline && (
-                                    <span className="flex items-center gap-1 text-xs" style={{ color: item.status === "overdue" ? '#F87171' : '#94A3B8' }}>
-                                      <Clock className="h-3 w-3" />Due {format(new Date(item.deadline), "MMM d, yyyy")}
-                                    </span>
-                                  )}
-                                  {item.sourceUrl && (
-                                    <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs hover:underline" style={{ color: '#38BDF8' }}>
-                                      <ExternalLink className="h-3 w-3" />Source
-                                    </a>
-                                  )}
-                                  {item.document && (
-                                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                                      <FileText className="h-3 w-3" />{item.document.filename}
-                                    </span>
-                                  )}
-                                </div>
-
-                                {/* Notes */}
-                                {editingNoteId === item.id ? (
-                                  <div className="mt-3 flex gap-2">
-                                    <textarea autoFocus rows={2} value={noteText} onChange={(e) => setNoteText(e.target.value)}
-                                      placeholder="Add a note..." className="flex-1 text-sm px-3 py-2 rounded-lg resize-none"
-                                      style={{ background: '#0F172A', border: '1px solid rgba(255,255,255,0.15)', color: '#F1F5F9', outline: 'none' }}
-                                      onKeyDown={(e) => { if (e.key === 'Escape') setEditingNoteId(null); }} />
-                                    <div className="flex flex-col gap-1">
-                                      <button onClick={() => { updateItem.mutate({ id: item.id, notes: noteText }); setEditingNoteId(null); }}
-                                        className="text-xs px-3 py-1.5 rounded font-medium bg-[#14B8A6] text-white">Save</button>
-                                      <button onClick={() => setEditingNoteId(null)}
-                                        className="text-xs px-3 py-1.5 rounded font-medium text-[#CBD5E1]"
-                                        style={{ background: 'rgba(255,255,255,0.05)' }}>Cancel</button>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <div className="mt-2">
-                                    {item.notes ? (
-                                      <div className="flex items-start gap-2">
-                                        <p className="text-xs flex-1 px-3 py-2 rounded-lg" style={{ background: 'rgba(20,184,166,0.06)', border: '1px solid rgba(20,184,166,0.15)', color: '#94A3B8' }}>
-                                          📝 {item.notes}
-                                        </p>
-                                        <button onClick={() => { setEditingNoteId(item.id); setNoteText(item.notes ?? ''); }}
-                                          className="text-xs text-[#CBD5E1] hover:text-[#14B8A6] shrink-0 mt-1">Edit</button>
+                                    const isLast = gIdx === groupItems.length - 1;
+                                    const isExp = expandedItems.has(item.id);
+                                    const dotColor = item.status === "met" ? '#10B981' : item.status === "overdue" ? '#EF4444' : item.status === "in_progress" ? '#F59E0B' : '#475569';
+                                    const lineColor = item.status === "met" ? 'rgba(16,185,129,0.3)' : 'rgba(51,65,85,0.5)';
+                                    const labelColor = item.status === "met" ? '#64748B' : item.status === "overdue" ? '#FCA5A5' : item.status === "in_progress" ? '#FDE68A' : '#E2E8F0';
+                                    const statusLabel = item.status === "met" ? "Complete" : item.status === "in_progress" ? "In Progress" : item.status === "overdue" ? "Overdue" : item.status === "not_applicable" ? "N/A" : "Pending";
+                                    return (
+                                      <div key={item.id} style={{ display: 'flex', gap: 12 }}>
+                                        {/* Timeline spine */}
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: 20 }}>
+                                          <div style={{ width: 20, height: 20, borderRadius: '50%', border: `2px solid ${dotColor}`, background: item.status === 'met' ? dotColor : `${dotColor}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2 }}>
+                                            {item.status === 'met' ? (
+                                              <span style={{ color: '#fff', fontSize: 10, fontWeight: 700 }}>✓</span>
+                                            ) : (
+                                              <span style={{ color: dotColor, fontSize: 9, fontWeight: 700 }}>{gIdx + 1}</span>
+                                            )}
+                                          </div>
+                                          {!isLast && (
+                                            <div style={{ width: 1, flex: 1, minHeight: 12, background: lineColor, margin: '3px 0' }} />
+                                          )}
+                                        </div>
+                                        {/* Content */}
+                                        <div style={{ flex: 1, paddingBottom: isLast ? 4 : 14 }}>
+                                          {/* Clickable header row */}
+                                          <div onClick={() => toggleItemExpand(item.id)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, minHeight: 24 }}>
+                                            <span style={{ fontSize: 13, fontWeight: 500, color: labelColor, textDecoration: item.status === 'met' ? 'line-through' : 'none', flex: 1, lineHeight: '1.45' }}>
+                                              {item.description}
+                                            </span>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, marginTop: 1 }}>
+                                              <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 100, background: `${dotColor}22`, color: dotColor, whiteSpace: 'nowrap' }}>{statusLabel}</span>
+                                              <span style={{ fontSize: 10, color: '#475569', transition: 'transform 0.15s', display: 'inline-block', transform: isExp ? 'rotate(180deg)' : 'none' }}>▼</span>
+                                            </div>
+                                          </div>
+                                          {/* Expanded panel */}
+                                          {isExp && (
+                                            <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+                                              {(item.sourceText ?? item.reasoning) && (
+                                                <p style={{ fontSize: 12, color: '#94A3B8', marginBottom: 10, lineHeight: 1.55 }}>{item.sourceText ?? item.reasoning}</p>
+                                              )}
+                                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 10, alignItems: 'center' }}>
+                                                {item.deadline && (
+                                                  <span style={{ fontSize: 11, color: item.status === "overdue" ? '#F87171' : '#64748B' }}>
+                                                    📅 Due {format(new Date(item.deadline), "MMM d, yyyy")}
+                                                  </span>
+                                                )}
+                                                {item.sourceUrl && (
+                                                  <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: '#38BDF8', textDecoration: 'none' }}>
+                                                    🔗 Official source
+                                                  </a>
+                                                )}
+                                                {item.document && (
+                                                  <span style={{ fontSize: 11, color: '#64748B' }}>📄 {item.document.filename}</span>
+                                                )}
+                                              </div>
+                                              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                                                <span style={{ fontSize: 11, color: '#64748B' }}>Status:</span>
+                                                <select value={item.status} onChange={(e) => handleStatusChange(item.id, e.target.value)}
+                                                  style={{ fontSize: 12, borderRadius: 6, padding: '3px 8px', background: '#0F172A', border: '1px solid rgba(255,255,255,0.12)', color: '#CBD5E1', outline: 'none', cursor: 'pointer' }}>
+                                                  <option value="pending">○ Pending</option>
+                                                  <option value="in_progress">→ In Progress</option>
+                                                  <option value="met">✓ Complete</option>
+                                                  <option value="overdue">⚠ Overdue</option>
+                                                  <option value="not_applicable">— N/A</option>
+                                                </select>
+                                              </div>
+                                              {editingNoteId === item.id ? (
+                                                <div style={{ display: 'flex', gap: 8 }}>
+                                                  <textarea autoFocus rows={2} value={noteText} onChange={(e) => setNoteText(e.target.value)}
+                                                    placeholder="Add a note..." style={{ flex: 1, fontSize: 12, padding: '6px 10px', borderRadius: 6, resize: 'none', background: '#0F172A', border: '1px solid rgba(255,255,255,0.15)', color: '#F1F5F9', outline: 'none' }}
+                                                    onKeyDown={(e) => { if (e.key === 'Escape') setEditingNoteId(null); }} />
+                                                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                                    <button onClick={() => { updateItem.mutate({ id: item.id, notes: noteText }); setEditingNoteId(null); }}
+                                                      style={{ fontSize: 11, padding: '4px 10px', borderRadius: 5, background: '#14B8A6', color: '#fff', border: 'none', cursor: 'pointer', fontWeight: 600 }}>Save</button>
+                                                    <button onClick={() => setEditingNoteId(null)}
+                                                      style={{ fontSize: 11, padding: '4px 10px', borderRadius: 5, background: 'rgba(255,255,255,0.07)', color: '#CBD5E1', border: 'none', cursor: 'pointer' }}>Cancel</button>
+                                                  </div>
+                                                </div>
+                                              ) : item.notes ? (
+                                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                                                  <p style={{ flex: 1, fontSize: 12, padding: '6px 10px', borderRadius: 6, background: 'rgba(20,184,166,0.06)', border: '1px solid rgba(20,184,166,0.15)', color: '#94A3B8', margin: 0 }}>📝 {item.notes}</p>
+                                                  <button onClick={() => { setEditingNoteId(item.id); setNoteText(item.notes ?? ''); }}
+                                                    style={{ fontSize: 11, color: '#CBD5E1', background: 'none', border: 'none', cursor: 'pointer', marginTop: 2, flexShrink: 0 }}>Edit</button>
+                                                </div>
+                                              ) : (
+                                                <button onClick={() => { setEditingNoteId(item.id); setNoteText(''); }}
+                                                  style={{ fontSize: 11, color: '#475569', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>+ Add note</button>
+                                              )}
+                                            </div>
+                                          )}
+                                        </div>
                                       </div>
-                                    ) : (
-                                      <button onClick={() => { setEditingNoteId(item.id); setNoteText(''); }}
-                                        className="text-xs text-[#475569] hover:text-[#14B8A6] transition-colors flex items-center gap-1">
-                                        + Add note
-                                      </button>
-                                    )}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                                    );
+                                  })}
                                 </div>
                               )}
                             </div>
