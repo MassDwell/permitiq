@@ -5,6 +5,7 @@ import { eq, and, desc, count, sql, gte, lte, inArray } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { sendProjectCreatedEmail } from "@/lib/email";
 import { assertProjectAccess } from "../project-access";
+import { dispatchWebhook, createProjectCreatedPayload } from "@/lib/webhooks";
 
 export const projectsRouter = createTRPCRouter({
   list: protectedProcedure.query(async ({ ctx }) => {
@@ -182,6 +183,19 @@ export const projectsRouter = createTRPCRouter({
         projectName: newProject.name,
         projectId: newProject.id,
       }).catch((err) => console.error("[email] project created email failed:", err));
+
+      // Dispatch webhook (fire-and-forget)
+      dispatchWebhook(
+        ctx.dbUser.id,
+        "project.created",
+        createProjectCreatedPayload({
+          projectId: newProject.id,
+          projectName: newProject.name,
+          address: newProject.address,
+          jurisdiction: newProject.jurisdiction,
+          projectType: newProject.projectType,
+        })
+      );
 
       return newProject;
     }),
