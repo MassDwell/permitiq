@@ -338,8 +338,7 @@ export default function LandingPage() {
             </h1>
 
             <p className="text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed" style={{ color: "#94A3B8" }}>
-              MeritLayer reads your permit documents, maps every deadline, and alerts your team
-              before anything slips through the cracks. Built for Boston developers and GCs.
+              MeritLayer reads your compliance documents, maps every deadline, and alerts your team before anything falls through the cracks. Built for Massachusetts developers and GCs.
             </p>
 
             {/* CTA buttons */}
@@ -384,7 +383,7 @@ export default function LandingPage() {
               <p className="text-sm" style={{ color: "#64748B" }}>
                 Trusted by{" "}
                 <span style={{ color: "#CBD5E1", fontWeight: 600 }}>47+</span>{" "}
-                Boston developers
+                Massachusetts developers
               </p>
             </div>
           </div>
@@ -1209,7 +1208,7 @@ export default function LandingPage() {
             <div className="md:col-span-2">
               <Logo size="sm" />
               <p className="mt-3 text-sm max-w-xs leading-relaxed" style={{ color: "#475569" }}>
-                AI-powered permit and compliance management for Boston&apos;s real estate developers and construction firms.
+                AI-powered permit and compliance management for Massachusetts real estate developers and construction firms.
               </p>
             </div>
             <div>
