@@ -321,11 +321,32 @@ export default function ProjectDetailPage() {
 
   const updateItem = updateComplianceItem;
 
+  // All requirementTypes that belong to the Demolition Permit group
+  const DEMOLITION_REQUIREMENT_TYPES = new Set([
+    "demolition_delay_approval",
+    "utility_shutoff_notices",
+    "bwsc_closed_gsa",
+    "dep_hazmat_approval",
+    "dig_safe_reference",
+    "pest_control_letter",
+    "licensed_builder_documents",
+    "fire_prevention_permit",
+    "environmental_services_review",
+    "asbestos_survey",
+    "asbestos_survey_and_notification",
+    "article_85_demolition_delay",
+  ]);
+
   // Group compliance items by permit process
   const getPermitGroup = (item: { ruleId: string | null; source: string | null; requirementType: string; document?: { filename: string } | null }): string => {
     const ruleId = item.ruleId ?? "";
-    if (ruleId.startsWith("boston-isd-demo") || /demolition/i.test(item.requirementType)) return "Demolition Permit";
-    if (ruleId.startsWith("boston-isd-building")) return "Building Permit";
+    if (
+      ruleId.startsWith("boston-isd-demo") ||
+      ruleId.startsWith("boston-demolition") ||
+      /demolition/i.test(item.requirementType) ||
+      DEMOLITION_REQUIREMENT_TYPES.has(item.requirementType)
+    ) return "Demolition Permit";
+    if (ruleId.startsWith("boston-isd-building") || ruleId.startsWith("boston-building")) return "Building Permit";
     if (ruleId.startsWith("boston-isd-trade")) return "Trade Permits";
     if (ruleId.startsWith("boston-isd-article-80-large") || ruleId.startsWith("boston-article-80-large")) return "BPDA Large Project Review";
     if (ruleId.startsWith("boston-isd-article-80-small") || ruleId.startsWith("boston-article-80-small")) return "BPDA Small Project Review";

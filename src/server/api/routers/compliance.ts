@@ -605,12 +605,14 @@ export const complianceRouter = createTRPCRouter({
       const insertedItems = await ctx.db
         .insert(complianceItems)
         .values(
-          requirementsData.map((r) => ({
+          requirementsData.map((r, i) => ({
             projectId: input.projectId,
             requirementType: r.requirementType,
             description: r.description,
             jurisdiction: jurisdictionDisplay,
             source: isAiGenerated ? "ai_generated" : "rule_based",
+            // Store ruleId so getPermitGroup can reliably bucket items by permit category
+            ruleId: isAiGenerated ? null : `${jurisdiction}-${category}-${r.requirementType}-${i + 1}`,
             sourceUrl: r.sourceUrl,
             sourceText: r.sourceText,
             reasoning: r.reasoning,

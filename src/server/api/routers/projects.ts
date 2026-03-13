@@ -1,5 +1,4 @@
 import { dispatchWebhook, createProjectCreatedPayload } from "@/lib/webhooks";
-import { dispatchWebhook, createProjectCreatedPayload } from "@/lib/webhooks";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { projects, documents, complianceItems, complianceSnapshots, projectMembers, jurisdictionRules, jurisdictionRequests } from "@/db/schema";
@@ -7,7 +6,7 @@ import { eq, and, desc, count, sql, gte, lte, inArray } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { sendProjectCreatedEmail } from "@/lib/email";
 import { assertProjectAccess } from "../project-access";
-import type { Context } from "../trpc";
+
 import Anthropic from "@anthropic-ai/sdk";
 import {
   BOSTON_BUILDING_REQUIREMENTS,
@@ -95,7 +94,7 @@ function getRequirementsForPermit(
 
 // Auto-trigger requirements research for a new project (fire-and-forget)
 async function autoTriggerRequirementsResearch(
-  db: Context["db"],
+  db: typeof import("@/db").db,
   projectId: string,
   projectType: string,
   address?: string,
