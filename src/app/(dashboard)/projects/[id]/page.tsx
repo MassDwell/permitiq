@@ -320,6 +320,19 @@ export default function ProjectDetailPage() {
     updateComplianceItem.mutate({ id: itemId, status: newStatus as "pending" | "in_progress" | "met" | "overdue" | "not_applicable" });
   };
 
+  const toggleArticle80Step = trpc.compliance.toggleArticle80Step.useMutation({
+    onSuccess: () => {
+      void utils.projects.get.invalidate({ id: projectId });
+    },
+    onError: (err) => {
+      toast.error(err.message ?? "Failed to update step");
+    },
+  });
+
+  const handleArticle80StepClick = (stepId: string, currentStatus: "pending" | "in_progress" | "met", stepDescription: string) => {
+    toggleArticle80Step.mutate({ projectId, stepId, stepDescription, currentStatus });
+  };
+
   const handleSettingsSave = () => {
     const gfaValue = settingsGrossFloorArea ? parseInt(settingsGrossFloorArea, 10) : null;
     const unitCountValue = settingsUnitCount ? parseInt(settingsUnitCount, 10) : null;
@@ -630,6 +643,7 @@ export default function ProjectDetailPage() {
                 activeStepIds={project.complianceItems
                   .filter((i) => i.status === "in_progress")
                   .map((i) => i.requirementType)}
+                onStepClick={handleArticle80StepClick}
               />
             )}
             <PermitWorkflowTab
@@ -741,7 +755,11 @@ export default function ProjectDetailPage() {
                     {project.complianceItems.map((item) => (
                       <div
                         key={item.id}
-                        className="flex items-start gap-4 p-4 rounded-lg border border-white/10 hover:bg-white/5 transition-colors"
+                        className="flex items-start gap-4 p-4 rounded-lg border border-white/10 hover:bg-white/5 transition-all"
+                        style={{
+                          opacity: item.status === "met" ? 0.65 : 1,
+                          background: item.status === "met" ? "rgba(34,197,94,0.04)" : undefined,
+                        }}
                       >
                         <Checkbox
                           checked={item.status === "met"}
@@ -1037,6 +1055,7 @@ export default function ProjectDetailPage() {
                 activeStepIds={project.complianceItems
                   .filter((i) => i.status === "in_progress")
                   .map((i) => i.requirementType)}
+                onStepClick={handleArticle80StepClick}
               />
             )}
             <PermitRequirementsPanel
