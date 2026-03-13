@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { userSettings, users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { userSettings, users, projects, projectMembers } from "@/db/schema";
+import { eq, count } from "drizzle-orm";
 
 export const settingsRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -99,5 +99,39 @@ export const settingsRouter = createTRPCRouter({
       .where(eq(users.id, ctx.dbUser.id));
 
     return { success: true };
+  }),
+
+  // Check if current user is an account owner (owns projects) vs a collaborator-only user
+  isOwnerStatus: protectedProcedure.query(async ({ ctx }) => {
+    // Count projects owned by this user
+    const [{ value: projectCount }] = await ctx.db
+      .select({ value: count() })
+      .from(projects)
+      .where(eq(projects.userId, ctx.dbUser.id));
+
+    if (projectCount > 0) {
+      return { isOwner: true, ownerEmail: null };
+    }
+
+    // Check if they have any accepted project_member entries (collaborator-only user)
+    const memberEntry = await ctx.db.query.projectMembers.findFirst({
+      where: eq(projectMembers.userId, ctx.userId),
+    });
+
+    if (!memberEntry) {
+      // No projects, no invites — new user, treat as owner
+      return { isOwner: true, ownerEmail: null };
+    }
+
+    // Find the project owner's email to show in the restricted message
+    const project = await ctx.db.query.projects.findFirst({
+      where: eq(projects.id, memberEntry.projectId),
+      with: { user: true },
+    });
+
+    return {
+      isOwner: false,
+      ownerEmail: project?.user?.email ?? null,
+    };
   }),
 });

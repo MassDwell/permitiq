@@ -400,49 +400,51 @@ export const BOSTON_ARTICLE_80_LARGE_REQUIREMENTS: RequirementData[] = [
 ];
 
 // Boston Article 80 Small Project Review (SPR)
-// Triggered by: Boston jurisdiction + residential/mixed_use + 7–14 units OR 20,000–49,999 sq ft
+// Triggered by: Boston jurisdiction + (grossFloorArea >= 20,000 sq ft OR unitCount >= 15)
+// Official 6-step process via Boston Planning Dept Urban Design Division
+// Contact: article80inquiries@boston.gov
 export const BOSTON_ARTICLE_80_SMALL_REQUIREMENTS: RequirementData[] = [
   {
-    requirementType: "bpda_pre_application_conference",
-    description: "Pre-Application Conference with BPDA (optional but strongly recommended) — Meet with BPDA staff to discuss project informally",
+    requirementType: "spr_pre_application_meeting",
+    description: "Pre-Application Meeting with Planning Dept — Contact article80inquiries@boston.gov; meet with project manager before filing",
     sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
-    sourceText: "Applicants for Small Project Review are encouraged to meet informally with BPDA staff prior to filing a PNF.",
-    reasoning: "Pre-application meetings reduce surprises during review and help applicants submit a complete PNF on the first try.",
+    sourceText: "Prior to filing, applicants must meet with a Boston Planning Dept project manager. Contact: article80inquiries@boston.gov",
+    reasoning: "The pre-application meeting is required to discuss project scope, identify issues early, and ensure a complete SPR application.",
   },
   {
-    requirementType: "pnf_submission",
-    description: "Project Notification Form (PNF) — Submit PNF to BPDA with project description, plans, and community context",
+    requirementType: "spr_application_submission",
+    description: "SPR Application Submission — Submit application to Planning Dept Urban Design Division: site plans, elevations, design narrative, climate resilience plan",
     sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
-    sourceText: "The Applicant shall file a Project Notification Form (PNF) with the BPDA to initiate Small Project Review under Article 80E.",
-    reasoning: "The PNF initiates Article 80 Small Project Review (Article 80E) for eligible projects.",
+    sourceText: "Submit SPR application to the Urban Design Division including site plans, elevations, design narrative, and climate resilience plan.",
+    reasoning: "The SPR application is the formal filing that initiates Article 80 Small Project Review — all required documents must be included.",
   },
   {
-    requirementType: "public_comment_period_20_days",
-    description: "20-Day Public Comment Period — BPDA publishes PNF and opens 20-day public comment window",
+    requirementType: "agency_community_review",
+    description: "Agency & Community Review — Planning Dept routes to city agencies and impacted community; public comment period (typically 20 days)",
     sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
-    sourceText: "Upon receipt of the PNF, the BPDA shall publish notice and open a 20-day public comment period for Small Project Review.",
-    reasoning: "Article 80E requires a 20-day public comment period (shorter than LPR's 30 days) before BPDA issues a determination.",
+    sourceText: "Upon receipt of the SPR application, the Planning Dept routes to relevant city agencies and the impacted community with a 20-day public comment period.",
+    reasoning: "Agency and community review ensures impacted stakeholders can weigh in before the Urban Design Division issues a determination.",
+  },
+  {
+    requirementType: "urban_design_review",
+    description: "Urban Design Review — Urban Design Division reviews: consistency with design principles, site plan, climate resilience",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "The Urban Design Division reviews the project for consistency with Boston design principles, site plan quality, and climate resilience measures.",
+    reasoning: "Urban Design Review is the core technical evaluation of an SPR project — compliance with design guidelines is required for approval.",
   },
   {
     requirementType: "spr_determination",
-    description: "Small Project Review Determination — BPDA issues determination: approved, approved with conditions, or referred to Large Project Review",
+    description: "SPR Determination — Planning Dept issues written determination: approved, approved with conditions, or referred to Large Project Review",
     sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
-    sourceText: "Following public comment, the BPDA shall issue a Small Project Review determination approving, approving with conditions, or escalating to Large Project Review.",
-    reasoning: "The BPDA determination is the primary decision point for SPR — conditions must be met before permits issue.",
+    sourceText: "Following Urban Design Review, the Planning Dept issues a written SPR determination: approved, approved with conditions, or escalated to Large Project Review.",
+    reasoning: "The SPR determination is the official decision point — conditions must be documented and satisfied before ISD will issue a building permit.",
   },
   {
-    requirementType: "conditions_compliance",
-    description: "Conditions Compliance — If approved with conditions, document and comply with all BPDA-imposed conditions",
-    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
-    sourceText: "If the BPDA approves a project with conditions, the Applicant must satisfy all conditions prior to or concurrent with building permit issuance.",
-    reasoning: "BPDA conditions are legally binding and must be satisfied before ISD will issue a building permit.",
-  },
-  {
-    requirementType: "isd_building_permit",
-    description: "Building Permit Application to ISD — With SPR complete, file building permit with Boston ISD",
+    requirementType: "conditions_compliance_isd_permit",
+    description: "Conditions Compliance + ISD Building Permit — Satisfy any conditions; file building permit with Boston ISD",
     sourceUrl: "https://onlinepermitsandlicenses.boston.gov/isdpermits/",
-    sourceText: "Following BPDA Small Project Review approval, the Applicant may file for a building permit with Boston ISD.",
-    reasoning: "Building permits from ISD are issued only after Article 80 Small Project Review is complete.",
+    sourceText: "Satisfy all SPR conditions of approval, then file a building permit application with Boston ISD.",
+    reasoning: "Building permits are issued by Boston ISD only after Article 80 SPR approval and all conditions are met.",
   },
 ];
 

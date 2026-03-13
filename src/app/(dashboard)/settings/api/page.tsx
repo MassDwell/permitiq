@@ -22,8 +22,10 @@ import {
   AlertTriangle,
   Zap,
   ArrowRight,
+  Lock,
 } from "lucide-react";
 import { format } from "date-fns";
+import { useIsOwner } from "@/hooks/use-is-owner";
 
 const CARD_STYLE = {
   background: "#0E1525",
@@ -37,6 +39,7 @@ const SECTION_HEADER_STYLE = {
 
 export default function ApiKeysPage() {
   const utils = trpc.useUtils();
+  const { isOwner, ownerEmail, isLoading: ownerLoading } = useIsOwner();
   const { data: profile, isLoading: profileLoading } = trpc.settings.getProfile.useQuery();
   const { data: keys, isLoading: keysLoading } = trpc.apiKeys.list.useQuery(undefined, {
     enabled: profile?.plan === "enterprise",
@@ -72,11 +75,45 @@ export default function ApiKeysPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (profileLoading) {
+  if (profileLoading || ownerLoading) {
     return (
       <div className="p-8 max-w-4xl">
         <Skeleton className="h-8 w-48 mb-4" />
         <Skeleton className="h-64 w-full rounded-xl" />
+      </div>
+    );
+  }
+
+  // Collaborator-only users cannot access API keys
+  if (!isOwner) {
+    return (
+      <div className="p-8 max-w-4xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-[#F1F5F9]">API Keys</h1>
+          <p className="text-[#64748B] mt-1">Manage API access for programmatic integrations</p>
+        </div>
+        <div
+          className="rounded-2xl p-8 text-center"
+          style={{ background: "#0E1525", border: "1px solid rgba(255,255,255,0.07)" }}
+        >
+          <div
+            className="h-14 w-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
+            style={{ background: "rgba(100,116,139,0.1)" }}
+          >
+            <Lock className="h-7 w-7 text-[#475569]" />
+          </div>
+          <h3 className="text-lg font-semibold text-[#F1F5F9] mb-2">API access is available to account owners only</h3>
+          <p className="text-sm text-[#64748B] max-w-sm mx-auto">
+            You have collaborator access to this workspace. API key management is restricted to the account owner.
+          </p>
+          {ownerEmail && (
+            <p className="text-sm text-[#475569] mt-4">
+              Contact{" "}
+              <span className="text-[#94A3B8] font-medium">{ownerEmail}</span>{" "}
+              for API access.
+            </p>
+          )}
+        </div>
       </div>
     );
   }

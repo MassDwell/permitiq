@@ -28,6 +28,7 @@ import {
   Check,
 } from "lucide-react";
 import { useState } from "react";
+import { useIsOwner } from "@/hooks/use-is-owner";
 
 const CARD_STYLE = {
   background: '#0E1525',
@@ -68,6 +69,7 @@ function PlanBadge({ plan }: { plan: string }) {
 export default function SettingsPage() {
   const utils = trpc.useUtils();
   const [copied, setCopied] = useState(false);
+  const { isOwner } = useIsOwner();
 
   const { data: profile, isLoading: profileLoading } =
     trpc.settings.getProfile.useQuery();
@@ -150,24 +152,26 @@ export default function SettingsPage() {
                       <PlanBadge plan={profile?.plan ?? "starter"} />
                     </div>
                   </div>
-                  <Button
-                    variant="outline"
-                    onClick={() => createPortalSession.mutate()}
-                    disabled={createPortalSession.isPending}
-                    style={{ borderColor: 'rgba(255,255,255,0.15)', color: '#94A3B8' }}
-                    className="hover:bg-white/5"
-                  >
-                    {createPortalSession.isPending ? "Loading..." : "Manage Subscription"}
-                    <ExternalLink className="h-4 w-4 ml-2" />
-                  </Button>
+                  {isOwner && (
+                    <Button
+                      variant="outline"
+                      onClick={() => createPortalSession.mutate()}
+                      disabled={createPortalSession.isPending}
+                      style={{ borderColor: 'rgba(255,255,255,0.15)', color: '#94A3B8' }}
+                      className="hover:bg-white/5"
+                    >
+                      {createPortalSession.isPending ? "Loading..." : "Manage Subscription"}
+                      <ExternalLink className="h-4 w-4 ml-2" />
+                    </Button>
+                  )}
                 </div>
               </>
             )}
           </div>
         </div>
 
-        {/* Billing */}
-        <div style={CARD_STYLE}>
+        {/* Billing — owner only */}
+        {isOwner && <div style={CARD_STYLE}>
           <div className="px-6 py-5" style={SECTION_HEADER_STYLE}>
             <div className="flex items-center gap-2">
               <CreditCard className="h-4 w-4 text-[#14B8A6]" />
@@ -232,7 +236,7 @@ export default function SettingsPage() {
               </div>
             )}
           </div>
-        </div>
+        </div>}
 
         {/* Notification Settings */}
         <div style={CARD_STYLE}>

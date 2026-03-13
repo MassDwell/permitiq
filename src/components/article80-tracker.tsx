@@ -2,7 +2,7 @@
 
 import { CheckCircle2, Circle, Clock } from "lucide-react";
 
-type ReviewType = "large" | "small";
+type ReviewType = "lpr" | "spr";
 
 interface Article80Step {
   id: string;
@@ -88,40 +88,40 @@ const LPR_STEPS: Article80Step[] = [
 
 const SPR_STEPS: Article80Step[] = [
   {
-    id: "bpda_pre_application_conference",
-    label: "Pre-Application Conference (Recommended)",
-    description: "Meet with BPDA staff to discuss project informally before filing",
+    id: "spr_pre_application_meeting",
+    label: "Pre-Application Meeting with Planning Dept",
+    description: "Contact article80inquiries@boston.gov; meet with project manager before filing any application",
     estimatedWeeks: "1–2 weeks",
   },
   {
-    id: "pnf_submission",
-    label: "Project Notification Form (PNF)",
-    description: "Submit PNF to BPDA with project description, plans, and community context",
+    id: "spr_application_submission",
+    label: "SPR Application Submission",
+    description: "Submit application to Urban Design Division: site plans, elevations, design narrative, climate resilience plan",
     estimatedWeeks: "2–4 weeks to prepare",
   },
   {
-    id: "public_comment_period_20_days",
-    label: "20-Day Public Comment Period",
-    description: "BPDA publishes PNF; 20-day public comment window opens",
+    id: "agency_community_review",
+    label: "Agency & Community Review",
+    description: "Planning Dept routes to city agencies and impacted community; public comment period (typically 20 days)",
     estimatedWeeks: "20 days (required)",
   },
   {
+    id: "urban_design_review",
+    label: "Urban Design Review",
+    description: "Urban Design Division reviews: consistency with design principles, site plan, climate resilience",
+    estimatedWeeks: "3–6 weeks",
+  },
+  {
     id: "spr_determination",
-    label: "Small Project Review Determination",
-    description: "BPDA issues determination: approved, approved with conditions, or referred to LPR",
-    estimatedWeeks: "4–8 weeks",
+    label: "SPR Determination",
+    description: "Planning Dept issues written determination: approved, approved with conditions, or referred to LPR",
+    estimatedWeeks: "2–4 weeks",
   },
   {
-    id: "conditions_compliance",
-    label: "Conditions Compliance",
-    description: "If approved with conditions, document and comply with all BPDA conditions",
-    estimatedWeeks: "Varies",
-  },
-  {
-    id: "isd_building_permit",
-    label: "Building Permit Application to ISD",
-    description: "With SPR complete, file building permit with Boston ISD",
-    estimatedWeeks: "6–12 weeks for ISD review",
+    id: "conditions_compliance_isd_permit",
+    label: "Conditions Compliance + ISD Building Permit",
+    description: "Satisfy any conditions; file building permit with Boston ISD",
+    estimatedWeeks: "Varies + 6–12 weeks ISD",
   },
 ];
 
@@ -138,7 +138,7 @@ export function Article80Tracker({
   completedStepIds = [],
   activeStepIds = [],
 }: Article80TrackerProps) {
-  const steps = reviewType === "large" ? LPR_STEPS : SPR_STEPS;
+  const steps = reviewType === "lpr" ? LPR_STEPS : SPR_STEPS;
   const completedSet = new Set(completedStepIds);
   const activeSet = new Set(activeStepIds);
 
@@ -146,9 +146,9 @@ export function Article80Tracker({
   const totalCount = steps.length;
   const progressPct = Math.round((completedCount / totalCount) * 100);
 
-  const timelineLabel = reviewType === "large" ? "6–18 months total" : "3–6 months total";
+  const timelineLabel = reviewType === "lpr" ? "Typically 12–18 months" : "Typically 3–6 months";
   const reviewLabel =
-    reviewType === "large" ? "Article 80 Large Project Review (LPR)" : "Article 80 Small Project Review (SPR)";
+    reviewType === "lpr" ? "Article 80 Large Project Review (LPR)" : "Article 80 Small Project Review (SPR)";
 
   return (
     <div

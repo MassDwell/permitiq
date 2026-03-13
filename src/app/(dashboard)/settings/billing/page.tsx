@@ -14,7 +14,9 @@ import {
   AlertTriangle,
   XCircle,
   Clock,
+  Lock,
 } from "lucide-react";
+import { useIsOwner } from "@/hooks/use-is-owner";
 
 const PLAN_FEATURES: Record<string, string[]> = {
   starter: ["1 active project", "100 documents/month", "AI document processing", "Deadline alerts", "Email support"],
@@ -104,6 +106,7 @@ const SECTION_HEADER_STYLE = {
 export default function BillingPage() {
   const { data: profile, isLoading: profileLoading } = trpc.settings.getProfile.useQuery();
   const { data: subscription, isLoading: subscriptionLoading } = trpc.billing.getSubscription.useQuery();
+  const { isOwner, ownerEmail, isLoading: ownerLoading } = useIsOwner();
 
   const createPortalSession = trpc.billing.createPortalSession.useMutation({
     onSuccess: (data) => {
@@ -116,6 +119,41 @@ export default function BillingPage() {
 
   const plan = profile?.plan ?? "starter";
   const isLoading = profileLoading || subscriptionLoading;
+
+  // Collaborator-only users cannot access billing
+  if (!ownerLoading && !isOwner) {
+    return (
+      <div className="p-8 max-w-4xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-[#F1F5F9]">Billing</h1>
+          <p className="text-[#64748B] mt-1">Manage your subscription and billing details</p>
+        </div>
+        <div
+          className="rounded-2xl p-8 text-center"
+          style={{ background: "#0E1525", border: "1px solid rgba(255,255,255,0.07)" }}
+        >
+          <div
+            className="h-14 w-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
+            style={{ background: "rgba(100,116,139,0.1)" }}
+          >
+            <Lock className="h-7 w-7 text-[#475569]" />
+          </div>
+          <h3 className="text-lg font-semibold text-[#F1F5F9] mb-2">Billing is managed by the account owner</h3>
+          <p className="text-sm text-[#64748B] max-w-sm mx-auto">
+            You have collaborator access to this workspace. Subscription and billing details are only visible to the
+            account owner.
+          </p>
+          {ownerEmail && (
+            <p className="text-sm text-[#475569] mt-4">
+              Contact{" "}
+              <span className="text-[#94A3B8] font-medium">{ownerEmail}</span>{" "}
+              to make changes.
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8 max-w-4xl">

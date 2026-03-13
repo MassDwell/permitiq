@@ -955,7 +955,7 @@ export default function ProjectDetailPage() {
             {project.articleEightyTrack && project.articleEightyTrack !== "none" &&
               (project.jurisdiction ?? "").toUpperCase().includes("BOSTON") && (
               <Article80Tracker
-                reviewType={project.articleEightyTrack === "lpr" ? "large" : "small"}
+                reviewType={project.articleEightyTrack === "lpr" ? "lpr" : "spr"}
                 completedStepIds={project.complianceItems
                   .filter((i) => i.status === "met")
                   .map((i) => i.requirementType)}

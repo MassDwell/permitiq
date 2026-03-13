@@ -411,7 +411,11 @@ export const complianceRouter = createTRPCRouter({
     });
   }),
 
-  // Auto-detect whether project needs Article 80 review based on jurisdiction, type, and unit count
+  // Auto-detect whether project needs Article 80 review based on jurisdiction, GFA, and unit count
+  // Official thresholds (bostonplans.org):
+  //   LPR: 50,000+ sq ft GFA
+  //   SPR: 20,000+ sq ft GFA OR 15+ dwelling units (and under LPR threshold)
+  //   None: <20,000 sq ft AND <15 units
   detectArticle80: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
@@ -428,24 +432,21 @@ export const complianceRouter = createTRPCRouter({
 
       const jurisdictionLower = (project.jurisdiction ?? "").toLowerCase();
       const isBoston = /boston/.test(jurisdictionLower);
-      const isEligibleType = project.projectType === "residential" || project.projectType === "mixed_use";
-      const unitCount = project.unitCount ?? 0;
+
+      if (!isBoston) {
+        return { applies: false, reviewType: "none" as const };
+      }
+
       const gfa = project.grossFloorArea ?? 0;
+      const units = project.unitCount ?? 0;
 
-      if (!isBoston || !isEligibleType) {
-        return { applies: false, reviewType: null as null };
+      if (gfa >= 50000) {
+        return { applies: true, reviewType: "lpr" as const };
       }
-
-      // LPR thresholds: 15+ units OR 50,000+ sq ft GFA
-      if (unitCount >= 15 || gfa >= 50000) {
-        return { applies: true, reviewType: "large" as const };
+      if (gfa >= 20000 || units >= 15) {
+        return { applies: true, reviewType: "spr" as const };
       }
-      // SPR thresholds: 7-14 units OR 20,000-49,999 sq ft GFA
-      if (unitCount >= 7 || (gfa >= 20000 && gfa < 50000)) {
-        return { applies: true, reviewType: "small" as const };
-      }
-      // Unit count and GFA unknown — flag as potentially applicable
-      return { applies: unitCount === 0 && gfa === 0, reviewType: "unknown" as const };
+      return { applies: false, reviewType: "none" as const };
     }),
 
   researchRequirements: protectedProcedure
