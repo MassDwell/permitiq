@@ -100,8 +100,8 @@ export function ComplianceReadinessScore({
 
   // Build actionable next steps
   const nextSteps: string[] = [];
-  if (overdueItems > 0) nextSteps.push(`Resolve ${overdueItems} overdue item${overdueItems > 1 ? "s" : ""}`);
-  if (pendingItems > 0 && pendingItems < 5) nextSteps.push(`Complete ${pendingItems} pending requirement${pendingItems > 1 ? "s" : ""}`);
+  if (overdueItems > 0) nextSteps.push(`Resolve ${overdueItems} past due step${overdueItems > 1 ? "s" : ""}`);
+  if (pendingItems > 0 && pendingItems < 5) nextSteps.push(`Complete ${pendingItems} remaining step${pendingItems > 1 ? "s" : ""}`);
   if (documentCount === 0) nextSteps.push("Upload at least one project document");
   if (documentCount < 3) nextSteps.push("Upload more supporting documents");
   if (upcomingDeadlinesCount > 0) nextSteps.push(`${upcomingDeadlinesCount} deadline${upcomingDeadlinesCount > 1 ? "s" : ""} coming up — stay on track`);
@@ -109,10 +109,10 @@ export function ComplianceReadinessScore({
 
   const breakdowns = [
     {
-      label: "Compliance Items",
+      label: "Permit Steps",
       score: complianceScore,
       icon: CheckCircle,
-      detail: `${metItems} of ${totalItems} met`,
+      detail: `${metItems} of ${totalItems} done`,
       color: complianceScore >= 67 ? "text-green-600" : complianceScore >= 34 ? "text-yellow-600" : "text-red-600",
     },
     {
@@ -126,7 +126,7 @@ export function ComplianceReadinessScore({
       label: "Deadlines",
       score: deadlineScore,
       icon: Clock,
-      detail: overdueItems > 0 ? `${overdueItems} overdue` : "All on track",
+      detail: overdueItems > 0 ? `${overdueItems} past due` : "All on track",
       color: deadlineScore >= 80 ? "text-green-600" : deadlineScore >= 50 ? "text-yellow-600" : "text-red-600",
     },
   ];
@@ -135,7 +135,7 @@ export function ComplianceReadinessScore({
     <Card>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium text-gray-500">Compliance Readiness</CardTitle>
+          <CardTitle className="text-sm font-medium text-gray-500">Permit Readiness</CardTitle>
           {getScoreBadge(overallScore)}
         </div>
       </CardHeader>

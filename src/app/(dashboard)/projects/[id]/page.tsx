@@ -67,6 +67,7 @@ import { HoldCostCalculator } from "@/components/hold-cost-calculator";
 import { PermitFeeEstimator } from "@/components/permit-fee-estimator";
 import { SoftCostsTab } from "@/components/soft-costs-tab";
 import { UpgradeModal } from "@/components/upgrade-modal";
+import { NextActionBanner } from "@/components/next-action-banner";
 import {
   Dialog,
   DialogContent,
@@ -122,15 +123,15 @@ const PROJECT_STATUS_OPTIONS = [
 function getStatusBadge(status: string) {
   switch (status) {
     case "met":
-      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">Met</span>;
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">Done</span>;
     case "pending":
-      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30">Pending</span>;
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30">Not started</span>;
     case "overdue":
-      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">Overdue</span>;
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">Past due</span>;
     case "in_progress":
-      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400 border border-blue-500/30">In Progress</span>;
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400 border border-blue-500/30">Working on it</span>;
     case "not_applicable":
-      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-white/10 text-muted-foreground border border-white/10">N/A</span>;
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-white/10 text-muted-foreground border border-white/10">Skipped</span>;
     default:
       return null;
   }
@@ -326,8 +327,8 @@ export default function ProjectDetailPage() {
     if (ruleId.startsWith("boston-isd-demo") || /demolition/i.test(item.requirementType)) return "Demolition Permit";
     if (ruleId.startsWith("boston-isd-building")) return "Building Permit";
     if (ruleId.startsWith("boston-isd-trade")) return "Trade Permits";
-    if (ruleId.startsWith("boston-isd-article-80-large") || ruleId.startsWith("boston-article-80-large")) return "Article 80 Large Project Review";
-    if (ruleId.startsWith("boston-isd-article-80-small") || ruleId.startsWith("boston-article-80-small")) return "Article 80 Small Project Review";
+    if (ruleId.startsWith("boston-isd-article-80-large") || ruleId.startsWith("boston-article-80-large")) return "BPDA Large Project Review";
+    if (ruleId.startsWith("boston-isd-article-80-small") || ruleId.startsWith("boston-article-80-small")) return "BPDA Small Project Review";
     if (ruleId.startsWith("cambridge")) return "Cambridge Building Permit";
     if (ruleId.startsWith("brookline")) return "Brookline Building Permit";
     if (ruleId.startsWith("salem")) return "Salem Building Permit";
@@ -544,7 +545,7 @@ export default function ProjectDetailPage() {
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
           style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#CBD5E1]">Compliance Score</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Permit Readiness</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: 'rgba(20,184,166,0.12)', boxShadow: '0 0 12px rgba(20,184,166,0.1)' }}>
               <CheckCircle className="h-4 w-4 text-[#14B8A6]" />
@@ -560,7 +561,7 @@ export default function ProjectDetailPage() {
           onClick={() => { setActiveTab("compliance"); setStatusFilter(statusFilter === "met" ? null : "met"); }}
           style={{ background: '#1E293B', border: statusFilter === "met" ? '1px solid rgba(16,185,129,0.5)' : '1px solid rgba(255,255,255,0.1)', boxShadow: statusFilter === "met" ? '0 0 0 2px rgba(16,185,129,0.15)' : '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#CBD5E1]">Requirements Met</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Steps Done</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: 'rgba(16,185,129,0.12)', boxShadow: '0 0 12px rgba(16,185,129,0.1)' }}>
               <CheckCircle className="h-4 w-4 text-[#10B981]" />
@@ -576,7 +577,7 @@ export default function ProjectDetailPage() {
           onClick={() => { setActiveTab("compliance"); setStatusFilter(statusFilter === "pending" ? null : "pending"); }}
           style={{ background: '#1E293B', border: statusFilter === "pending" ? '1px solid rgba(245,158,11,0.5)' : '1px solid rgba(255,255,255,0.1)', boxShadow: statusFilter === "pending" ? '0 0 0 2px rgba(245,158,11,0.15)' : '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#CBD5E1]">Pending</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Not Started</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: 'rgba(245,158,11,0.12)', boxShadow: '0 0 12px rgba(245,158,11,0.1)' }}>
               <Clock className="h-4 w-4 text-[#F59E0B]" />
@@ -590,7 +591,7 @@ export default function ProjectDetailPage() {
           onClick={() => { setActiveTab("compliance"); setStatusFilter(statusFilter === "overdue" ? null : "overdue"); }}
           style={{ background: '#1E293B', border: statusFilter === "overdue" ? '1px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.1)', boxShadow: statusFilter === "overdue" ? '0 0 0 2px rgba(239,68,68,0.15)' : '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#CBD5E1]">Overdue</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Past Due</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: 'rgba(239,68,68,0.12)', boxShadow: '0 0 12px rgba(239,68,68,0.1)' }}>
               <AlertTriangle className="h-4 w-4 text-[#EF4444]" />
@@ -601,13 +602,41 @@ export default function ProjectDetailPage() {
         </div>
       </div>
 
+      {/* Next Action Banner */}
+      <div className="mb-6">
+        <NextActionBanner
+          projectId={projectId}
+          complianceItems={project.complianceItems}
+          onFindRequirements={() => {
+            const lower = project.name.toLowerCase();
+            setResearchPermitType(/demo(lition)?/.test(lower) ? "demolition" : "");
+            setResearchOpen(true);
+          }}
+          onViewStep={(itemId) => {
+            setActiveTab("compliance");
+            setExpandedItems((prev) => {
+              const next = new Set(prev);
+              next.add(itemId);
+              return next;
+            });
+            // Scroll to the item after a short delay to allow tab switch
+            setTimeout(() => {
+              const el = document.getElementById(`compliance-item-${itemId}`);
+              if (el) {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
+              }
+            }, 100);
+          }}
+        />
+      </div>
+
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '0' }}>
           <div className="flex px-0 gap-0 overflow-x-auto scrollbar-none" style={{ whiteSpace: 'nowrap' }}>
             {[
               { value: "permits", label: "Permits" },
-              { value: "compliance", label: `Compliance (${project.complianceItems.length})` },
+              { value: "compliance", label: `Requirements (${project.complianceItems.length})` },
               { value: "documents", label: `Documents (${project.documents.length})` },
               { value: "requirements", label: "Requirements" },
               { value: "submission", label: "Submission Prep" },
@@ -720,7 +749,7 @@ export default function ProjectDetailPage() {
               </div>
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" onClick={() => { const lower = project.name.toLowerCase(); setResearchPermitType(/demo(lition)?/.test(lower) ? "demolition" : ""); setResearchOpen(true); }}>
-                  <Search className="h-4 w-4 mr-2" />Research Requirements
+                  <Search className="h-4 w-4 mr-2" />Find My Requirements
                 </Button>
                 <Button size="sm" onClick={() => setAddItemOpen(true)}>
                   <Plus className="h-4 w-4 mr-2" />Add Step
@@ -833,7 +862,7 @@ export default function ProjectDetailPage() {
                                     </span>
                                     {overdueCount > 0 && (
                                       <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: 'rgba(239,68,68,0.15)', color: '#F87171' }}>
-                                        {overdueCount} overdue
+                                        {overdueCount} past due
                                       </span>
                                     )}
                                     {metCount === groupItems.length && (
@@ -853,9 +882,9 @@ export default function ProjectDetailPage() {
                                     const dotColor = item.status === "met" ? '#10B981' : item.status === "overdue" ? '#EF4444' : item.status === "in_progress" ? '#F59E0B' : '#475569';
                                     const lineColor = item.status === "met" ? 'rgba(16,185,129,0.3)' : 'rgba(51,65,85,0.5)';
                                     const labelColor = item.status === "met" ? '#64748B' : item.status === "overdue" ? '#FCA5A5' : item.status === "in_progress" ? '#FDE68A' : '#E2E8F0';
-                                    const statusLabel = item.status === "met" ? "Complete" : item.status === "in_progress" ? "In Progress" : item.status === "overdue" ? "Overdue" : item.status === "not_applicable" ? "N/A" : "Pending";
+                                    const statusLabel = item.status === "met" ? "Done" : item.status === "in_progress" ? "Working on it" : item.status === "overdue" ? "Past due" : item.status === "not_applicable" ? "Skipped" : "Not started";
                                     return (
-                                      <div key={item.id} style={{ display: 'flex', gap: 12 }}>
+                                      <div key={item.id} id={`compliance-item-${item.id}`} style={{ display: 'flex', gap: 12 }}>
                                         {/* Timeline spine */}
                                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: 20 }}>
                                           <div style={{ width: 20, height: 20, borderRadius: '50%', border: `2px solid ${dotColor}`, background: item.status === 'met' ? dotColor : `${dotColor}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2 }}>
@@ -906,11 +935,11 @@ export default function ProjectDetailPage() {
                                                 <span style={{ fontSize: 11, color: '#64748B' }}>Status:</span>
                                                 <select value={item.status} onChange={(e) => handleStatusChange(item.id, e.target.value)}
                                                   style={{ fontSize: 12, borderRadius: 6, padding: '3px 8px', background: '#0F172A', border: '1px solid rgba(255,255,255,0.12)', color: '#CBD5E1', outline: 'none', cursor: 'pointer' }}>
-                                                  <option value="pending">○ Pending</option>
-                                                  <option value="in_progress">→ In Progress</option>
-                                                  <option value="met">✓ Complete</option>
-                                                  <option value="overdue">⚠ Overdue</option>
-                                                  <option value="not_applicable">— N/A</option>
+                                                  <option value="pending">○ Not started</option>
+                                                  <option value="in_progress">→ Working on it</option>
+                                                  <option value="met">✓ Done</option>
+                                                  <option value="overdue">⚠ Past due</option>
+                                                  <option value="not_applicable">— Skip this step</option>
                                                 </select>
                                               </div>
                                               {editingNoteId === item.id ? (
@@ -958,7 +987,7 @@ export default function ProjectDetailPage() {
                 <p className="text-muted-foreground mb-5 max-w-xs mx-auto text-sm">Research requirements for your permit type, or add them manually.</p>
                 <div className="flex items-center justify-center gap-3">
                   <Button onClick={() => { const lower = project.name.toLowerCase(); setResearchPermitType(/demo(lition)?/.test(lower) ? "demolition" : ""); setResearchOpen(true); }}>
-                    <Search className="h-4 w-4 mr-2" />Research Requirements
+                    <Search className="h-4 w-4 mr-2" />Find My Requirements
                   </Button>
                   <Button variant="outline" onClick={() => setAddItemOpen(true)}>
                     <Plus className="h-4 w-4 mr-2" />Add Manually
@@ -1248,10 +1277,10 @@ export default function ProjectDetailPage() {
                     const isBostonJx = (settingsJurisdiction || "").toUpperCase().includes("BOSTON");
                     const badge = isBostonJx && (gfa > 0 || units > 0)
                       ? gfa >= 50000
-                        ? { label: "LPR Required", color: "#EF4444" }
+                        ? { label: "BPDA Large Review", color: "#EF4444" }
                         : (gfa >= 20000 || units >= 15)
-                        ? { label: "SPR Required", color: "#F59E0B" }
-                        : { label: "No Article 80", color: "#22C55E" }
+                        ? { label: "BPDA Small Review", color: "#F59E0B" }
+                        : { label: "No BPDA Review", color: "#22C55E" }
                       : null;
                     return (
                       <>
@@ -1287,7 +1316,7 @@ export default function ProjectDetailPage() {
                 </div>
               </div>
               <p className="text-xs text-muted-foreground -mt-3">
-                Boston projects: 15+ units or 20,000+ sq ft require Article 80 BPDA review (SPR); 50,000+ sq ft triggers LPR.
+                Boston projects: 15+ units or 20,000+ sq ft require BPDA Small Project Review; 50,000+ sq ft triggers BPDA Large Project Review.
               </p>
 
               <div className="space-y-2">
@@ -1466,7 +1495,7 @@ export default function ProjectDetailPage() {
       <Dialog open={researchOpen} onOpenChange={setResearchOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Research Requirements</DialogTitle>
+            <DialogTitle>Find My Requirements</DialogTitle>
             <DialogDescription>
               What permit type is this project? We&apos;ll look up the requirements for you.
             </DialogDescription>
@@ -1478,8 +1507,8 @@ export default function ProjectDetailPage() {
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                 {[
                   { label: "Boston Building Permit", value: "Boston building permit" },
-                  { label: "Article 80 LPR", value: "Article 80 Large Project Review Boston" },
-                  { label: "Article 80 SPR", value: "Article 80 Small Project Review Boston" },
+                  { label: "BPDA Large Project Review", value: "Article 80 Large Project Review Boston" },
+                  { label: "BPDA Small Project Review", value: "Article 80 Small Project Review Boston" },
                   { label: "Demolition", value: "Boston demolition permit" },
                   { label: "Electrical", value: "Boston electrical permit" },
                 ].map((opt) => (

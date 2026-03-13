@@ -59,7 +59,7 @@ export function AddComplianceItemDialog({
 
   const createItem = trpc.compliance.create.useMutation({
     onSuccess: () => {
-      toast.success("Compliance item added");
+      toast.success("Step added");
       utils.projects.get.invalidate({ id: projectId });
       onOpenChange(false);
       // Reset form
@@ -93,9 +93,9 @@ export function AddComplianceItemDialog({
       <DialogContent className="sm:max-w-[500px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Add Compliance Item</DialogTitle>
+            <DialogTitle>Add Step</DialogTitle>
             <DialogDescription>
-              Manually add a requirement, deadline, or other compliance item to track.
+              Manually add a permit step, deadline, or requirement to track.
             </DialogDescription>
           </DialogHeader>
 
