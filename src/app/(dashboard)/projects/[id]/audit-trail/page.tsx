@@ -68,7 +68,7 @@ export default function AuditTrailPage() {
           body { background: white !important; color: black !important; }
           .print-page { page-break-after: always; }
           .print-card { border: 1px solid #e5e7eb !important; background: white !important; }
-          .print-text { color: #111827 !important; }
+          .print-text { color: #0F172A !important; }
           .print-muted { color: #6b7280 !important; }
           .print-header { background: #f9fafb !important; }
         }
@@ -76,7 +76,7 @@ export default function AuditTrailPage() {
 
       {/* Controls — hidden when printing */}
       <div className="no-print sticky top-0 z-10 flex items-center gap-3 px-8 py-4"
-        style={{ background: '#060B17', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+        style={{ background: '#1E293B', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
         <Link href={`/projects/${projectId}`}>
           <Button variant="outline" size="sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -101,7 +101,7 @@ export default function AuditTrailPage() {
 
         {/* COVER PAGE */}
         <div className="print-page print-card rounded-2xl p-10 space-y-8"
-          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.1)' }}>
+          style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)' }}>
           <div className="border-b pb-8" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
             <p className="text-2xl font-bold tracking-tight" style={{ color: '#14B8A6' }}>MeritLayer</p>
             <p className="text-sm text-muted-foreground mt-1">Permit &amp; Compliance Intelligence</p>
@@ -153,7 +153,7 @@ export default function AuditTrailPage() {
               style={{ background: 'rgba(20,184,166,0.2)', color: '#14B8A6' }}>1</span>
             Project Summary
           </h2>
-          <div className="print-card rounded-xl overflow-x-auto" style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <div className="print-card rounded-xl overflow-x-auto" style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)' }}>
             <table className="w-full min-w-[480px]">
               <tbody>
                 {[
@@ -185,7 +185,7 @@ export default function AuditTrailPage() {
           {project.complianceItems.length === 0 ? (
             <p className="text-muted-foreground text-sm">No compliance items recorded.</p>
           ) : (
-            <div className="print-card rounded-xl overflow-hidden" style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div className="print-card rounded-xl overflow-hidden" style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)' }}>
               <table className="w-full">
                 <thead>
                   <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
@@ -225,7 +225,7 @@ export default function AuditTrailPage() {
           {!permits || permits.length === 0 ? (
             <p className="text-muted-foreground text-sm">No permits tracked for this project.</p>
           ) : (
-            <div className="print-card rounded-xl overflow-hidden" style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div className="print-card rounded-xl overflow-hidden" style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)' }}>
               <table className="w-full">
                 <thead>
                   <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
@@ -280,7 +280,7 @@ export default function AuditTrailPage() {
           {project.documents.length === 0 ? (
             <p className="text-muted-foreground text-sm">No documents uploaded.</p>
           ) : (
-            <div className="print-card rounded-xl overflow-hidden" style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div className="print-card rounded-xl overflow-hidden" style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)' }}>
               <table className="w-full">
                 <thead>
                   <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
@@ -321,7 +321,7 @@ export default function AuditTrailPage() {
           {!inspections || inspections.length === 0 ? (
             <p className="text-muted-foreground text-sm">No inspection steps recorded.</p>
           ) : (
-            <div className="print-card rounded-xl overflow-hidden" style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div className="print-card rounded-xl overflow-hidden" style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)' }}>
               <table className="w-full">
                 <thead>
                   <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>

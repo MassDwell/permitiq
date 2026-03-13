@@ -113,7 +113,7 @@ export default async function SharePage({ params }: PageProps) {
         </div>
 
         {/* Compliance Summary Card */}
-        <div style={{ borderRadius: 16, padding: "1.75rem", background: "#0E1525", border: "1px solid rgba(255,255,255,0.07)", marginBottom: "1.5rem" }}>
+        <div style={{ borderRadius: 16, padding: "1.75rem", background: "#1E293B", border: "1px solid rgba(255,255,255,0.07)", marginBottom: "1.5rem" }}>
           <h2 style={{ fontSize: "0.8rem", fontWeight: 600, color: "#94A3B8", marginBottom: "1.25rem", letterSpacing: "0.04em", textTransform: "uppercase" }}>Compliance Summary</h2>
           <div style={{ display: "flex", alignItems: "center", gap: "2rem", flexWrap: "wrap" }}>
             <div>
@@ -147,7 +147,7 @@ export default async function SharePage({ params }: PageProps) {
 
         {/* Upcoming Deadlines */}
         {upcomingDeadlines.length > 0 && (
-          <div style={{ borderRadius: 16, padding: "1.5rem", background: "#0E1525", border: "1px solid rgba(255,255,255,0.07)", marginBottom: "1.5rem" }}>
+          <div style={{ borderRadius: 16, padding: "1.5rem", background: "#1E293B", border: "1px solid rgba(255,255,255,0.07)", marginBottom: "1.5rem" }}>
             <h2 style={{ fontSize: "0.8rem", fontWeight: 600, color: "#94A3B8", marginBottom: "1rem", letterSpacing: "0.04em", textTransform: "uppercase" }}>Upcoming Deadlines</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               {upcomingDeadlines.map((item) => {
@@ -172,7 +172,7 @@ export default async function SharePage({ params }: PageProps) {
 
         {/* Permit Workflow */}
         {project.permitWorkflows.length > 0 && (
-          <div style={{ borderRadius: 16, padding: "1.5rem", background: "#0E1525", border: "1px solid rgba(255,255,255,0.07)", marginBottom: "1.5rem" }}>
+          <div style={{ borderRadius: 16, padding: "1.5rem", background: "#1E293B", border: "1px solid rgba(255,255,255,0.07)", marginBottom: "1.5rem" }}>
             <h2 style={{ fontSize: "0.8rem", fontWeight: 600, color: "#94A3B8", marginBottom: "1rem", letterSpacing: "0.04em", textTransform: "uppercase" }}>Permit Workflow</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.625rem" }}>
               {project.permitWorkflows.map((pw) => {
@@ -204,7 +204,7 @@ export default async function SharePage({ params }: PageProps) {
 
         {/* Compliance Checklist */}
         {project.complianceItems.length > 0 && (
-          <div style={{ borderRadius: 16, padding: "1.5rem", background: "#0E1525", border: "1px solid rgba(255,255,255,0.07)", marginBottom: "1.5rem" }}>
+          <div style={{ borderRadius: 16, padding: "1.5rem", background: "#1E293B", border: "1px solid rgba(255,255,255,0.07)", marginBottom: "1.5rem" }}>
             <h2 style={{ fontSize: "0.8rem", fontWeight: 600, color: "#94A3B8", marginBottom: "1rem", letterSpacing: "0.04em", textTransform: "uppercase" }}>Compliance Checklist</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
               {project.complianceItems.map((item) => (
@@ -225,7 +225,7 @@ export default async function SharePage({ params }: PageProps) {
 
         {/* Document Log */}
         {project.documents.length > 0 && (
-          <div style={{ borderRadius: 16, padding: "1.5rem", background: "#0E1525", border: "1px solid rgba(255,255,255,0.07)", marginBottom: "1.5rem" }}>
+          <div style={{ borderRadius: 16, padding: "1.5rem", background: "#1E293B", border: "1px solid rgba(255,255,255,0.07)", marginBottom: "1.5rem" }}>
             <h2 style={{ fontSize: "0.8rem", fontWeight: 600, color: "#94A3B8", marginBottom: "1rem", letterSpacing: "0.04em", textTransform: "uppercase" }}>Document Log</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
               {project.documents.map((doc) => (

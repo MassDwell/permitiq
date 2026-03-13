@@ -98,7 +98,7 @@ const NEGOTIATION_TIPS = [
 
 export default function Article85DemolitionPage() {
   return (
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#080D1A', minHeight: '100vh' }}>
+    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#0F172A', minHeight: '100vh' }}>
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-[#64748B] mb-8">
         <Link href="/permits" className="hover:text-[#14B8A6] transition-colors">Permit Guides</Link>
@@ -141,7 +141,7 @@ export default function Article85DemolitionPage() {
       {/* What is Article 85 */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold text-white mb-4">What Is Article 85?</h2>
-        <div className="bg-[#111827] rounded-2xl p-6 text-[#94A3B8] space-y-3">
+        <div className="bg-[#0F172A] rounded-2xl p-6 text-[#94A3B8] space-y-3">
           <p>
             Article 85 of the Boston Zoning Code is the city's demolition delay ordinance. Its purpose
             is to preserve historically and architecturally significant buildings by requiring a review
@@ -160,12 +160,12 @@ export default function Article85DemolitionPage() {
             on mitigation.
           </p>
           <div className="grid sm:grid-cols-2 gap-4 pt-2">
-            <div className="bg-[#0D1525] border border-white/10 rounded-xl p-4">
+            <div className="bg-[#1E293B] border border-white/10 rounded-xl p-4">
               <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1">BPDA / Article 85 Review</p>
               <p className="font-semibold text-white">1 City Hall Square</p>
               <p className="text-sm text-[#94A3B8]">Boston Planning &amp; Development Agency</p>
             </div>
-            <div className="bg-[#0D1525] border border-white/10 rounded-xl p-4">
+            <div className="bg-[#1E293B] border border-white/10 rounded-xl p-4">
               <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1">Boston Landmarks Commission</p>
               <p className="font-semibold text-white">1 City Hall Square, Room 805</p>
               <p className="text-sm text-[#94A3B8]">617-635-3850</p>
@@ -222,7 +222,7 @@ export default function Article85DemolitionPage() {
               <div className="flex-1 pb-6 border-b border-white/6 last:border-0">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <p className="font-semibold text-white">{step.name}</p>
-                  <span className="text-xs font-medium bg-[#111827] text-[#94A3B8] px-2.5 py-1 rounded-full flex-shrink-0">
+                  <span className="text-xs font-medium bg-[#0F172A] text-[#94A3B8] px-2.5 py-1 rounded-full flex-shrink-0">
                     {step.timeline}
                   </span>
                 </div>
@@ -249,7 +249,7 @@ export default function Article85DemolitionPage() {
       {/* Negotiation Tips */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold text-white mb-4">Navigating the Delay Effectively</h2>
-        <div className="bg-[#111827] border border-white/10 rounded-2xl p-6 space-y-3">
+        <div className="bg-[#0F172A] border border-white/10 rounded-2xl p-6 space-y-3">
           {NEGOTIATION_TIPS.map((tip, i) => (
             <div key={i} className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
@@ -297,7 +297,7 @@ export default function Article85DemolitionPage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/sign-up"
-              className="inline-flex items-center gap-2 bg-[#0D1525] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
+              className="inline-flex items-center gap-2 bg-[#1E293B] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
             >
               Start Free Trial <ArrowRight className="h-4 w-4" />
             </Link>

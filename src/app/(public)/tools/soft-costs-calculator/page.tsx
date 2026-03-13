@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function SoftCostsCalculatorPage() {
   return (
-    <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#080D1A', minHeight: '100vh' }}>
+    <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#0F172A', minHeight: '100vh' }}>
       <div className="mb-10">
         <p className="text-sm font-medium mb-2" style={{ color: '#14B8A6' }}>Free Developer Tool</p>
         <h1 className="text-4xl font-bold text-white mb-4">

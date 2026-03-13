@@ -20,7 +20,7 @@ export default function AdminDocumentsPage() {
 
       <div
         className="rounded-xl overflow-hidden"
-        style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.1)" }}
+        style={{ background: "#0F172A", border: "1px solid rgba(255,255,255,0.1)" }}
       >
         <table className="w-full text-sm">
           <thead>

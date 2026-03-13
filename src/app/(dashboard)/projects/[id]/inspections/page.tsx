@@ -180,7 +180,7 @@ export default function InspectionsPage() {
       {totalCount > 0 && (
         <div
           style={{
-            background: "#0E1525",
+            background: "#1E293B",
             border: "1px solid rgba(255,255,255,0.07)",
             borderRadius: 12,
             padding: "20px 24px",
@@ -219,7 +219,7 @@ export default function InspectionsPage() {
       {!isLoading && totalCount === 0 && (
         <div
           style={{
-            background: "#0E1525",
+            background: "#1E293B",
             border: "1px solid rgba(255,255,255,0.07)",
             borderRadius: 12,
             padding: "48px 24px",
@@ -236,7 +236,7 @@ export default function InspectionsPage() {
             disabled={seedBoston.isPending}
             style={{
               background: "#14B8A6",
-              color: "#080D1A",
+              color: "#0F172A",
               border: "none",
               borderRadius: 8,
               padding: "10px 20px",
@@ -268,7 +268,7 @@ export default function InspectionsPage() {
               <div
                 key={inspection.id}
                 style={{
-                  background: "#0E1525",
+                  background: "#1E293B",
                   border: "1px solid rgba(255,255,255,0.07)",
                   borderRadius: 10,
                   overflow: "hidden",
@@ -525,7 +525,7 @@ export default function InspectionsPage() {
                             background: "#14B8A6",
                             border: "none",
                             borderRadius: 6,
-                            color: "#080D1A",
+                            color: "#0F172A",
                             padding: "6px 14px",
                             fontSize: 13,
                             fontWeight: 600,
@@ -553,7 +553,7 @@ export default function InspectionsPage() {
       {/* Add custom inspection */}
       <div
         style={{
-          background: "#0E1525",
+          background: "#1E293B",
           border: "1px solid rgba(255,255,255,0.07)",
           borderRadius: 12,
           padding: 16,
@@ -663,7 +663,7 @@ export default function InspectionsPage() {
                   background: "#14B8A6",
                   border: "none",
                   borderRadius: 6,
-                  color: "#080D1A",
+                  color: "#0F172A",
                   padding: "7px 14px",
                   fontSize: 13,
                   fontWeight: 600,

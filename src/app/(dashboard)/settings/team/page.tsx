@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 const CARD_STYLE = {
-  background: "#0E1525",
+  background: "#1E293B",
   border: "1px solid rgba(255,255,255,0.07)",
   borderRadius: 16,
 };
@@ -220,7 +220,7 @@ export default function TeamSettingsPage() {
                 <Button
                   onClick={handleInvite}
                   disabled={inviteMutation.isPending || !inviteEmail}
-                  style={{ background: "#14B8A6", color: "#080D1A" }}
+                  style={{ background: "#14B8A6", color: "#0F172A" }}
                   className="hover:bg-[#0D9488] font-semibold"
                 >
                   {inviteMutation.isPending ? (

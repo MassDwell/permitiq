@@ -33,13 +33,13 @@ export default function AdminUsersPage() {
           placeholder="Search by name or email…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-9 bg-[#111827] border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-teal-500/50"
+          className="pl-9 bg-[#0F172A] border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-teal-500/50"
         />
       </div>
 
       <div
         className="rounded-xl overflow-hidden"
-        style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.1)" }}
+        style={{ background: "#0F172A", border: "1px solid rgba(255,255,255,0.1)" }}
       >
         <table className="w-full text-sm">
           <thead>

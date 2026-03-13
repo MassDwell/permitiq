@@ -207,7 +207,7 @@ export default function ZbaVariancePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#080D1A', minHeight: '100vh' }}>
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#0F172A', minHeight: '100vh' }}>
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-sm text-[#64748B] mb-8">
           <Link href="/permits" className="hover:text-[#14B8A6] transition-colors">Permit Guides</Link>
@@ -236,7 +236,7 @@ export default function ZbaVariancePage() {
               <DollarSign className="h-3.5 w-3.5" />
               $150 flat (≤3 units) or $150/violation
             </span>
-            <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-[#111827] text-[#94A3B8] px-3 py-1.5 rounded-full">
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-[#0F172A] text-[#94A3B8] px-3 py-1.5 rounded-full">
               <Calendar className="h-3.5 w-3.5" />
               Every other Tuesday 9:30 AM
             </span>
@@ -250,7 +250,7 @@ export default function ZbaVariancePage() {
         {/* What is the ZBA */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-white mb-4">What Is the ZBA?</h2>
-          <div className="bg-[#111827] rounded-2xl p-6 text-[#94A3B8] space-y-3">
+          <div className="bg-[#0F172A] rounded-2xl p-6 text-[#94A3B8] space-y-3">
             <p>
               The Boston Zoning Board of Appeal is a seven-member board appointed by the Mayor, each
               serving 3-year terms. It reviews appeals when ISD denies a permit because a project
@@ -262,12 +262,12 @@ export default function ZbaVariancePage() {
               changes), or when you want to challenge an ISD decision.
             </p>
             <div className="grid sm:grid-cols-2 gap-4 pt-2">
-              <div className="bg-[#0D1525] border border-white/10 rounded-xl p-4">
+              <div className="bg-[#1E293B] border border-white/10 rounded-xl p-4">
                 <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1">Hearings</p>
                 <p className="font-semibold text-white">1 City Hall Square, Room 801</p>
                 <p className="text-sm text-[#94A3B8]">Every other Tuesday, 9:30 AM</p>
               </div>
-              <div className="bg-[#0D1525] border border-white/10 rounded-xl p-4">
+              <div className="bg-[#1E293B] border border-white/10 rounded-xl p-4">
                 <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1">File Appeal</p>
                 <p className="font-semibold text-white">1010 Mass Ave, 5th Floor</p>
                 <p className="text-sm text-[#94A3B8]">617-635-5300 / 617-635-5399</p>
@@ -315,7 +315,7 @@ export default function ZbaVariancePage() {
           <div className="border border-white/10 rounded-2xl overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="bg-[#111827] border-b border-white/10">
+                <tr className="bg-[#0F172A] border-b border-white/10">
                   <th className="text-left text-xs font-semibold text-[#64748B] uppercase tracking-wide px-6 py-3">Project Type</th>
                   <th className="text-left text-xs font-semibold text-[#64748B] uppercase tracking-wide px-6 py-3">Fee</th>
                   <th className="text-left text-xs font-semibold text-[#64748B] uppercase tracking-wide px-6 py-3">Example</th>
@@ -335,7 +335,7 @@ export default function ZbaVariancePage() {
                     A 2-family requesting a setback variance → $150
                   </td>
                 </tr>
-                <tr className="bg-[#111827]">
+                <tr className="bg-[#0F172A]">
                   <td className="px-6 py-4">
                     <p className="font-medium text-white">All other buildings</p>
                     <p className="text-sm text-[#64748B]">Residential &gt;3 units, commercial, mixed-use</p>
@@ -376,7 +376,7 @@ export default function ZbaVariancePage() {
                 <div className="flex-1 pb-6 border-b border-white/6 last:border-0">
                   <div className="flex items-start justify-between gap-4 flex-wrap">
                     <p className="font-semibold text-white">{step.name}</p>
-                    <span className="text-xs font-medium bg-[#111827] text-[#94A3B8] px-2.5 py-1 rounded-full flex-shrink-0">
+                    <span className="text-xs font-medium bg-[#0F172A] text-[#94A3B8] px-2.5 py-1 rounded-full flex-shrink-0">
                       {step.timeline}
                     </span>
                   </div>
@@ -410,7 +410,7 @@ export default function ZbaVariancePage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {Object.entries(quarterGroups).map(([quarter, hearings]) => (
               <div key={quarter} className="border border-white/10 rounded-xl overflow-hidden">
-                <div className="bg-[#111827] px-4 py-2.5 border-b border-white/10">
+                <div className="bg-[#0F172A] px-4 py-2.5 border-b border-white/10">
                   <p className="font-semibold text-[#94A3B8] text-sm">{quarter} 2026</p>
                 </div>
                 <div className="divide-y divide-white/6">
@@ -451,7 +451,7 @@ export default function ZbaVariancePage() {
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/sign-up"
-                className="inline-flex items-center gap-2 bg-[#0D1525] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
+                className="inline-flex items-center gap-2 bg-[#1E293B] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
               >
                 Start Free Trial <ArrowRight className="h-4 w-4" />
               </Link>

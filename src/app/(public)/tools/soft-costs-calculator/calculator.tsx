@@ -110,7 +110,7 @@ function Select({ value, onChange, options, label, id }: SelectProps) {
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="w-full appearance-none rounded-xl px-4 py-2.5 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-[#14B8A6] text-sm"
-          style={{ background: '#111827', border: '1px solid rgba(255,255,255,0.10)' }}
+          style={{ background: '#0F172A', border: '1px solid rgba(255,255,255,0.10)' }}
         >
           {options.map((o) => (
             <option key={o.value} value={o.value}>{o.label}</option>
@@ -152,7 +152,7 @@ function NumberInput({ value, onChange, label, id, prefix, suffix, placeholder, 
           className={`w-full rounded-xl py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-[#14B8A6] text-sm placeholder:text-[#64748B] ${
             prefix ? "pl-7" : "pl-4"
           } ${suffix ? "pr-12" : "pr-4"}`}
-          style={{ background: '#111827', border: '1px solid rgba(255,255,255,0.10)' }}
+          style={{ background: '#0F172A', border: '1px solid rgba(255,255,255,0.10)' }}
         />
         {suffix && (
           <span className="absolute right-3 text-sm" style={{ color: '#64748B' }}>{suffix}</span>
@@ -258,7 +258,7 @@ export function SoftCostsCalculator() {
     <div className="grid lg:grid-cols-5 gap-8">
       {/* Inputs */}
       <div className="lg:col-span-2 space-y-5">
-        <div className="rounded-2xl p-6" style={{ background: '#0D1525', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="rounded-2xl p-6" style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.06)' }}>
           <h2 className="font-semibold text-white mb-5 flex items-center gap-2">
             <Calculator className="h-4 w-4" style={{ color: '#14B8A6' }} />
             Project Details
@@ -290,8 +290,8 @@ export function SoftCostsCalculator() {
                     onClick={() => setProjectType(t)}
                     className="flex-1 py-2.5 px-4 rounded-xl text-sm font-medium transition-colors"
                     style={projectType === t
-                      ? { background: '#14B8A6', color: '#080D1A', border: '1px solid #14B8A6' }
-                      : { background: '#111827', color: '#94A3B8', border: '1px solid rgba(255,255,255,0.10)' }
+                      ? { background: '#14B8A6', color: '#0F172A', border: '1px solid #14B8A6' }
+                      : { background: '#0F172A', color: '#94A3B8', border: '1px solid rgba(255,255,255,0.10)' }
                     }
                   >
                     {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -355,7 +355,7 @@ export function SoftCostsCalculator() {
       {/* Results */}
       <div className="lg:col-span-3">
         {!results ? (
-          <div className="rounded-2xl p-12 text-center" style={{ background: '#0D1525', border: '2px dashed rgba(255,255,255,0.10)' }}>
+          <div className="rounded-2xl p-12 text-center" style={{ background: '#1E293B', border: '2px dashed rgba(255,255,255,0.10)' }}>
             <Calculator className="h-10 w-10 mx-auto mb-3" style={{ color: '#475569' }} />
             <p className="font-medium" style={{ color: '#64748B' }}>Enter your project details to see an estimate</p>
             <p className="text-sm mt-1" style={{ color: '#475569' }}>Start with construction cost on the left</p>
@@ -392,7 +392,7 @@ export function SoftCostsCalculator() {
             </div>
 
             {/* Fee Breakdown */}
-            <div className="rounded-2xl p-6" style={{ background: '#0D1525', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="rounded-2xl p-6" style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.06)' }}>
               <div className="flex items-center gap-2 mb-4">
                 <DollarSign className="h-5 w-5" style={{ color: '#94A3B8' }} />
                 <p className="font-semibold text-white">Estimated Soft Costs</p>
@@ -460,7 +460,7 @@ export function SoftCostsCalculator() {
             </div>
 
             {/* Related guides */}
-            <div className="rounded-2xl p-5" style={{ background: '#0D1525', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="rounded-2xl p-5" style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.06)' }}>
               <p className="font-semibold text-white mb-3 text-sm">Related Permit Guides</p>
               <div className="space-y-2">
                 {permitType === "zba-appeal" && (
@@ -522,7 +522,7 @@ export function SoftCostsCalculator() {
               <Link
                 href="/sign-up"
                 className="inline-flex items-center gap-2 font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm"
-                style={{ background: '#14B8A6', color: '#080D1A' }}
+                style={{ background: '#14B8A6', color: '#0F172A' }}
               >
                 Start Free Trial <ArrowRight className="h-4 w-4" />
               </Link>

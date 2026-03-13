@@ -108,7 +108,7 @@ export default function AdminJurisdictionsPage() {
 
       <div
         className="rounded-xl overflow-hidden"
-        style={{ background: "#0E1525", border: "1px solid rgba(255,255,255,0.07)" }}
+        style={{ background: "#1E293B", border: "1px solid rgba(255,255,255,0.07)" }}
       >
         {isLoading ? (
           <div className="p-8 flex justify-center">

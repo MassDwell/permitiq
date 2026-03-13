@@ -655,7 +655,7 @@ export default function ProjectDetailPage() {
 
         {/* COMPLIANCE TAB */}
         <TabsContent value="compliance" className="mt-6">
-          <div className="space-y-6">
+          <div className="space-y-5">
             <ComplianceReadinessScore
               healthScore={project.healthScore}
               metItems={project.metItems}
@@ -665,293 +665,216 @@ export default function ProjectDetailPage() {
               documentCount={project.documents.length}
             />
 
-            {/* Confidence Badge */}
-            {(() => {
+            {/* Header + action buttons */}
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-semibold text-foreground">Permit Requirements</h2>
+                <p className="text-sm text-muted-foreground mt-0.5">Complete each step in order to get your permit approved</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => { const lower = project.name.toLowerCase(); setResearchPermitType(/demo(lition)?/.test(lower) ? "demolition" : ""); setResearchOpen(true); }}>
+                  <Search className="h-4 w-4 mr-2" />Research Requirements
+                </Button>
+                <Button size="sm" onClick={() => setAddItemOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />Add Step
+                </Button>
+              </div>
+            </div>
+
+            {project.complianceItems.length > 0 ? (() => {
               const items = project.complianceItems;
+              const totalSteps = items.length;
+              const completeSteps = items.filter((i) => i.status === "met").length;
+              const pct = totalSteps > 0 ? Math.round((completeSteps / totalSteps) * 100) : 0;
+              const allDone = completeSteps === totalSteps;
+              const nextActionIdx = items.findIndex((i) => i.status !== "met" && i.status !== "not_applicable");
               const hasAiGenerated = items.some((i) => i.source === "ai_generated");
-              const nonStateItems = items.filter(
-                (i) => i.jurisdiction !== "MA_STATE" && i.jurisdiction !== "Massachusetts (Statewide Requirements)"
-              );
-              const onlyStateRules = items.length > 0 && nonStateItems.length === 0;
+              const onlyStateRules = items.length > 0 && items.filter((i) => i.jurisdiction !== "MA_STATE" && i.jurisdiction !== "Massachusetts (Statewide Requirements)").length === 0;
 
-              if (onlyStateRules) {
-                return (
-                  <div
-                    className="flex items-start gap-3 px-4 py-3 rounded-lg text-sm"
-                    style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}
-                  >
-                    <span className="text-amber-400 mt-0.5">⚠️</span>
-                    <div>
-                      <span className="text-amber-300 font-medium">No jurisdiction-specific rules found for {project.jurisdiction ?? "this city"}.</span>
-                      <span className="text-amber-200/70 ml-2">Showing Massachusetts state requirements only.</span>
-                      <button
-                        className="ml-2 text-amber-400 hover:text-amber-300 underline underline-offset-2"
-                        onClick={() => { setResearchPermitType(""); setResearchOpen(true); }}
-                      >
-                        Request rules for this jurisdiction →
-                      </button>
-                    </div>
-                  </div>
-                );
-              }
-
-              if (hasAiGenerated) {
-                return (
-                  <div
-                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium"
-                    style={{ background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.25)', color: '#FCD34D' }}
-                  >
-                    <span>🤖</span>
-                    <span>AI-researched — verify with local authority</span>
-                  </div>
-                );
-              }
-
-              if (items.length > 0) {
-                return (
-                  <div
-                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium"
-                    style={{ background: 'rgba(20,184,166,0.12)', border: '1px solid rgba(20,184,166,0.25)', color: '#5EEAD4' }}
-                  >
-                    <span>✅</span>
-                    <span>Curated rules — verified by MeritLayer</span>
-                  </div>
-                );
-              }
-
-              return null;
-            })()}
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle>Compliance Checklist</CardTitle>
-                  <CardDescription>
-                    Track all requirements for this project
-                  </CardDescription>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      const lower = project.name.toLowerCase();
-                      const prefill = /demo(lition)?/.test(lower) ? "demolition" : "";
-                      setResearchPermitType(prefill);
-                      setResearchOpen(true);
-                    }}
-                  >
-                    <Search className="h-4 w-4 mr-2" />
-                    Research Requirements
-                  </Button>
-                  <Button onClick={() => setAddItemOpen(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Item
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {project.complianceItems.length > 0 ? (
-                  <div className="space-y-2">
-                    {project.complianceItems.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-start gap-4 p-4 rounded-lg border border-white/10 hover:bg-white/5 transition-all"
-                        style={{
-                          opacity: item.status === "met" ? 0.65 : 1,
-                          background: item.status === "met" ? "rgba(34,197,94,0.04)" : undefined,
-                        }}
-                      >
-                        <Checkbox
-                          checked={item.status === "met"}
-                          disabled={item.status === "overdue"}
-                          onCheckedChange={(checked) =>
-                            handleStatusChange(
-                              item.id,
-                              checked ? "met" : "pending"
-                            )
-                          }
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p
-                              className={`font-medium ${
-                                item.status === "met"
-                                  ? "line-through text-muted-foreground"
-                                  : "text-foreground"
-                              }`}
-                            >
-                              {item.description}
-                            </p>
-                            <select
-                              value={item.status}
-                              onChange={(e) => handleStatusChange(item.id, e.target.value)}
-                              className="text-xs rounded px-2 py-0.5 font-medium border cursor-pointer"
-                              style={{
-                                background: '#1E293B',
-                                borderColor: 'rgba(255,255,255,0.1)',
-                                color: item.status === 'met' ? '#4ade80'
-                                  : item.status === 'in_progress' ? '#60a5fa'
-                                  : item.status === 'overdue' ? '#f87171'
-                                  : item.status === 'not_applicable' ? '#6b7280'
-                                  : '#fbbf24',
-                              }}
-                            >
-                              <option value="pending">Pending</option>
-                              <option value="in_progress">In Progress</option>
-                              <option value="met">Met</option>
-                              <option value="overdue">Overdue</option>
-                              <option value="not_applicable">N/A</option>
-                            </select>
-                            {item.sourceUrl && (
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <button className="text-gray-400 hover:text-gray-600 flex-shrink-0">
-                                    <Info className="h-4 w-4" />
-                                  </button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-80" align="start">
-                                  <div className="space-y-3 text-sm">
-                                    <div>
-                                      <p className="font-semibold text-gray-700 mb-1">Source</p>
-                                      <a
-                                        href={item.sourceUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-blue-600 hover:underline break-all"
-                                      >
-                                        {(() => {
-                                          try {
-                                            const u = new URL(item.sourceUrl);
-                                            const path = u.pathname.length > 30 ? u.pathname.slice(0, 30) + "…" : u.pathname;
-                                            return u.hostname + path;
-                                          } catch {
-                                            return item.sourceUrl;
-                                          }
-                                        })()}
-                                      </a>
-                                    </div>
-                                    {item.sourceText && (
-                                      <div>
-                                        <p className="font-semibold text-gray-700 mb-1">Evidence</p>
-                                        <blockquote className="border-l-2 border-gray-200 pl-3 text-gray-600 italic">
-                                          {item.sourceText}
-                                        </blockquote>
-                                      </div>
-                                    )}
-                                    {item.reasoning && (
-                                      <div>
-                                        <p className="font-semibold text-gray-700 mb-1">Why this applies</p>
-                                        <p className="text-gray-600">{item.reasoning}</p>
-                                      </div>
-                                    )}
-                                  </div>
-                                </PopoverContent>
-                              </Popover>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
-                            <span className="capitalize">
-                              {item.requirementType.replace(/_/g, " ")}
-                            </span>
-                            {item.deadline && (
-                              <span className="flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
-                                Due {format(new Date(item.deadline), "MMM d, yyyy")}
-                              </span>
-                            )}
-                            {item.document && (
-                              <span className="flex items-center gap-1">
-                                <FileText className="h-3 w-3" />
-                                {item.document.filename}
-                              </span>
-                            )}
-                          </div>
-                          {editingNoteId === item.id ? (
-                            <div className="mt-2 flex gap-2">
-                              <textarea
-                                autoFocus
-                                rows={2}
-                                value={noteText}
-                                onChange={(e) => setNoteText(e.target.value)}
-                                placeholder="Add a note... e.g. Submitted water cut and cap application to BWSC on 3/12"
-                                className="flex-1 text-sm px-3 py-2 rounded-lg resize-none"
-                                style={{
-                                  background: '#1E293B',
-                                  border: '1px solid rgba(255,255,255,0.15)',
-                                  color: '#F1F5F9',
-                                }}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Escape') {
-                                    setEditingNoteId(null);
-                                  }
-                                }}
-                              />
-                              <div className="flex flex-col gap-1">
-                                <button
-                                  onClick={() => {
-                                    updateItem.mutate({ id: item.id, notes: noteText });
-                                    setEditingNoteId(null);
-                                  }}
-                                  className="text-xs px-3 py-1.5 rounded font-medium bg-[#14B8A6] text-white hover:bg-[#0D9488]"
-                                >
-                                  Save
-                                </button>
-                                <button
-                                  onClick={() => setEditingNoteId(null)}
-                                  className="text-xs px-3 py-1.5 rounded font-medium text-[#64748B] hover:text-white"
-                                  style={{ background: 'rgba(255,255,255,0.05)' }}
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="mt-2">
-                              {item.notes ? (
-                                <div className="flex items-start gap-2">
-                                  <p className="text-sm flex-1 px-3 py-2 rounded-lg"
-                                    style={{ background: 'rgba(20,184,166,0.06)', border: '1px solid rgba(20,184,166,0.15)', color: '#94A3B8' }}>
-                                    📝 {item.notes}
-                                  </p>
-                                  <button
-                                    onClick={() => { setEditingNoteId(item.id); setNoteText(item.notes ?? ''); }}
-                                    className="text-xs text-[#64748B] hover:text-[#14B8A6] shrink-0 mt-1"
-                                  >
-                                    Edit
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
-                                  onClick={() => { setEditingNoteId(item.id); setNoteText(''); }}
-                                  className="text-xs text-[#475569] hover:text-[#14B8A6] transition-colors flex items-center gap-1"
-                                >
-                                  + Add note
-                                </button>
-                              )}
-                            </div>
-                          )}
+              return (
+                <>
+                  {/* Progress card */}
+                  <div className="rounded-xl p-5" style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    {allDone ? (
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(16,185,129,0.15)' }}>
+                          <CheckCircle className="h-5 w-5 text-emerald-400" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-emerald-400">All requirements met!</p>
+                          <p className="text-sm text-muted-foreground">All {totalSteps} steps complete — ready to submit.</p>
                         </div>
                       </div>
-                    ))}
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between mb-3">
+                          <p className="text-sm font-medium text-[#F1F5F9]">
+                            Progress: <span className="text-[#14B8A6] font-bold">{completeSteps} of {totalSteps}</span> steps complete
+                          </p>
+                          <span className="text-sm font-bold text-[#14B8A6]">{pct}%</span>
+                        </div>
+                        <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                          <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #14B8A6, #0EA5E9)' }} />
+                        </div>
+                        {nextActionIdx >= 0 && (
+                          <div className="mt-4 flex items-start gap-2.5 px-4 py-3 rounded-lg" style={{ background: 'rgba(14,165,233,0.08)', border: '1px solid rgba(14,165,233,0.25)' }}>
+                            <div className="h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: 'rgba(14,165,233,0.2)' }}>
+                              <span style={{ fontSize: 11, fontWeight: 700, color: '#38BDF8' }}>{nextActionIdx + 1}</span>
+                            </div>
+                            <div>
+                              <p className="text-xs font-semibold text-[#38BDF8] uppercase tracking-wide mb-0.5">Next Action</p>
+                              <p className="text-sm text-[#CBD5E1]">{items[nextActionIdx]!.description}</p>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
-                ) : (
-                  <div className="text-center py-12">
-                    <CheckCircle className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-foreground mb-2">
-                      No compliance items yet
-                    </h3>
-                    <p className="text-muted-foreground mb-4">
-                      Upload documents to auto-extract requirements, or add them
-                      manually.
-                    </p>
-                    <Button onClick={() => setAddItemOpen(true)}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Compliance Item
-                    </Button>
+
+                  {/* Confidence badge */}
+                  {onlyStateRules ? (
+                    <div className="flex items-start gap-3 px-4 py-3 rounded-lg text-sm" style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}>
+                      <span className="text-amber-400 mt-0.5">⚠️</span>
+                      <div>
+                        <span className="text-amber-300 font-medium">No jurisdiction-specific rules found for {project.jurisdiction ?? "this city"}.</span>
+                        <span className="text-amber-200/70 ml-2">Showing Massachusetts state requirements only.</span>
+                        <button className="ml-2 text-amber-400 hover:text-amber-300 underline underline-offset-2" onClick={() => { setResearchPermitType(""); setResearchOpen(true); }}>
+                          Request rules for this jurisdiction →
+                        </button>
+                      </div>
+                    </div>
+                  ) : hasAiGenerated ? (
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium" style={{ background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.25)', color: '#FCD34D' }}>
+                      <span>🤖</span><span>AI-researched — verify with local authority</span>
+                    </div>
+                  ) : (
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium" style={{ background: 'rgba(20,184,166,0.12)', border: '1px solid rgba(20,184,166,0.25)', color: '#5EEAD4' }}>
+                      <span>✅</span><span>Curated rules — verified by MeritLayer</span>
+                    </div>
+                  )}
+
+                  {/* Numbered steps */}
+                  <div className="space-y-3">
+                    {items.map((item, idx) => {
+                      const isNext = idx === nextActionIdx;
+                      const sc =
+                        item.status === "met"      ? { border: 'rgba(16,185,129,0.3)', bg: 'rgba(16,185,129,0.04)', num: '#10B981', badge: 'rgba(16,185,129,0.15)', badgeText: '#4ADE80' }
+                        : item.status === "overdue"   ? { border: 'rgba(239,68,68,0.4)', bg: 'rgba(239,68,68,0.05)', num: '#EF4444', badge: 'rgba(239,68,68,0.15)', badgeText: '#F87171' }
+                        : item.status === "in_progress" ? { border: 'rgba(59,130,246,0.4)', bg: 'rgba(59,130,246,0.05)', num: '#3B82F6', badge: 'rgba(59,130,246,0.15)', badgeText: '#60A5FA' }
+                        : { border: 'rgba(255,255,255,0.09)', bg: 'transparent', num: '#475569', badge: 'rgba(255,255,255,0.07)', badgeText: '#64748B' };
+                      const statusLabel =
+                        item.status === "met" ? "✓ Complete" : item.status === "in_progress" ? "→ In Progress"
+                        : item.status === "overdue" ? "⚠ Overdue" : item.status === "not_applicable" ? "N/A" : "○ Pending";
+
+                      return (
+                        <div key={item.id} className="rounded-xl overflow-hidden"
+                          style={{ border: isNext ? '1px solid rgba(14,165,233,0.45)' : `1px solid ${sc.border}`, background: isNext ? 'rgba(14,165,233,0.04)' : sc.bg, boxShadow: isNext ? '0 0 0 1px rgba(14,165,233,0.12)' : 'none' }}>
+                          <div className="p-4">
+                            <div className="flex items-start gap-3">
+                              {/* Step number */}
+                              <div className="h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold"
+                                style={{ background: `${sc.num}20`, color: sc.num, border: `1px solid ${sc.num}40` }}>
+                                {item.status === "met" ? "✓" : idx + 1}
+                              </div>
+
+                              <div className="flex-1 min-w-0">
+                                {/* Description + status */}
+                                <div className="flex items-start gap-2 flex-wrap">
+                                  <p className="font-medium text-sm flex-1 min-w-0"
+                                    style={{ color: item.status === "met" ? '#64748B' : '#F1F5F9', textDecoration: item.status === "met" ? 'line-through' : 'none' }}>
+                                    {item.description}
+                                  </p>
+                                  <div className="flex items-center gap-2 flex-shrink-0">
+                                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: sc.badge, color: sc.badgeText }}>{statusLabel}</span>
+                                    <select value={item.status} onChange={(e) => handleStatusChange(item.id, e.target.value)}
+                                      className="text-xs rounded-md px-2 py-1 font-medium border cursor-pointer"
+                                      style={{ background: '#0F172A', borderColor: 'rgba(255,255,255,0.12)', color: '#94A3B8', outline: 'none' }}>
+                                      <option value="pending">Pending</option>
+                                      <option value="in_progress">In Progress</option>
+                                      <option value="met">Complete</option>
+                                      <option value="overdue">Overdue</option>
+                                      <option value="not_applicable">N/A</option>
+                                    </select>
+                                  </div>
+                                </div>
+
+                                {/* Meta: type, due, source, doc */}
+                                <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                                  <span className="text-xs capitalize text-muted-foreground">{item.requirementType.replace(/_/g, " ")}</span>
+                                  {item.deadline && (
+                                    <span className="flex items-center gap-1 text-xs" style={{ color: item.status === "overdue" ? '#F87171' : '#94A3B8' }}>
+                                      <Clock className="h-3 w-3" />Due {format(new Date(item.deadline), "MMM d, yyyy")}
+                                    </span>
+                                  )}
+                                  {item.sourceUrl && (
+                                    <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs hover:underline" style={{ color: '#38BDF8' }}>
+                                      <ExternalLink className="h-3 w-3" />Source
+                                    </a>
+                                  )}
+                                  {item.document && (
+                                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                                      <FileText className="h-3 w-3" />{item.document.filename}
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Notes */}
+                                {editingNoteId === item.id ? (
+                                  <div className="mt-3 flex gap-2">
+                                    <textarea autoFocus rows={2} value={noteText} onChange={(e) => setNoteText(e.target.value)}
+                                      placeholder="Add a note..." className="flex-1 text-sm px-3 py-2 rounded-lg resize-none"
+                                      style={{ background: '#0F172A', border: '1px solid rgba(255,255,255,0.15)', color: '#F1F5F9', outline: 'none' }}
+                                      onKeyDown={(e) => { if (e.key === 'Escape') setEditingNoteId(null); }} />
+                                    <div className="flex flex-col gap-1">
+                                      <button onClick={() => { updateItem.mutate({ id: item.id, notes: noteText }); setEditingNoteId(null); }}
+                                        className="text-xs px-3 py-1.5 rounded font-medium bg-[#14B8A6] text-white">Save</button>
+                                      <button onClick={() => setEditingNoteId(null)}
+                                        className="text-xs px-3 py-1.5 rounded font-medium text-[#64748B]"
+                                        style={{ background: 'rgba(255,255,255,0.05)' }}>Cancel</button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="mt-2">
+                                    {item.notes ? (
+                                      <div className="flex items-start gap-2">
+                                        <p className="text-xs flex-1 px-3 py-2 rounded-lg" style={{ background: 'rgba(20,184,166,0.06)', border: '1px solid rgba(20,184,166,0.15)', color: '#94A3B8' }}>
+                                          📝 {item.notes}
+                                        </p>
+                                        <button onClick={() => { setEditingNoteId(item.id); setNoteText(item.notes ?? ''); }}
+                                          className="text-xs text-[#64748B] hover:text-[#14B8A6] shrink-0 mt-1">Edit</button>
+                                      </div>
+                                    ) : (
+                                      <button onClick={() => { setEditingNoteId(item.id); setNoteText(''); }}
+                                        className="text-xs text-[#475569] hover:text-[#14B8A6] transition-colors flex items-center gap-1">
+                                        + Add note
+                                      </button>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                )}
-              </CardContent>
-            </Card>
+                </>
+              );
+            })() : (
+              <div className="rounded-xl p-12 text-center" style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <CheckCircle className="h-12 w-12 mx-auto mb-4" style={{ color: 'rgba(255,255,255,0.2)' }} />
+                <h3 className="text-lg font-medium text-foreground mb-2">No requirements yet</h3>
+                <p className="text-muted-foreground mb-5 max-w-xs mx-auto text-sm">Research requirements for your permit type, or add them manually.</p>
+                <div className="flex items-center justify-center gap-3">
+                  <Button onClick={() => { const lower = project.name.toLowerCase(); setResearchPermitType(/demo(lition)?/.test(lower) ? "demolition" : ""); setResearchOpen(true); }}>
+                    <Search className="h-4 w-4 mr-2" />Research Requirements
+                  </Button>
+                  <Button variant="outline" onClick={() => setAddItemOpen(true)}>
+                    <Plus className="h-4 w-4 mr-2" />Add Manually
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </TabsContent>
 

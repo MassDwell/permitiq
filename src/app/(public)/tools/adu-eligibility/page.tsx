@@ -111,12 +111,12 @@ export default function ADUEligibilityPage() {
   const selectClass =
     "w-full px-3 py-2.5 rounded-lg text-sm text-white focus:outline-none focus:ring-1 appearance-none";
   const selectStyle = {
-    background: "#0E1525",
+    background: "#1E293B",
     border: "1px solid rgba(255,255,255,0.1)",
   };
 
   return (
-    <div className="min-h-screen" style={{ background: "#080D1A" }}>
+    <div className="min-h-screen" style={{ background: "#0F172A" }}>
       {/* Hero */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
         <div className="mb-2">
@@ -156,7 +156,7 @@ export default function ADUEligibilityPage() {
         <form
           onSubmit={handleSubmit}
           className="rounded-2xl p-6 sm:p-8"
-          style={{ background: "#0E1525", border: "1px solid rgba(255,255,255,0.06)" }}
+          style={{ background: "#1E293B", border: "1px solid rgba(255,255,255,0.06)" }}
         >
           <h2 className="text-base font-semibold text-white mb-5">Step 1 — Property Basics</h2>
 
@@ -267,7 +267,7 @@ export default function ADUEligibilityPage() {
                     style={
                       form.ownerOccupied === opt
                         ? { background: "rgba(20,184,166,0.15)", color: "#14B8A6", border: "1px solid rgba(20,184,166,0.4)" }
-                        : { background: "#0E1525", color: "#64748B", border: "1px solid rgba(255,255,255,0.08)" }
+                        : { background: "#1E293B", color: "#64748B", border: "1px solid rgba(255,255,255,0.08)" }
                     }
                   >
                     {opt}
@@ -283,7 +283,7 @@ export default function ADUEligibilityPage() {
           <button
             type="submit"
             className="mt-6 w-full py-3 rounded-xl font-semibold text-sm transition-all"
-            style={{ background: "#14B8A6", color: "#080D1A" }}
+            style={{ background: "#14B8A6", color: "#0F172A" }}
           >
             Check My Eligibility →
           </button>
@@ -297,7 +297,7 @@ export default function ADUEligibilityPage() {
                 {/* Eligible card */}
                 <div
                   className="rounded-2xl p-6 sm:p-8 mb-6"
-                  style={{ background: "#0E1525", border: "1px solid rgba(20,184,166,0.3)" }}
+                  style={{ background: "#1E293B", border: "1px solid rgba(20,184,166,0.3)" }}
                 >
                   <div className="flex items-start gap-3 mb-6">
                     <CheckCircle className="h-6 w-6 shrink-0 mt-0.5" style={{ color: "#14B8A6" }} />
@@ -350,7 +350,7 @@ export default function ADUEligibilityPage() {
                   {/* Timeline */}
                   <div
                     className="rounded-xl p-4 mb-4"
-                    style={{ background: "#060B17", border: "1px solid rgba(255,255,255,0.06)" }}
+                    style={{ background: "#1E293B", border: "1px solid rgba(255,255,255,0.06)" }}
                   >
                     <p className="text-sm font-semibold text-white mb-2">⏱ Typical Timeline</p>
                     <div className="space-y-1 text-sm" style={{ color: "#94A3B8" }}>
@@ -375,7 +375,7 @@ export default function ADUEligibilityPage() {
                   {/* Cost estimate */}
                   <div
                     className="rounded-xl p-4"
-                    style={{ background: "#060B17", border: "1px solid rgba(255,255,255,0.06)" }}
+                    style={{ background: "#1E293B", border: "1px solid rgba(255,255,255,0.06)" }}
                   >
                     <p className="text-sm font-semibold text-white mb-2">💰 Estimated Investment</p>
                     <div className="space-y-1 text-sm" style={{ color: "#94A3B8" }}>
@@ -411,7 +411,7 @@ export default function ADUEligibilityPage() {
                 {result.massDwellModels && result.massDwellModels.length > 0 && (
                   <div
                     className="rounded-2xl p-6 sm:p-8 mb-6"
-                    style={{ background: "#0E1525", border: "1px solid rgba(255,255,255,0.07)" }}
+                    style={{ background: "#1E293B", border: "1px solid rgba(255,255,255,0.07)" }}
                   >
                     <h3 className="text-base font-semibold text-white mb-1">
                       🏠 MassDwell Models That Fit Your Property
@@ -429,7 +429,7 @@ export default function ADUEligibilityPage() {
                           style={
                             selectedModel?.name === model.name
                               ? { background: "rgba(20,184,166,0.12)", border: "1px solid rgba(20,184,166,0.35)" }
-                              : { background: "#060B17", border: "1px solid rgba(255,255,255,0.06)" }
+                              : { background: "#1E293B", border: "1px solid rgba(255,255,255,0.06)" }
                           }
                         >
                           <div className="flex items-center gap-4">
@@ -454,7 +454,7 @@ export default function ADUEligibilityPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all"
-                      style={{ background: "#14B8A6", color: "#080D1A" }}
+                      style={{ background: "#14B8A6", color: "#0F172A" }}
                     >
                       Get a Free MassDwell Quote →
                       <ExternalLink className="h-4 w-4" />
@@ -475,7 +475,7 @@ export default function ADUEligibilityPage() {
                   <Link
                     href="/permits/boston/adu-permit"
                     className="flex items-center justify-between px-5 py-4 rounded-xl transition-all group"
-                    style={{ background: "#0E1525", border: "1px solid rgba(255,255,255,0.07)" }}
+                    style={{ background: "#1E293B", border: "1px solid rgba(255,255,255,0.07)" }}
                   >
                     <div>
                       <p className="font-semibold text-white text-sm group-hover:text-[#14B8A6] transition-colors">
@@ -494,7 +494,7 @@ export default function ADUEligibilityPage() {
             {result.eligible === false && (
               <div
                 className="rounded-2xl p-6 sm:p-8"
-                style={{ background: "#0E1525", border: "1px solid rgba(251,191,36,0.3)" }}
+                style={{ background: "#1E293B", border: "1px solid rgba(251,191,36,0.3)" }}
               >
                 <div className="flex items-start gap-3 mb-5">
                   <AlertTriangle className="h-6 w-6 shrink-0 mt-0.5" style={{ color: "#F59E0B" }} />
@@ -527,7 +527,7 @@ export default function ADUEligibilityPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all"
-                  style={{ background: "#14B8A6", color: "#080D1A" }}
+                  style={{ background: "#14B8A6", color: "#0F172A" }}
                 >
                   Still interested in an ADU? Talk to MassDwell →
                   <ExternalLink className="h-4 w-4" />
@@ -538,7 +538,7 @@ export default function ADUEligibilityPage() {
             {result.eligible === "maybe" && (
               <div
                 className="rounded-2xl p-6 sm:p-8"
-                style={{ background: "#0E1525", border: "1px solid rgba(251,191,36,0.3)" }}
+                style={{ background: "#1E293B", border: "1px solid rgba(251,191,36,0.3)" }}
               >
                 <div className="flex items-start gap-3 mb-5">
                   <AlertTriangle className="h-6 w-6 shrink-0 mt-0.5" style={{ color: "#F59E0B" }} />
@@ -570,7 +570,7 @@ export default function ADUEligibilityPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all"
-                  style={{ background: "#14B8A6", color: "#080D1A" }}
+                  style={{ background: "#14B8A6", color: "#0F172A" }}
                 >
                   Still interested in an ADU? Talk to MassDwell →
                   <ExternalLink className="h-4 w-4" />

@@ -117,7 +117,7 @@ const TCO_INFO = [
 
 export default function CertificateOfOccupancyPage() {
   return (
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#080D1A', minHeight: '100vh' }}>
+    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#0F172A', minHeight: '100vh' }}>
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-[#64748B] mb-8">
         <Link href="/permits" className="hover:text-[#14B8A6] transition-colors">Permit Guides</Link>
@@ -160,7 +160,7 @@ export default function CertificateOfOccupancyPage() {
       {/* What is a CO */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold text-white mb-4">What Is a Certificate of Occupancy?</h2>
-        <div className="bg-[#111827] rounded-2xl p-6 text-[#94A3B8] space-y-3">
+        <div className="bg-[#0F172A] rounded-2xl p-6 text-[#94A3B8] space-y-3">
           <p>
             A Certificate of Occupancy is an official document issued by Boston ISD certifying that a
             completed building or structure complies with the Massachusetts State Building Code and is
@@ -173,12 +173,12 @@ export default function CertificateOfOccupancyPage() {
             liability for owners and developers.
           </p>
           <div className="grid sm:grid-cols-2 gap-4 pt-2">
-            <div className="bg-[#0D1525] border border-white/10 rounded-xl p-4">
+            <div className="bg-[#1E293B] border border-white/10 rounded-xl p-4">
               <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1">Request CO / Finals</p>
               <p className="font-semibold text-white">1010 Massachusetts Ave</p>
               <p className="text-sm text-[#94A3B8]">Boston ISD, 4th Floor · 617-635-5300</p>
             </div>
-            <div className="bg-[#0D1525] border border-white/10 rounded-xl p-4">
+            <div className="bg-[#1E293B] border border-white/10 rounded-xl p-4">
               <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1">Fire Inspection</p>
               <p className="font-semibold text-white">Boston Fire Prevention</p>
               <p className="text-sm text-[#94A3B8]">115 Southampton St · 617-343-3628</p>
@@ -194,7 +194,7 @@ export default function CertificateOfOccupancyPage() {
           {INSPECTION_SEQUENCE.map((item) => (
             <div
               key={item.step}
-              className={`border rounded-xl p-5 ${item.required ? "border-[rgba(20,184,166,0.25)] bg-[rgba(20,184,166,0.08)]" : "border-white/10 bg-[#0D1525]"}`}
+              className={`border rounded-xl p-5 ${item.required ? "border-[rgba(20,184,166,0.25)] bg-[rgba(20,184,166,0.08)]" : "border-white/10 bg-[#1E293B]"}`}
             >
               <div className="flex items-start gap-4">
                 <div className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${item.required ? "bg-[#14B8A6] text-white" : "bg-white/10 text-[#94A3B8]"}`}>
@@ -203,7 +203,7 @@ export default function CertificateOfOccupancyPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-semibold text-white">{item.name}</p>
-                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${item.required ? "bg-[rgba(20,184,166,0.1)] text-[#14B8A6]" : "bg-[#111827] text-[#94A3B8]"}`}>
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${item.required ? "bg-[rgba(20,184,166,0.1)] text-[#14B8A6]" : "bg-[#0F172A] text-[#94A3B8]"}`}>
                       {item.required ? "Always Required" : "If Applicable"}
                     </span>
                   </div>
@@ -221,7 +221,7 @@ export default function CertificateOfOccupancyPage() {
         <h2 className="text-2xl font-bold text-white mb-4">Temporary CO vs. Permanent CO</h2>
         <div className="grid sm:grid-cols-2 gap-4">
           {TCO_INFO.map((item) => (
-            <div key={item.title} className="border border-white/10 bg-[#0D1525] rounded-xl p-5">
+            <div key={item.title} className="border border-white/10 bg-[#1E293B] rounded-xl p-5">
               <div className="flex items-start gap-3">
                 <FileText className="h-5 w-5 text-[#14B8A6] mt-0.5 flex-shrink-0" />
                 <div>
@@ -255,7 +255,7 @@ export default function CertificateOfOccupancyPage() {
       {/* CO Closeout Checklist */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold text-white mb-4">CO Closeout Checklist</h2>
-        <div className="bg-[#111827] border border-white/10 rounded-2xl p-6 space-y-3">
+        <div className="bg-[#0F172A] border border-white/10 rounded-2xl p-6 space-y-3">
           {[
             "All trade permits (electrical, plumbing, HVAC, gas) are fully inspected and signed off",
             "As-built drawings submitted to ISD reflecting any field changes",
@@ -315,7 +315,7 @@ export default function CertificateOfOccupancyPage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/sign-up"
-              className="inline-flex items-center gap-2 bg-[#0D1525] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
+              className="inline-flex items-center gap-2 bg-[#1E293B] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
             >
               Start Free Trial <ArrowRight className="h-4 w-4" />
             </Link>

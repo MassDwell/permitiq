@@ -127,7 +127,7 @@ export default async function PermitGuidePage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#080D1A', minHeight: '100vh' }}>
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#0F172A', minHeight: '100vh' }}>
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-sm mb-8" style={{ color: '#64748B' }}>
           <Link href="/permits" className="hover:text-[#14B8A6] transition-colors">
@@ -157,7 +157,7 @@ export default async function PermitGuidePage({
             {!isStateWide && jurisdictionData && (
               <section>
                 <h2 className="text-xl font-semibold text-white mb-4">Department</h2>
-                <div className="rounded-xl p-5 space-y-3" style={{ background: '#0D1525', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div className="rounded-xl p-5 space-y-3" style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.08)' }}>
                   <p className="font-semibold text-white">{jurisdictionData.department}</p>
                   {jurisdictionData.address && (
                     <div className="flex items-start gap-2 text-sm" style={{ color: '#94A3B8' }}>
@@ -278,7 +278,7 @@ export default async function PermitGuidePage({
                       <div
                         key={i}
                         className="flex items-start gap-3 p-4 rounded-xl transition-colors"
-                        style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#0D1525' }}
+                        style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#1E293B' }}
                       >
                         <div className="mt-0.5 h-5 w-5 rounded-full flex-shrink-0" style={{ border: '2px solid rgba(255,255,255,0.2)' }} />
                         <div className="flex-1 min-w-0">
@@ -391,7 +391,7 @@ export default async function PermitGuidePage({
             {!isStateWide && permitTypeData?.fees && (
               <section>
                 <h2 className="text-lg font-semibold text-white mb-3">Fee Schedule</h2>
-                <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#0D1525' }}>
+                <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#1E293B' }}>
                   <FeeTable fees={permitTypeData.fees} />
                 </div>
               </section>
@@ -409,7 +409,7 @@ export default async function PermitGuidePage({
               <Link
                 href="/sign-up"
                 className="block w-full text-sm font-medium py-2.5 rounded-lg transition-colors"
-                style={{ background: '#14B8A6', color: '#080D1A' }}
+                style={{ background: '#14B8A6', color: '#0F172A' }}
               >
                 Start Free Trial
               </Link>

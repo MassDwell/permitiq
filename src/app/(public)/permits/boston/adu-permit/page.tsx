@@ -163,7 +163,7 @@ const PRO_TIPS = [
 
 export default function BostonADUPermitPage() {
   return (
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16" style={{ background: '#080D1A', minHeight: '100vh' }}>
+    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16" style={{ background: '#0F172A', minHeight: '100vh' }}>
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs text-[#64748B] mb-8">
         <Link href="/permits" className="hover:text-[#94A3B8] transition-colors">Permit Guides</Link>
@@ -191,15 +191,15 @@ export default function BostonADUPermitPage() {
           Accessory Dwelling Unit under the 2024 MA ADU Law (Chapter 150 of the Acts of 2024).
         </p>
         <div className="flex flex-wrap gap-3 mt-5">
-          <div className="flex items-center gap-2 bg-[#111827] rounded-full px-3 py-1.5 text-sm text-[#94A3B8]">
+          <div className="flex items-center gap-2 bg-[#0F172A] rounded-full px-3 py-1.5 text-sm text-[#94A3B8]">
             <Clock className="h-4 w-4 text-[#64748B]" />
             4–8 weeks review
           </div>
-          <div className="flex items-center gap-2 bg-[#111827] rounded-full px-3 py-1.5 text-sm text-[#94A3B8]">
+          <div className="flex items-center gap-2 bg-[#0F172A] rounded-full px-3 py-1.5 text-sm text-[#94A3B8]">
             <DollarSign className="h-4 w-4 text-[#64748B]" />
             $1,200–$2,400 typical fees
           </div>
-          <div className="flex items-center gap-2 bg-[#111827] rounded-full px-3 py-1.5 text-sm text-[#94A3B8]">
+          <div className="flex items-center gap-2 bg-[#0F172A] rounded-full px-3 py-1.5 text-sm text-[#94A3B8]">
             <Building2 className="h-4 w-4 text-[#64748B]" />
             Boston ISD — 1010 Mass Ave
           </div>
@@ -271,7 +271,7 @@ export default function BostonADUPermitPage() {
               {REQUIRED_DOCS.map((doc) => (
                 <div
                   key={doc.label}
-                  className={`flex items-start gap-3 p-4 rounded-xl border ${doc.critical ? "border-white/10 bg-[#0D1525]" : "border-white/6 bg-[#111827]"}`}
+                  className={`flex items-start gap-3 p-4 rounded-xl border ${doc.critical ? "border-white/10 bg-[#1E293B]" : "border-white/6 bg-[#0F172A]"}`}
                 >
                   <div
                     className={`w-5 h-5 rounded border-2 flex-shrink-0 mt-0.5 flex items-center justify-center ${doc.critical ? "border-white/20" : "border-white/10"}`}
@@ -325,7 +325,7 @@ export default function BostonADUPermitPage() {
                   <div>
                     <div className="flex items-center gap-2 flex-wrap mb-1">
                       <p className="font-semibold text-white text-sm">{s.title}</p>
-                      <span className="text-xs font-medium bg-[#111827] text-[#64748B] px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <span className="text-xs font-medium bg-[#0F172A] text-[#64748B] px-2 py-0.5 rounded-full flex items-center gap-1">
                         <Clock className="h-3 w-3" />
                         {s.time}
                       </span>
@@ -421,7 +421,7 @@ export default function BostonADUPermitPage() {
             <Link
               href="/tools/adu-eligibility"
               className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl font-semibold text-sm transition-all"
-              style={{ background: "#14B8A6", color: "#080D1A" }}
+              style={{ background: "#14B8A6", color: "#0F172A" }}
             >
               ADU Eligibility Checker →
             </Link>
@@ -458,7 +458,7 @@ export default function BostonADUPermitPage() {
                   <Link
                     key={g.href}
                     href={g.href}
-                    className="flex items-center gap-2 p-2.5 rounded-lg hover:bg-[#111827] transition-colors group"
+                    className="flex items-center gap-2 p-2.5 rounded-lg hover:bg-[#0F172A] transition-colors group"
                   >
                     <Icon className="h-4 w-4 text-[#64748B] group-hover:text-[#14B8A6] flex-shrink-0" />
                     <p className="text-sm text-[#94A3B8] group-hover:text-[#14B8A6] transition-colors">{g.label}</p>
@@ -480,7 +480,7 @@ export default function BostonADUPermitPage() {
         </p>
         <Link
           href="/sign-up"
-          className="inline-block bg-[#0D1525] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
+          className="inline-block bg-[#1E293B] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
         >
           Start Free Trial
         </Link>

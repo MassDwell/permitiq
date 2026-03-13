@@ -123,7 +123,7 @@ export default function PermitsIndexPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16" style={{ background: '#080D1A', minHeight: '100vh' }}>
+    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16" style={{ background: '#0F172A', minHeight: '100vh' }}>
       <div className="mb-12">
         <p className="text-sm font-medium mb-2" style={{ color: '#14B8A6' }}>Free Permit Guides</p>
         <h1 className="text-4xl font-bold text-white mb-4">
@@ -150,7 +150,7 @@ export default function PermitsIndexPage() {
           <Link
             href="/tools/zoning-lookup"
             className="font-semibold px-5 py-2.5 rounded-xl transition-colors whitespace-nowrap flex-shrink-0 text-sm"
-            style={{ background: '#14B8A6', color: '#080D1A' }}
+            style={{ background: '#14B8A6', color: '#0F172A' }}
           >
             Try Zoning Lookup →
           </Link>
@@ -174,7 +174,7 @@ export default function PermitsIndexPage() {
             <Link
               href="/tools/adu-eligibility"
               className="font-semibold px-4 py-2 rounded-xl transition-colors whitespace-nowrap text-sm text-center"
-              style={{ background: '#14B8A6', color: '#080D1A' }}
+              style={{ background: '#14B8A6', color: '#0F172A' }}
             >
               Check Your Eligibility →
             </Link>
@@ -205,7 +205,7 @@ export default function PermitsIndexPage() {
           <Link
             href="/tools/soft-costs-calculator"
             className="font-semibold px-5 py-2.5 rounded-xl transition-colors whitespace-nowrap flex-shrink-0 text-sm"
-            style={{ background: '#14B8A6', color: '#080D1A' }}
+            style={{ background: '#14B8A6', color: '#0F172A' }}
           >
             Open Calculator →
           </Link>
@@ -228,7 +228,7 @@ export default function PermitsIndexPage() {
                   key={guide.href}
                   href={guide.href}
                   className="flex items-center justify-between p-5 rounded-xl transition-all group"
-                  style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#0D1525' }}
+                  style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#1E293B' }}
                 >
                   <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-colors" style={{ background: 'rgba(20,184,166,0.10)' }}>
@@ -324,7 +324,7 @@ export default function PermitsIndexPage() {
                   key={item.city}
                   href={item.href}
                   className="flex flex-col items-center justify-center p-4 rounded-xl transition-all group text-center"
-                  style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#0D1525' }}
+                  style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#1E293B' }}
                 >
                   <p className="font-semibold text-white group-hover:text-[#14B8A6] transition-colors text-sm">
                     {item.city}
@@ -335,7 +335,7 @@ export default function PermitsIndexPage() {
                 <div
                   key={item.city}
                   className="flex flex-col items-center justify-center p-4 rounded-xl opacity-40 text-center cursor-default"
-                  style={{ border: '1px solid rgba(255,255,255,0.04)', background: '#0D1525' }}
+                  style={{ border: '1px solid rgba(255,255,255,0.04)', background: '#1E293B' }}
                 >
                   <p className="font-semibold text-sm" style={{ color: '#64748B' }}>{item.city}</p>
                   <p className="text-xs mt-0.5" style={{ color: '#475569' }}>Coming soon</p>
@@ -370,7 +370,7 @@ export default function PermitsIndexPage() {
                         key={`${route.jurisdiction}-${route.permitType}`}
                         href={`/permits/${route.jurisdiction}/${route.permitType}`}
                         className="flex items-center justify-between p-4 rounded-xl transition-all group"
-                        style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#0D1525' }}
+                        style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#1E293B' }}
                       >
                         <div>
                           <p className="font-medium text-white group-hover:text-[#14B8A6] transition-colors">
@@ -401,7 +401,7 @@ export default function PermitsIndexPage() {
             <Link
               href="/permits/boston/zba-variance"
               className="flex items-center gap-3 p-4 rounded-xl transition-all group"
-              style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#0D1525' }}
+              style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#1E293B' }}
             >
               <Scale className="h-5 w-5 group-hover:text-[#14B8A6] transition-colors flex-shrink-0" style={{ color: '#475569' }} />
               <div>
@@ -412,7 +412,7 @@ export default function PermitsIndexPage() {
             <Link
               href="/permits/boston/article-80-review"
               className="flex items-center gap-3 p-4 rounded-xl transition-all group"
-              style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#0D1525' }}
+              style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#1E293B' }}
             >
               <Building2 className="h-5 w-5 group-hover:text-[#14B8A6] transition-colors flex-shrink-0" style={{ color: '#475569' }} />
               <div>
@@ -423,7 +423,7 @@ export default function PermitsIndexPage() {
             <Link
               href="/permits/massachusetts/adu-permit"
               className="flex items-center gap-3 p-4 rounded-xl transition-all group"
-              style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#0D1525' }}
+              style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#1E293B' }}
             >
               <Home className="h-5 w-5 group-hover:text-[#14B8A6] transition-colors flex-shrink-0" style={{ color: '#475569' }} />
               <div>
@@ -438,7 +438,7 @@ export default function PermitsIndexPage() {
                   key={g.label}
                   href={g.href}
                   className="flex items-center gap-3 p-4 rounded-xl transition-all group"
-                  style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#0D1525' }}
+                  style={{ border: '1px solid rgba(255,255,255,0.08)', background: '#1E293B' }}
                 >
                   <Icon className="h-5 w-5 group-hover:text-[#14B8A6] flex-shrink-0" style={{ color: '#475569' }} />
                   <p className="font-medium text-white group-hover:text-[#14B8A6] text-sm">{g.label}</p>
@@ -447,7 +447,7 @@ export default function PermitsIndexPage() {
                 <div
                   key={g.label}
                   className="flex items-center gap-3 p-4 rounded-xl opacity-40 cursor-default"
-                  style={{ border: '1px solid rgba(255,255,255,0.04)', background: '#0D1525' }}
+                  style={{ border: '1px solid rgba(255,255,255,0.04)', background: '#1E293B' }}
                 >
                   <Icon className="h-5 w-5 flex-shrink-0" style={{ color: '#475569' }} />
                   <div>
@@ -472,7 +472,7 @@ export default function PermitsIndexPage() {
         <Link
           href="/sign-up"
           className="inline-block font-semibold px-6 py-3 rounded-xl transition-colors"
-          style={{ background: '#14B8A6', color: '#080D1A' }}
+          style={{ background: '#14B8A6', color: '#0F172A' }}
         >
           Start Free Trial
         </Link>

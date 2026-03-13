@@ -322,7 +322,7 @@ function PricingContent() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: "#080D1A", color: "#F1F5F9", fontFamily: "var(--font-jakarta, sans-serif)" }}>
+    <div className="min-h-screen" style={{ background: "#0F172A", color: "#F1F5F9", fontFamily: "var(--font-jakarta, sans-serif)" }}>
 
       {/* ------------------------------------------------------------------ */}
       {/* Nav */}
@@ -542,7 +542,7 @@ export default function PricingPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center" style={{ background: "#080D1A" }}>
+        <div className="min-h-screen flex items-center justify-center" style={{ background: "#0F172A" }}>
           <div style={{ color: "#475569" }}>Loading...</div>
         </div>
       }

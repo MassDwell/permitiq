@@ -4,7 +4,7 @@ export default function OfflinePage() {
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center px-6 text-center"
-      style={{ background: '#080D1A' }}
+      style={{ background: '#0F172A' }}
     >
       <div
         className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6"

@@ -398,7 +398,7 @@ export default function LandingPage() {
               <div
                 className="rounded-xl px-4 py-3"
                 style={{
-                  background: "#111827",
+                  background: "#0F172A",
                   border: "1px solid rgba(245,158,11,0.45)",
                   boxShadow: "0 0 24px rgba(245,158,11,0.18), 0 10px 36px rgba(0,0,0,0.45)",
                 }}
@@ -426,7 +426,7 @@ export default function LandingPage() {
               <div
                 className="rounded-xl px-4 py-3"
                 style={{
-                  background: "#111827",
+                  background: "#0F172A",
                   border: "1px solid rgba(59,130,246,0.45)",
                   boxShadow: "0 0 24px rgba(59,130,246,0.18), 0 10px 36px rgba(0,0,0,0.45)",
                 }}
@@ -454,7 +454,7 @@ export default function LandingPage() {
               <div
                 className="rounded-xl px-4 py-3"
                 style={{
-                  background: "#111827",
+                  background: "#0F172A",
                   border: "1px solid rgba(239,68,68,0.5)",
                   boxShadow: "0 0 24px rgba(239,68,68,0.22), 0 10px 36px rgba(0,0,0,0.45)",
                 }}

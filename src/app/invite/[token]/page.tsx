@@ -48,7 +48,7 @@ export default function InvitePage() {
 
   if (isLoading || !userLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-8" style={{ background: '#080D1A' }}>
+      <div className="min-h-screen flex items-center justify-center p-8" style={{ background: '#0F172A' }}>
         <div className="w-full max-w-md space-y-4">
           <Skeleton className="h-8 w-3/4 mx-auto" />
           <Skeleton className="h-4 w-1/2 mx-auto" />
@@ -60,7 +60,7 @@ export default function InvitePage() {
 
   if (error || !data) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-8" style={{ background: '#080D1A' }}>
+      <div className="min-h-screen flex items-center justify-center p-8" style={{ background: '#0F172A' }}>
         <div className="w-full max-w-md text-center">
           <div className="h-16 w-16 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-4">
             <AlertTriangle className="h-8 w-8 text-red-400" />
@@ -82,10 +82,10 @@ export default function InvitePage() {
   const alreadyAccepted = member.inviteStatus === "accepted";
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8" style={{ background: '#080D1A' }}>
+    <div className="min-h-screen flex items-center justify-center p-8" style={{ background: '#0F172A' }}>
       <div
         className="w-full max-w-md rounded-2xl p-8"
-        style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 4px 24px rgba(0,0,0,0.4)' }}
+        style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 4px 24px rgba(0,0,0,0.4)' }}
       >
         {/* Logo / Brand */}
         <div className="text-center mb-8">

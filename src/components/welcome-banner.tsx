@@ -53,7 +53,7 @@ export function WelcomeBanner({ projectCount, onCreateProject }: WelcomeBannerPr
     <div
       className="relative mb-8 rounded-xl p-6"
       style={{
-        background: "linear-gradient(135deg, #0E1525 0%, #0D1B35 100%)",
+        background: "linear-gradient(135deg, #1E293B 0%, #0D1B35 100%)",
         border: "1px solid rgba(20,184,166,0.3)",
         boxShadow: "0 0 40px rgba(20,184,166,0.08)",
       }}

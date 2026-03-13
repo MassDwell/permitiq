@@ -101,7 +101,7 @@ export default function PortfolioPage() {
         </div>
         <Button
           onClick={() => setCreateOpen(true)}
-          style={{ background: "#14B8A6", color: "#080D1A" }}
+          style={{ background: "#14B8A6", color: "#0F172A" }}
           className="hover:bg-[#0D9488] font-semibold gap-2"
         >
           <Plus className="h-4 w-4" />
@@ -231,7 +231,7 @@ export default function PortfolioPage() {
                 className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 flex items-center gap-2"
                 style={
                   activeFilter === tab.key
-                    ? { background: "#14B8A6", color: "#080D1A" }
+                    ? { background: "#14B8A6", color: "#0F172A" }
                     : { color: "#64748B" }
                 }
               >
@@ -241,7 +241,7 @@ export default function PortfolioPage() {
                     className="text-xs px-1.5 py-0.5 rounded-full font-semibold"
                     style={
                       activeFilter === tab.key
-                        ? { background: "rgba(0,0,0,0.2)", color: "#080D1A" }
+                        ? { background: "rgba(0,0,0,0.2)", color: "#0F172A" }
                         : { background: "rgba(255,255,255,0.08)", color: "#475569" }
                     }
                   >

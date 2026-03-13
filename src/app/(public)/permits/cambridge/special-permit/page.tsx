@@ -136,7 +136,7 @@ const PRO_TIPS = [
 
 export default function CambridgeSpecialPermitPage() {
   return (
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#080D1A', minHeight: '100vh' }}>
+    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#0F172A', minHeight: '100vh' }}>
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-[#64748B] mb-8">
         <Link href="/permits" className="hover:text-[#14B8A6] transition-colors">Permit Guides</Link>
@@ -165,7 +165,7 @@ export default function CambridgeSpecialPermitPage() {
             <Clock className="h-3.5 w-3.5" />
             60–90 days typical
           </span>
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-[#111827] text-[#94A3B8] px-3 py-1.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-[#0F172A] text-[#94A3B8] px-3 py-1.5 rounded-full">
             <MapPin className="h-3.5 w-3.5" />
             344 Broadway, Cambridge
           </span>
@@ -204,7 +204,7 @@ export default function CambridgeSpecialPermitPage() {
               phone: null,
             },
           ].map((c) => (
-            <div key={c.label} className="bg-[#111827] border border-white/10 rounded-xl p-4">
+            <div key={c.label} className="bg-[#0F172A] border border-white/10 rounded-xl p-4">
               <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1">{c.label}</p>
               <p className="font-semibold text-white text-sm">{c.address}</p>
               <p className="text-sm text-[#94A3B8] mt-0.5">{c.detail}</p>
@@ -226,7 +226,7 @@ export default function CambridgeSpecialPermitPage() {
           {REQUIRED_DOCS.map((doc) => (
             <div
               key={doc.name}
-              className={`border rounded-xl p-5 ${doc.critical ? "border-[rgba(20,184,166,0.25)] bg-[rgba(20,184,166,0.08)]" : "border-white/10 bg-[#0D1525]"}`}
+              className={`border rounded-xl p-5 ${doc.critical ? "border-[rgba(20,184,166,0.25)] bg-[rgba(20,184,166,0.08)]" : "border-white/10 bg-[#1E293B]"}`}
             >
               <div className="flex items-start gap-3">
                 <FileText className={`h-5 w-5 mt-0.5 flex-shrink-0 ${doc.critical ? "text-[#14B8A6]" : "text-[#64748B]"}`} />
@@ -257,7 +257,7 @@ export default function CambridgeSpecialPermitPage() {
               <div className="flex-1 pb-6 border-b border-white/6 last:border-0">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <p className="font-semibold text-white">{step.name}</p>
-                  <span className="text-xs font-medium bg-[#111827] text-[#94A3B8] px-2.5 py-1 rounded-full flex-shrink-0">
+                  <span className="text-xs font-medium bg-[#0F172A] text-[#94A3B8] px-2.5 py-1 rounded-full flex-shrink-0">
                     {step.timeline}
                   </span>
                 </div>
@@ -291,7 +291,7 @@ export default function CambridgeSpecialPermitPage() {
       {/* Pro Tips */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold text-white mb-4">Pro Tips for Cambridge Special Permits</h2>
-        <div className="bg-[#111827] border border-white/10 rounded-2xl p-6 space-y-3">
+        <div className="bg-[#0F172A] border border-white/10 rounded-2xl p-6 space-y-3">
           {PRO_TIPS.map((tip, i) => (
             <div key={i} className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
@@ -339,7 +339,7 @@ export default function CambridgeSpecialPermitPage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/sign-up"
-              className="inline-flex items-center gap-2 bg-[#0D1525] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
+              className="inline-flex items-center gap-2 bg-[#1E293B] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
             >
               Start Free Trial <ArrowRight className="h-4 w-4" />
             </Link>

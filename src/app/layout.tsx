@@ -74,7 +74,7 @@ export default function RootLayout({
       appearance={{
         variables: {
           colorBackground: '#0A0F1E',
-          colorInputBackground: '#111827',
+          colorInputBackground: '#0F172A',
           colorInputText: '#F9FAFB',
           colorText: '#F9FAFB',
           colorTextSecondary: '#9CA3AF',
@@ -83,16 +83,16 @@ export default function RootLayout({
           borderRadius: '0.5rem',
         },
         elements: {
-          card: 'bg-[#111827] border border-white/10 shadow-2xl',
+          card: 'bg-[#0F172A] border border-white/10 shadow-2xl',
           headerTitle: 'text-white',
           socialButtonsBlockButton: 'bg-white border border-gray-300 text-gray-900 hover:bg-gray-100',
-          formFieldInput: 'bg-[#111827] border-white/10 text-white',
+          formFieldInput: 'bg-[#0F172A] border-white/10 text-white',
           footerActionLink: 'text-teal-400',
         },
       }}
     >
       <html lang="en" className="dark">
-        <body className={`${jakarta.variable} font-sans antialiased`} style={{ background: '#080D1A', color: '#F1F5F9' }}>
+        <body className={`${jakarta.variable} font-sans antialiased`} style={{ background: '#0F172A', color: '#F1F5F9' }}>
           <TRPCProvider>
             {children}
             <Toaster />

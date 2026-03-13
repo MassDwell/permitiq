@@ -19,11 +19,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen" style={{ background: "#080D1A" }}>
+    <div className="min-h-screen" style={{ background: "#0F172A" }}>
       {/* Sidebar */}
       <div
         className="hidden md:flex fixed inset-y-0 left-0 z-50 w-64 flex-col"
-        style={{ background: "#060B17", borderRight: "1px solid rgba(255,255,255,0.05)" }}
+        style={{ background: "#1E293B", borderRight: "1px solid rgba(255,255,255,0.05)" }}
       >
         {/* Logo */}
         <Link href="/">
@@ -69,7 +69,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
 
       {/* Main content */}
-      <div className="md:pl-64 min-h-screen" style={{ background: "#080D1A" }}>
+      <div className="md:pl-64 min-h-screen" style={{ background: "#0F172A" }}>
         <main className="min-h-screen">{children}</main>
       </div>
     </div>

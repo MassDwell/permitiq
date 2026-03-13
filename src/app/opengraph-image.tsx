@@ -12,7 +12,7 @@ export default function OgImage() {
         style={{
           width: 1200,
           height: 630,
-          background: "#080D1A",
+          background: "#0F172A",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",

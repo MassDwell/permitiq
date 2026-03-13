@@ -47,7 +47,7 @@ export default function AdminOverviewPage() {
           <div
             key={card.label}
             className="rounded-xl p-4"
-            style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.1)" }}
+            style={{ background: "#0F172A", border: "1px solid rgba(255,255,255,0.1)" }}
           >
             <card.icon className={`h-4 w-4 mb-3 ${card.color}`} />
             <p className={`text-2xl font-bold ${card.color}`}>{card.value}</p>
@@ -60,7 +60,7 @@ export default function AdminOverviewPage() {
         {/* Recent Signups */}
         <div
           className="rounded-xl"
-          style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.1)" }}
+          style={{ background: "#0F172A", border: "1px solid rgba(255,255,255,0.1)" }}
         >
           <div className="px-5 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
             <h2 className="text-sm font-semibold text-white">Recent Signups</h2>
@@ -88,7 +88,7 @@ export default function AdminOverviewPage() {
         {/* Recent Documents */}
         <div
           className="rounded-xl"
-          style={{ background: "#111827", border: "1px solid rgba(255,255,255,0.1)" }}
+          style={{ background: "#0F172A", border: "1px solid rgba(255,255,255,0.1)" }}
         >
           <div className="px-5 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
             <h2 className="text-sm font-semibold text-white">Recent Documents</h2>

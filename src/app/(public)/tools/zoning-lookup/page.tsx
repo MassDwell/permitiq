@@ -278,7 +278,7 @@ export default function ZoningLookupPage() {
   const permitReqs = result ? getPermitRequirements(result.districtCode) : [];
 
   return (
-    <main className="min-h-screen" style={{ background: "#080D1A" }}>
+    <main className="min-h-screen" style={{ background: "#0F172A" }}>
       {/* ------------------------------------------------------------------ */}
       {/* Hero */}
       {/* ------------------------------------------------------------------ */}
@@ -309,7 +309,7 @@ export default function ZoningLookupPage() {
           <div
             className="flex-1 flex items-center gap-3 px-4 rounded-xl"
             style={{
-              background: "#0E1525",
+              background: "#1E293B",
               border: "1px solid rgba(255,255,255,0.08)",
             }}
           >
@@ -328,7 +328,7 @@ export default function ZoningLookupPage() {
             className="flex items-center gap-2 px-6 py-4 rounded-xl font-semibold text-sm transition-all"
             style={{
               background: "#14B8A6",
-              color: "#080D1A",
+              color: "#0F172A",
             }}
           >
             <Search className="h-4 w-4" />
@@ -375,7 +375,7 @@ export default function ZoningLookupPage() {
           <div
             className="rounded-2xl p-6"
             style={{
-              background: "#0E1525",
+              background: "#1E293B",
               border: "1px solid rgba(255,255,255,0.06)",
             }}
           >
@@ -443,7 +443,7 @@ export default function ZoningLookupPage() {
           <div
             className="rounded-2xl p-6"
             style={{
-              background: "#0E1525",
+              background: "#1E293B",
               border: "1px solid rgba(255,255,255,0.06)",
             }}
           >
@@ -471,7 +471,7 @@ export default function ZoningLookupPage() {
           <div
             className="rounded-2xl p-6"
             style={{
-              background: "#0E1525",
+              background: "#1E293B",
               border: "1px solid rgba(255,255,255,0.06)",
             }}
           >
@@ -507,7 +507,7 @@ export default function ZoningLookupPage() {
           <div
             className="rounded-2xl p-6"
             style={{
-              background: "#0E1525",
+              background: "#1E293B",
               border: "1px solid rgba(255,255,255,0.06)",
             }}
           >
@@ -596,7 +596,7 @@ export default function ZoningLookupPage() {
                 key={step}
                 className="rounded-xl p-5"
                 style={{
-                  background: "#0E1525",
+                  background: "#1E293B",
                   border: "1px solid rgba(255,255,255,0.06)",
                 }}
               >

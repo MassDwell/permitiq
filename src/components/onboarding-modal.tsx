@@ -238,7 +238,7 @@ export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModa
 
               <Button
                 onClick={handleStep1Continue}
-                className="w-full bg-[#14B8A6] text-[#080D1A] hover:bg-[#0D9488] font-semibold"
+                className="w-full bg-[#14B8A6] text-[#0F172A] hover:bg-[#0D9488] font-semibold"
               >
                 Get Started
                 <ArrowRight className="h-4 w-4 ml-2" />
@@ -331,7 +331,7 @@ export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModa
                 <Button
                   onClick={handleCreateProject}
                   disabled={createProject.isPending}
-                  className="flex-1 bg-[#14B8A6] text-[#080D1A] hover:bg-[#0D9488] font-semibold"
+                  className="flex-1 bg-[#14B8A6] text-[#0F172A] hover:bg-[#0D9488] font-semibold"
                 >
                   {createProject.isPending ? (
                     <>
@@ -398,7 +398,7 @@ export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModa
                     router.push("/dashboard");
                   }
                 }}
-                className="w-full bg-[#14B8A6] text-[#080D1A] hover:bg-[#0D9488] font-semibold"
+                className="w-full bg-[#14B8A6] text-[#0F172A] hover:bg-[#0D9488] font-semibold"
               >
                 Go to Dashboard
                 <ArrowRight className="h-4 w-4 ml-2" />

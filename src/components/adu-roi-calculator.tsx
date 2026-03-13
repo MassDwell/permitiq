@@ -86,7 +86,7 @@ export default function ADURoiCalculator({ initialCost = 172000, aduSqft = 565 }
             onChange={(e) => setCost(Number(e.target.value))}
             className="w-full px-3 py-2 rounded-lg text-sm text-white focus:outline-none focus:ring-1"
             style={{
-              background: "#0E1525",
+              background: "#1E293B",
               border: "1px solid rgba(255,255,255,0.1)",
               // @ts-expect-error css var
               "--tw-ring-color": "#14B8A6",
@@ -103,7 +103,7 @@ export default function ADURoiCalculator({ initialCost = 172000, aduSqft = 565 }
             onChange={(e) => setMonthlyRent(Number(e.target.value))}
             className="w-full px-3 py-2 rounded-lg text-sm text-white focus:outline-none focus:ring-1"
             style={{
-              background: "#0E1525",
+              background: "#1E293B",
               border: "1px solid rgba(255,255,255,0.1)",
               // @ts-expect-error css var
               "--tw-ring-color": "#14B8A6",
@@ -119,7 +119,7 @@ export default function ADURoiCalculator({ initialCost = 172000, aduSqft = 565 }
             onChange={(e) => setFinancing(e.target.value as "cash" | "loan" | "heloc")}
             className="w-full px-3 py-2 rounded-lg text-sm text-white focus:outline-none"
             style={{
-              background: "#0E1525",
+              background: "#1E293B",
               border: "1px solid rgba(255,255,255,0.1)",
             }}
           >
@@ -140,7 +140,7 @@ export default function ADURoiCalculator({ initialCost = 172000, aduSqft = 565 }
               onChange={(e) => setRate(Number(e.target.value))}
               className="w-full px-3 py-2 rounded-lg text-sm text-white focus:outline-none"
               style={{
-                background: "#0E1525",
+                background: "#1E293B",
                 border: "1px solid rgba(255,255,255,0.1)",
               }}
             />
@@ -151,7 +151,7 @@ export default function ADURoiCalculator({ initialCost = 172000, aduSqft = 565 }
       {/* Results */}
       <div
         className="rounded-xl p-5"
-        style={{ background: "#0E1525", border: "1px solid rgba(255,255,255,0.07)" }}
+        style={{ background: "#1E293B", border: "1px solid rgba(255,255,255,0.07)" }}
       >
         <div className="flex items-center gap-2 mb-4">
           <DollarSign className="h-4 w-4" style={{ color: "#14B8A6" }} />

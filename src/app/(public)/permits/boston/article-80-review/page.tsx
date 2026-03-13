@@ -125,7 +125,7 @@ export default function Article80ReviewPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#080D1A', minHeight: '100vh' }}>
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#0F172A', minHeight: '100vh' }}>
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-sm text-[#64748B] mb-8">
           <Link href="/permits" className="hover:text-[#14B8A6] transition-colors">Permit Guides</Link>
@@ -212,12 +212,12 @@ export default function Article80ReviewPage() {
                   Large projects with significant change of use (without new construction)
                 </li>
               </ul>
-              <div className="mt-4 bg-[#0D1525] rounded-xl p-3 border border-[rgba(20,184,166,0.25)]">
+              <div className="mt-4 bg-[#1E293B] rounded-xl p-3 border border-[rgba(20,184,166,0.25)]">
                 <p className="text-xs font-semibold text-[#14B8A6]">Typical Timeline</p>
                 <p className="text-lg font-bold text-white">12–24 months</p>
               </div>
             </div>
-            <div className="border-2 border-white/10 bg-[#111827] rounded-2xl p-6">
+            <div className="border-2 border-white/10 bg-[#0F172A] rounded-2xl p-6">
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-white text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.12)' }}>SMALL</span>
                 <p className="font-semibold text-white">Small Project Review</p>
@@ -236,7 +236,7 @@ export default function Article80ReviewPage() {
                   Below 50,000 sq ft threshold
                 </li>
               </ul>
-              <div className="mt-4 bg-[#0D1525] rounded-xl p-3 border border-white/10">
+              <div className="mt-4 bg-[#1E293B] rounded-xl p-3 border border-white/10">
                 <p className="text-xs font-semibold text-[#94A3B8]">Typical Timeline</p>
                 <p className="text-lg font-bold text-white">3–6 months</p>
               </div>
@@ -254,14 +254,14 @@ export default function Article80ReviewPage() {
           <div className="space-y-6">
             {LARGE_PROJECT_STEPS.map((step) => (
               <div key={step.step} className="border border-white/10 rounded-2xl overflow-hidden">
-                <div className="flex items-center gap-4 bg-[#111827] border-b border-white/10 px-6 py-4">
+                <div className="flex items-center gap-4 bg-[#0F172A] border-b border-white/10 px-6 py-4">
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#14B8A6] text-white flex items-center justify-center text-sm font-bold">
                     {step.step}
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold text-white">{step.name}</p>
                   </div>
-                  <span className="text-xs font-medium bg-[#0D1525] border border-white/10 text-[#94A3B8] px-3 py-1.5 rounded-full flex-shrink-0">
+                  <span className="text-xs font-medium bg-[#1E293B] border border-white/10 text-[#94A3B8] px-3 py-1.5 rounded-full flex-shrink-0">
                     {step.duration}
                   </span>
                 </div>
@@ -299,7 +299,7 @@ export default function Article80ReviewPage() {
         {/* Small Project Review */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-white mb-4">Small Project Review</h2>
-          <div className="bg-[#111827] border border-white/10 rounded-2xl p-6">
+          <div className="bg-[#0F172A] border border-white/10 rounded-2xl p-6">
             <p className="text-[#94A3B8] mb-4">
               Projects between 20,000–50,000 sq ft (or ≥15 dwelling units) undergo a streamlined
               review focused on:
@@ -402,7 +402,7 @@ export default function Article80ReviewPage() {
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/sign-up"
-                className="inline-flex items-center gap-2 bg-[#0D1525] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
+                className="inline-flex items-center gap-2 bg-[#1E293B] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
               >
                 Start Free Trial <ArrowRight className="h-4 w-4" />
               </Link>

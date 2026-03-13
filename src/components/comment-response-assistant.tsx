@@ -89,7 +89,7 @@ export function CommentResponseAssistant({
       {/* Form */}
       <div
         style={{
-          background: "#0E1525",
+          background: "#1E293B",
           border: "1px solid rgba(255,255,255,0.07)",
           borderRadius: 12,
           padding: 24,
@@ -161,7 +161,7 @@ export function CommentResponseAssistant({
             background: isStreaming || !objectionText.trim() ? "rgba(20,184,166,0.4)" : "#14B8A6",
             border: "none",
             borderRadius: 8,
-            color: "#080D1A",
+            color: "#0F172A",
             padding: "10px 24px",
             fontSize: 14,
             fontWeight: 700,
@@ -204,7 +204,7 @@ export function CommentResponseAssistant({
       {(output || isStreaming) && (
         <div
           style={{
-            background: "#0E1525",
+            background: "#1E293B",
             border: "1px solid rgba(255,255,255,0.07)",
             borderRadius: 12,
             overflow: "hidden",

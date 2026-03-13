@@ -4,7 +4,7 @@ import { PublicNavAuth } from "@/components/public-nav-auth";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ minHeight: "100vh", background: "#080D1A", color: "#F1F5F9" }}>
+    <div style={{ minHeight: "100vh", background: "#0F172A", color: "#F1F5F9" }}>
       <nav
         className="sticky top-0 z-50 backdrop-blur-sm"
         style={{ background: "rgba(6,11,23,0.95)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
@@ -41,7 +41,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       {children}
       <footer
         className="py-8 mt-16"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "#060B17" }}
+        style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "#1E293B" }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">

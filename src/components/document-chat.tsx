@@ -98,7 +98,7 @@ export function DocumentChat({ projectId }: DocumentChatProps) {
         flexDirection: "column",
         height: 600,
         borderRadius: 16,
-        background: "#0E1525",
+        background: "#1E293B",
         border: "1px solid rgba(255,255,255,0.1)",
         overflow: "hidden",
       }}

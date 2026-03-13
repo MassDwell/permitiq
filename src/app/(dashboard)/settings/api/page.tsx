@@ -28,7 +28,7 @@ import { format } from "date-fns";
 import { useIsOwner } from "@/hooks/use-is-owner";
 
 const CARD_STYLE = {
-  background: "#0E1525",
+  background: "#1E293B",
   border: "1px solid rgba(255,255,255,0.07)",
   borderRadius: 16,
 };
@@ -94,7 +94,7 @@ export default function ApiKeysPage() {
         </div>
         <div
           className="rounded-2xl p-8 text-center"
-          style={{ background: "#0E1525", border: "1px solid rgba(255,255,255,0.07)" }}
+          style={{ background: "#1E293B", border: "1px solid rgba(255,255,255,0.07)" }}
         >
           <div
             className="h-14 w-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
@@ -129,7 +129,7 @@ export default function ApiKeysPage() {
 
       {/* Reveal modal for new key */}
       <Dialog open={!!createdKey} onOpenChange={(open) => !open && setCreatedKey(null)}>
-        <DialogContent style={{ background: "#0E1525", border: "1px solid rgba(255,255,255,0.1)" }}>
+        <DialogContent style={{ background: "#1E293B", border: "1px solid rgba(255,255,255,0.1)" }}>
           <DialogHeader>
             <DialogTitle className="text-[#F1F5F9] flex items-center gap-2">
               <Key className="h-5 w-5 text-[#14B8A6]" />
@@ -166,7 +166,7 @@ export default function ApiKeysPage() {
           </div>
           <Button
             className="w-full mt-2"
-            style={{ background: "#14B8A6", color: "#080D1A" }}
+            style={{ background: "#14B8A6", color: "#0F172A" }}
             onClick={() => setCreatedKey(null)}
           >
             Done — I&apos;ve saved my key
@@ -191,7 +191,7 @@ export default function ApiKeysPage() {
             </p>
             <Button
               asChild
-              style={{ background: "#14B8A6", color: "#080D1A" }}
+              style={{ background: "#14B8A6", color: "#0F172A" }}
               className="hover:bg-[#0D9488] font-semibold"
             >
               <a href="/pricing">
@@ -231,7 +231,7 @@ export default function ApiKeysPage() {
                   <Button
                     onClick={() => newKeyName && createMutation.mutate({ name: newKeyName })}
                     disabled={createMutation.isPending || !newKeyName}
-                    style={{ background: "#14B8A6", color: "#080D1A" }}
+                    style={{ background: "#14B8A6", color: "#0F172A" }}
                     className="hover:bg-[#0D9488] font-semibold"
                   >
                     {createMutation.isPending ? "Creating..." : "Create Key"}
@@ -248,7 +248,7 @@ export default function ApiKeysPage() {
               ) : (
                 <Button
                   onClick={() => setShowCreate(true)}
-                  style={{ background: "#14B8A6", color: "#080D1A" }}
+                  style={{ background: "#14B8A6", color: "#0F172A" }}
                   className="hover:bg-[#0D9488] font-semibold gap-2"
                 >
                   <Plus className="h-4 w-4" />
