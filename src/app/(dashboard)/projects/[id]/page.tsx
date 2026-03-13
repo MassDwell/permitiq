@@ -177,6 +177,8 @@ export default function ProjectDetailPage() {
     title: "Upgrade to Professional",
     description: "Upgrade to access this feature.",
   });
+  const [deleteProjectDialogOpen, setDeleteProjectDialogOpen] = useState(false);
+  const [deleteDocDialogId, setDeleteDocDialogId] = useState<string | null>(null);
 
   // Settings form state
   const [settingsName, setSettingsName] = useState("");
@@ -501,7 +503,7 @@ export default function ProjectDetailPage() {
 
       <div className="p-4 sm:p-8">
       {/* Header */}
-      <div className="flex items-start justify-between mb-8 gap-3">
+      <div className="flex items-start justify-between mb-8 gap-3 flex-wrap">
         <div>
           <Link
             href="/dashboard"
@@ -542,7 +544,7 @@ export default function ProjectDetailPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <Button
             variant="outline"
             onClick={() => {
@@ -550,6 +552,7 @@ export default function ProjectDetailPage() {
               setGeneratedShareUrl("");
               setShareLabel("");
             }}
+            className="min-h-[44px]"
           >
             <Share2 className="h-4 w-4 mr-2" />
             Share Report
@@ -564,15 +567,7 @@ export default function ProjectDetailPage() {
             <DropdownMenuContent align="end">
               <DropdownMenuItem
                 className="text-red-600"
-                onClick={() => {
-                  if (
-                    confirm(
-                      "Are you sure you want to delete this project? This cannot be undone."
-                    )
-                  ) {
-                    deleteProject.mutate({ id: projectId });
-                  }
-                }}
+                onClick={() => setDeleteProjectDialogOpen(true)}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete Project
@@ -774,7 +769,7 @@ export default function ProjectDetailPage() {
             />
 
             {/* Header + action buttons */}
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex items-start justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-3">
                 <div>
                   <h2 className="text-lg font-semibold text-foreground">Permit Requirements</h2>
@@ -1032,9 +1027,9 @@ export default function ProjectDetailPage() {
               );
             })() : (
               <div className="rounded-xl p-12 text-center" style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.08)' }}>
-                <CheckCircle className="h-12 w-12 mx-auto mb-4" style={{ color: 'rgba(255,255,255,0.2)' }} />
+                <Search className="h-12 w-12 mx-auto mb-4 text-gray-400" />
                 <h3 className="text-lg font-medium text-foreground mb-2">No requirements yet</h3>
-                <p className="text-muted-foreground mb-5 max-w-xs mx-auto text-sm">Research requirements for your permit type, or add them manually.</p>
+                <p className="text-muted-foreground mb-5 max-w-xs mx-auto text-sm">Click &quot;Research Requirements&quot; to auto-populate permit steps for this project, or add them manually.</p>
                 <div className="flex items-center justify-center gap-3">
                   <Button onClick={() => { const lower = project.name.toLowerCase(); setResearchPermitType(/demo(lition)?/.test(lower) ? "demolition" : ""); setResearchOpen(true); }}>
                     <Search className="h-4 w-4 mr-2" />Find My Requirements
@@ -1113,15 +1108,7 @@ export default function ProjectDetailPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => {
-                            if (
-                              confirm(
-                                "Are you sure you want to delete this document?"
-                              )
-                            ) {
-                              deleteDocument.mutate({ id: doc.id });
-                            }
-                          }}
+                          onClick={() => setDeleteDocDialogId(doc.id)}
                         >
                           <Trash2 className="h-4 w-4 text-red-500" />
                         </Button>
@@ -1226,6 +1213,7 @@ export default function ProjectDetailPage() {
                 <Label htmlFor="settings-name">Project Name</Label>
                 <Input
                   id="settings-name"
+                  className="text-base"
                   value={settingsName}
                   onChange={(e) => setSettingsName(e.target.value)}
                   placeholder="Project name"
@@ -1236,6 +1224,7 @@ export default function ProjectDetailPage() {
                 <Label htmlFor="settings-address">Address</Label>
                 <Input
                   id="settings-address"
+                  className="text-base"
                   value={settingsAddress}
                   onChange={(e) => setSettingsAddress(e.target.value)}
                   placeholder="Full project address"
@@ -1312,6 +1301,7 @@ export default function ProjectDetailPage() {
                   </Label>
                   <Input
                     id="settings-unit-count"
+                    className="text-base"
                     type="number"
                     min="1"
                     placeholder="e.g. 12"
@@ -1354,6 +1344,7 @@ export default function ProjectDetailPage() {
                         </div>
                         <Input
                           id="settings-gfa"
+                          className="text-base"
                           type="number"
                           min="1"
                           placeholder="e.g. 25000"
@@ -1373,6 +1364,7 @@ export default function ProjectDetailPage() {
                 <Label htmlFor="settings-description">Description</Label>
                 <Textarea
                   id="settings-description"
+                  className="text-base"
                   value={settingsDescription}
                   onChange={(e) => setSettingsDescription(e.target.value)}
                   placeholder="Brief project description..."
@@ -1453,6 +1445,7 @@ export default function ProjectDetailPage() {
                 <Label htmlFor="share-label">Label <span className="text-muted-foreground font-normal">(optional)</span></Label>
                 <Input
                   id="share-label"
+                  className="text-base"
                   placeholder="e.g. For First Republic Bank"
                   value={shareLabel}
                   onChange={(e) => setShareLabel(e.target.value)}
@@ -1585,6 +1578,7 @@ export default function ProjectDetailPage() {
               <Label htmlFor="permitType" className="mb-2 block">Or enter a permit type</Label>
               <Input
                 id="permitType"
+                className="text-base"
                 placeholder="e.g. demolition, building permit, electrical..."
                 value={researchPermitType}
                 onChange={(e) => setResearchPermitType(e.target.value)}
@@ -1626,6 +1620,65 @@ export default function ProjectDetailPage() {
         title={upgradeModalConfig.title}
         description={upgradeModalConfig.description}
       />
+
+      {/* Delete Project Confirmation */}
+      <Dialog open={deleteProjectDialogOpen} onOpenChange={setDeleteProjectDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Project</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete &quot;{project?.name}&quot;? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteProjectDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                setDeleteProjectDialogOpen(false);
+                deleteProject.mutate({ id: projectId });
+              }}
+              disabled={deleteProject.isPending}
+            >
+              {deleteProject.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
+              Delete Project
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Document Confirmation */}
+      <Dialog open={deleteDocDialogId !== null} onOpenChange={(open) => { if (!open) setDeleteDocDialogId(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Document</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this document? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDocDialogId(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (deleteDocDialogId) {
+                  deleteDocument.mutate({ id: deleteDocDialogId });
+                  setDeleteDocDialogId(null);
+                }
+              }}
+              disabled={deleteDocument.isPending}
+            >
+              {deleteDocument.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
+              Delete Document
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       </div> {/* end p-8 */}
     </div>
   );
