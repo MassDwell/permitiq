@@ -36,7 +36,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center px-5 h-16" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-            <Logo size="md" />
+            <Link href="/">
+              <Logo size="md" />
+            </Link>
           </div>
 
           {/* Navigation */}

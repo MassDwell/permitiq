@@ -26,13 +26,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         style={{ background: "#060B17", borderRight: "1px solid rgba(255,255,255,0.05)" }}
       >
         {/* Logo */}
-        <div
-          className="flex items-center gap-2.5 px-5 h-16 shrink-0"
-          style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
-        >
-          <Shield className="h-5 w-5 text-[#14B8A6]" />
-          <span className="text-white font-semibold text-sm">MeritLayer Admin</span>
-        </div>
+        <Link href="/">
+          <div
+            className="flex items-center gap-2.5 px-5 h-16 shrink-0 hover:opacity-80 transition-opacity"
+            style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
+          >
+            <Shield className="h-5 w-5 text-[#14B8A6]" />
+            <span className="text-white font-semibold text-sm">MeritLayer Admin</span>
+          </div>
+        </Link>
 
         {/* Navigation */}
         <nav className="flex-1 px-3 py-5 space-y-0.5">
