@@ -8,6 +8,13 @@
       "when": 1773344286670,
       "tag": "0000_boring_human_cannonball",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1773364922611,
+      "tag": "0001_gorgeous_puff_adder",
+      "breakpoints": true
     }
   ]
 }

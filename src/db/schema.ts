@@ -438,3 +438,76 @@ export const softCostsRelations = relations(softCosts, ({ one }) => ({
 
 export type SoftCost = typeof softCosts.$inferSelect;
 export type NewSoftCost = typeof softCosts.$inferInsert;
+
+// API Keys table (for enterprise integrations)
+export const apiKeys = pgTable("api_keys", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(), // User-friendly name for the key
+  keyPrefix: text("key_prefix").notNull(), // First 8 chars for display (e.g., "ml_live_12345678")
+  keyHash: text("key_hash").notNull(), // bcrypt hash of full key
+  lastUsedAt: timestamp("last_used_at"),
+  expiresAt: timestamp("expires_at"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const apiKeysRelations = relations(apiKeys, ({ one }) => ({
+  user: one(users, {
+    fields: [apiKeys.userId],
+    references: [users.id],
+  }),
+}));
+
+export type ApiKey = typeof apiKeys.$inferSelect;
+export type NewApiKey = typeof apiKeys.$inferInsert;
+
+// API Webhooks table
+export const apiWebhooks = pgTable("api_webhooks", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  url: text("url").notNull(), // Webhook endpoint URL
+  events: jsonb("events").$type<string[]>().notNull(), // ["compliance.status_changed", "document.processed"]
+  secret: text("secret").notNull(), // For HMAC signature verification
+  isActive: boolean("is_active").default(true),
+  lastTriggeredAt: timestamp("last_triggered_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const apiWebhooksRelations = relations(apiWebhooks, ({ one }) => ({
+  user: one(users, {
+    fields: [apiWebhooks.userId],
+    references: [users.id],
+  }),
+}));
+
+export type ApiWebhook = typeof apiWebhooks.$inferSelect;
+export type NewApiWebhook = typeof apiWebhooks.$inferInsert;
+
+// API Request Logs table (for rate limiting and analytics)
+export const apiRequestLogs = pgTable("api_request_logs", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  apiKeyId: text("api_key_id").references(() => apiKeys.id, { onDelete: "set null" }),
+  method: text("method").notNull(), // GET, POST, etc.
+  endpoint: text("endpoint").notNull(), // /api/v1/projects
+  statusCode: integer("status_code").notNull(),
+  responseTimeMs: integer("response_time_ms"),
+  requestedAt: timestamp("requested_at").notNull().defaultNow(),
+});
+
+export const apiRequestLogsRelations = relations(apiRequestLogs, ({ one }) => ({
+  user: one(users, {
+    fields: [apiRequestLogs.userId],
+    references: [users.id],
+  }),
+  apiKey: one(apiKeys, {
+    fields: [apiRequestLogs.apiKeyId],
+    references: [apiKeys.id],
+  }),
+}));
+
+export type ApiRequestLog = typeof apiRequestLogs.$inferSelect;
+export type NewApiRequestLog = typeof apiRequestLogs.$inferInsert;

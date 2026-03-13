@@ -8,6 +8,19 @@ const getStripe = () => new Stripe(process.env.STRIPE_SECRET_KEY ?? "");
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
+// Map Stripe price IDs to plan names
+const PRICE_TO_PLAN: Record<string, "starter" | "professional" | "enterprise"> = {
+  // Solo → Starter
+  [process.env.STRIPE_FOUNDER_SOLO_PRICE_ID || ""]: "starter",
+  [process.env.STRIPE_SOLO_PRICE_ID || ""]: "starter",
+  // Developer → Professional
+  [process.env.STRIPE_FOUNDER_DEVELOPER_PRICE_ID || ""]: "professional",
+  [process.env.STRIPE_DEVELOPER_PRICE_ID || ""]: "professional",
+  // Portfolio → Enterprise
+  [process.env.STRIPE_FOUNDER_PORTFOLIO_PRICE_ID || ""]: "enterprise",
+  [process.env.STRIPE_PORTFOLIO_PRICE_ID || ""]: "enterprise",
+};
+
 export async function POST(req: Request) {
   const body = await req.text();
   const headerPayload = await headers();
@@ -56,13 +69,7 @@ export async function POST(req: Request) {
         if (user) {
           // Map price ID to plan
           const priceId = subscription.items.data[0]?.price.id;
-          let plan: "starter" | "professional" | "enterprise" = "starter";
-
-          if (priceId === process.env.STRIPE_PROFESSIONAL_PRICE_ID) {
-            plan = "professional";
-          } else if (priceId === process.env.STRIPE_ENTERPRISE_PRICE_ID) {
-            plan = "enterprise";
-          }
+          const plan = priceId ? PRICE_TO_PLAN[priceId] || "starter" : "starter";
 
           await db
             .update(users)
