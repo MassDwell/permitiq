@@ -1,10 +1,10 @@
 {
   "name": "MeritLayer",
   "short_name": "MeritLayer",
-  "description": "AI-Powered Construction Compliance",
+  "description": "Permit compliance tracking",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#080D1A",
+  "background_color": "#0E1525",
   "theme_color": "#14B8A6",
   "orientation": "portrait-primary",
   "icons": [

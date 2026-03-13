@@ -4,6 +4,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { TRPCProvider } from "@/lib/trpc/provider";
 import { Toaster } from "@/components/ui/sonner";
 import { PWARegister } from "@/components/pwa-register";
+import { PushNotificationBanner } from "@/components/push-notification-banner";
+import { PWAInstallBanner } from "@/components/pwa-install-banner";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -97,6 +99,8 @@ export default function RootLayout({
             {children}
             <Toaster />
             <PWARegister />
+            <PushNotificationBanner />
+            <PWAInstallBanner />
           </TRPCProvider>
         </body>
       </html>

@@ -566,3 +566,23 @@ export type NewApiRequestLog = typeof apiRequestLogs.$inferInsert;
 
 export type JurisdictionRequest = typeof jurisdictionRequests.$inferSelect;
 export type NewJurisdictionRequest = typeof jurisdictionRequests.$inferInsert;
+
+// Push Subscriptions table (for PWA push notifications)
+export const pushSubscriptions = pgTable("push_subscriptions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  endpoint: text("endpoint").notNull(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const pushSubscriptionsRelations = relations(pushSubscriptions, ({ one }) => ({
+  user: one(users, {
+    fields: [pushSubscriptions.userId],
+    references: [users.id],
+  }),
+}));
+
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+export type NewPushSubscription = typeof pushSubscriptions.$inferInsert;

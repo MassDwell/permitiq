@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 
 const getStripe = () => new Stripe((process.env.STRIPE_SECRET_KEY ?? "").trim());
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!.trim();
+const getWebhookSecret = () => (process.env.STRIPE_WEBHOOK_SECRET ?? "").trim();
 
 // Map Stripe price IDs to plan names
 const PRICE_TO_PLAN: Record<string, "starter" | "professional" | "enterprise"> = {
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
   let event: Stripe.Event;
 
   try {
-    event = getStripe().webhooks.constructEvent(body, signature, webhookSecret);
+    event = getStripe().webhooks.constructEvent(body, signature, getWebhookSecret());
   } catch (err) {
     console.error("Webhook signature verification failed:", err);
     return new Response("Webhook Error", { status: 400 });
