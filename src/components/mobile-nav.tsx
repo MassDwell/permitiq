@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, BarChart2, MapPin, Bell } from 'lucide-react';
+import { SignOutButton } from '@clerk/nextjs';
+import { LayoutDashboard, BarChart2, MapPin, Bell, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -40,6 +41,12 @@ export function MobileNav() {
             </Link>
           );
         })}
+        <SignOutButton>
+          <button className="flex flex-col items-center gap-1 py-3 px-4 text-xs font-medium transition-colors text-[#475569] hover:text-red-400">
+            <LogOut className="h-5 w-5" />
+            Sign Out
+          </button>
+        </SignOutButton>
       </div>
     </nav>
   );

@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, SignOutButton } from "@clerk/nextjs";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
-import { LayoutDashboard, Bell, Settings, Zap, BarChart2, MapPin, Home } from "lucide-react";
+import { LayoutDashboard, Bell, Settings, Zap, BarChart2, MapPin, Home, LogOut } from "lucide-react";
 import { MobileNav } from "@/components/mobile-nav";
 
 const navigation = [
@@ -73,6 +73,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <UserButton />
               <p className="text-sm font-medium text-[#94A3B8]">Account</p>
             </div>
+            {/* Sign Out */}
+            <SignOutButton>
+              <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 text-[#64748B] hover:text-red-400 hover:bg-[rgba(239,68,68,0.05)]">
+                <LogOut className="h-4 w-4 shrink-0" />
+                Sign Out
+              </button>
+            </SignOutButton>
           </div>
         </div>
       </div>
