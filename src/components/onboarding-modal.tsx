@@ -20,8 +20,6 @@ import {
 } from "@/components/ui/select";
 import { CheckCircle, ArrowRight, Upload, MapPin, Building2, Loader2 } from "lucide-react";
 
-const STORAGE_KEY = "meritlayer-onboarding-complete";
-
 const JURISDICTION_OPTIONS = [
   { value: "BOSTON_ISD", label: "Boston, MA (ISD)" },
   { value: "BOSTON_BPDA", label: "Boston, MA (BPDA)" },
@@ -45,12 +43,12 @@ const PROJECT_TYPE_OPTIONS = [
 
 interface OnboardingModalProps {
   userName?: string | null;
-  hasProjects?: boolean;
+  /** If true, show the modal regardless of completion status (admin/debug) */
   forceOpen?: boolean;
   onClose?: () => void;
 }
 
-export function OnboardingModal({ userName, hasProjects, forceOpen, onClose }: OnboardingModalProps) {
+export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModalProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1);
@@ -65,22 +63,31 @@ export function OnboardingModal({ userName, hasProjects, forceOpen, onClose }: O
 
   const utils = trpc.useUtils();
 
+  // Fetch profile to check onboardingCompleted
+  const { data: profile, isLoading: profileLoading } = trpc.settings.getProfile.useQuery();
+
   useEffect(() => {
     if (forceOpen) {
       setOpen(true);
       return;
     }
-    // Only auto-open for users with no projects who haven't seen it
-    if (hasProjects) return;
-    const done = localStorage.getItem(STORAGE_KEY) === "true";
-    if (!done) {
+    // Wait until profile loads
+    if (profileLoading) return;
+    // Show modal if onboarding is not yet complete
+    if (profile && !profile.onboardingCompleted) {
       setOpen(true);
     }
-  }, [forceOpen, hasProjects]);
+  }, [forceOpen, profile, profileLoading]);
+
+  const completeOnboarding = trpc.settings.completeOnboarding.useMutation({
+    onSuccess: () => {
+      utils.settings.getProfile.invalidate();
+    },
+  });
 
   const createProject = trpc.projects.create.useMutation({
     onSuccess: (project) => {
-      localStorage.setItem(STORAGE_KEY, "true");
+      completeOnboarding.mutate();
       utils.projects.list.invalidate();
       toast.success("Project created! Let's get started.");
       handleClose();
@@ -92,7 +99,7 @@ export function OnboardingModal({ userName, hasProjects, forceOpen, onClose }: O
   });
 
   const handleClose = () => {
-    localStorage.setItem(STORAGE_KEY, "true");
+    completeOnboarding.mutate();
     setOpen(false);
     onClose?.();
   };

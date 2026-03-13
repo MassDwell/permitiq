@@ -145,6 +145,7 @@ export const permitWorkflowsRouter = createTRPCRouter({
       z.object({
         projectId: z.string().uuid(),
         permitCategory: z.enum([
+
           "building",
           "demolition",
           "electrical",
@@ -169,6 +170,14 @@ export const permitWorkflowsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Creating permit workflows requires Professional or higher plan
+      if (ctx.dbUser.plan === "starter") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Creating permit workflows requires a Professional or higher plan.",
+        });
+      }
+
       // Verify project ownership
       const project = await ctx.db.query.projects.findFirst({
         where: and(

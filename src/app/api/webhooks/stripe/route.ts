@@ -43,11 +43,29 @@ export async function POST(req: Request) {
         const plan = session.metadata?.plan as "starter" | "professional" | "enterprise";
 
         if (userId && plan) {
+          // Fetch subscription to get status + period end
+          let subscriptionStatus: string | null = null;
+          let subscriptionPeriodEnd: Date | null = null;
+
+          if (session.subscription) {
+            try {
+              const sub = await getStripe().subscriptions.retrieve(session.subscription as string);
+              subscriptionStatus = sub.status;
+              subscriptionPeriodEnd = (sub as any).current_period_end
+                ? new Date((sub as any).current_period_end * 1000)
+                : null;
+            } catch (err) {
+              console.error("Failed to retrieve subscription on checkout:", err);
+            }
+          }
+
           await db
             .update(users)
             .set({
               plan,
               stripeSubscriptionId: session.subscription as string,
+              subscriptionStatus,
+              subscriptionPeriodEnd,
               updatedAt: new Date(),
             })
             .where(eq(users.id, userId));
@@ -70,17 +88,22 @@ export async function POST(req: Request) {
           // Map price ID to plan
           const priceId = subscription.items.data[0]?.price.id;
           const plan = priceId ? PRICE_TO_PLAN[priceId] || "starter" : "starter";
+          const periodEnd = (subscription as any).current_period_end
+            ? new Date((subscription as any).current_period_end * 1000)
+            : null;
 
           await db
             .update(users)
             .set({
               plan,
               stripeSubscriptionId: subscription.id,
+              subscriptionStatus: subscription.status,
+              subscriptionPeriodEnd: periodEnd,
               updatedAt: new Date(),
             })
             .where(eq(users.id, user.id));
 
-          console.log(`Subscription updated for user ${user.id}: ${plan}`);
+          console.log(`Subscription updated for user ${user.id}: ${plan} (${subscription.status})`);
         }
         break;
       }
@@ -100,11 +123,44 @@ export async function POST(req: Request) {
             .set({
               plan: "starter",
               stripeSubscriptionId: null,
+              subscriptionStatus: "canceled",
+              subscriptionPeriodEnd: null,
               updatedAt: new Date(),
             })
             .where(eq(users.id, user.id));
 
           console.log(`Subscription cancelled for user ${user.id}, downgraded to starter`);
+        }
+        break;
+      }
+
+      case "invoice.payment_succeeded": {
+        const invoice = event.data.object as Stripe.Invoice;
+        const customerId = invoice.customer as string;
+        const subscriptionId = (invoice as any).subscription as string | null;
+
+        const user = await db.query.users.findFirst({
+          where: eq(users.stripeCustomerId, customerId),
+        });
+
+        if (user && subscriptionId) {
+          try {
+            const sub = await getStripe().subscriptions.retrieve(subscriptionId);
+            const periodEnd = (sub as any).current_period_end
+              ? new Date((sub as any).current_period_end * 1000)
+              : null;
+
+            await db
+              .update(users)
+              .set({
+                subscriptionStatus: sub.status,
+                subscriptionPeriodEnd: periodEnd,
+                updatedAt: new Date(),
+              })
+              .where(eq(users.id, user.id));
+          } catch (err) {
+            console.error("Failed to refresh subscription on payment_succeeded:", err);
+          }
         }
         break;
       }
@@ -118,8 +174,11 @@ export async function POST(req: Request) {
         });
 
         if (user) {
+          await db
+            .update(users)
+            .set({ subscriptionStatus: "past_due", updatedAt: new Date() })
+            .where(eq(users.id, user.id));
           console.log(`Payment failed for user ${user.id}`);
-          // Could add notification or status update here
         }
         break;
       }

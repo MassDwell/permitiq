@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
 import { LayoutDashboard, Bell, Settings, Zap, BarChart2, MapPin, Home, LogOut } from "lucide-react";
 import { MobileNav } from "@/components/mobile-nav";
+import { OnboardingModal } from "@/components/onboarding-modal";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -22,6 +23,11 @@ const navigation = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { data: unreadCount } = trpc.alerts.getUnreadCount.useQuery();
+  const { data: profile } = trpc.settings.getProfile.useQuery();
+
+  const planLabel = profile?.plan
+    ? profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1)
+    : "Starter";
 
   return (
     <div className="min-h-screen" style={{ background: '#080D1A' }}>
@@ -65,8 +71,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="px-3 pb-4 space-y-2">
             {/* Plan badge */}
             <div className="px-3 py-2 rounded-lg" style={{ background: 'rgba(20,184,166,0.05)', border: '1px solid rgba(20,184,166,0.15)' }}>
-              <p className="text-xs font-medium text-[#14B8A6]">Starter Plan</p>
-              <p className="text-xs text-[#475569] mt-0.5">3 active projects</p>
+              <p className="text-xs font-medium text-[#14B8A6]">{planLabel} Plan</p>
+              <p className="text-xs text-[#475569] mt-0.5">
+                {profile?.plan === "starter" ? "1 project limit" : profile?.plan === "professional" ? "Up to 5 projects" : "Unlimited projects"}
+              </p>
             </div>
             {/* User */}
             <div className="flex items-center gap-3 px-2 py-2">
@@ -91,6 +99,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Mobile bottom nav */}
       <MobileNav />
+
+      {/* Onboarding modal — shown when onboardingCompleted is false */}
+      {profile && !profile.onboardingCompleted && (
+        <OnboardingModal userName={profile.name} />
+      )}
     </div>
   );
 }

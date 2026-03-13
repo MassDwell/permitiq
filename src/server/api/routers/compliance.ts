@@ -192,6 +192,14 @@ export const complianceRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // Custom compliance rules are enterprise-only
+      if (ctx.dbUser.plan !== "enterprise") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Custom compliance rules require an Enterprise plan.",
+        });
+      }
+
       // Verify project ownership
       const project = await ctx.db.query.projects.findFirst({
         where: and(

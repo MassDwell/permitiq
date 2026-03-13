@@ -74,6 +74,14 @@ export const billingRouter = createTRPCRouter({
     }),
 
   createPortalSession: protectedProcedure.mutation(async ({ ctx }) => {
+    // Billing portal is only for paid plans
+    if (ctx.dbUser.plan === "starter" && !ctx.dbUser.stripeCustomerId) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Please upgrade to a paid plan to access the billing portal.",
+      });
+    }
+
     if (!ctx.dbUser.stripeCustomerId) {
       throw new TRPCError({
         code: "BAD_REQUEST",
