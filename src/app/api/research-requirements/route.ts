@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { jurisdictionRules } from "@/db/schema";
 import type { JurisdictionRule } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const client = new Anthropic();
 
@@ -12,6 +13,15 @@ export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Rate limit: 15 requests per user per hour
+  const rl = checkRateLimit(`research-requirements:${userId}`, 15, 60 * 60 * 1000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Rate limit exceeded. Try again later." }, {
+      status: 429,
+      headers: { "X-RateLimit-Reset": String(rl.resetAt) },
+    });
   }
 
   let body: unknown;

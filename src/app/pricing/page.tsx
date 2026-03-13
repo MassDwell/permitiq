@@ -22,6 +22,7 @@ const TIERS = [
     founderPrice: 49,
     regularPrice: 149,
     founderPriceId: "price_1TAKUV8WeSNkRrKoSn83vPyr",
+    founderAnnualPriceId: "price_1TAVxw8WeSNkRrKokEtxdBnD",
     regularPriceId: "price_1TAIiZ94ePmNThnD8A8bjdVn",
     description: "For independent contractors and solo operators.",
     popular: false,
@@ -41,6 +42,7 @@ const TIERS = [
     founderPrice: 99,
     regularPrice: 349,
     founderPriceId: "price_1TAKUW8WeSNkRrKo864hCugD",
+    founderAnnualPriceId: "price_1TAVy28WeSNkRrKo2SI4edhW",
     regularPriceId: "price_1TAIia94ePmNThnD1mr2KDJT",
     description: "For development teams managing multiple projects.",
     popular: true,
@@ -61,6 +63,7 @@ const TIERS = [
     founderPrice: 199,
     regularPrice: 749,
     founderPriceId: "price_1TAKUX8WeSNkRrKoG6rVbNmn",
+    founderAnnualPriceId: "price_1TAVy28WeSNkRrKoWxvOFja2",
     regularPriceId: "price_1TAIib94ePmNThnDBfqopr9e",
     description: "For firms managing large project portfolios.",
     popular: false,
@@ -219,7 +222,7 @@ function PricingCard({
 
         {/* CTA */}
         <button
-          onClick={() => onCheckout(tier.founderPriceId)}
+          onClick={() => onCheckout(isAnnual ? tier.founderAnnualPriceId : tier.founderPriceId)}
           disabled={loading}
           className="w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-150 mb-7"
           style={
@@ -397,9 +400,7 @@ function PricingContent() {
 
         <SpotsBar />
 
-        {/* AUDIT-FIX: Annual toggle hidden — annual Stripe prices not yet created; would mislead customers */}
-        {/* Annual toggle disabled until annual price IDs are configured in Stripe */}
-        <div className="flex items-center justify-center gap-3 mt-10" style={{ display: 'none' }}>
+        <div className="flex items-center justify-center gap-3 mt-10">
           <span className="text-sm font-medium" style={{ color: isAnnual ? "#475569" : "#F1F5F9" }}>
             Monthly
           </span>
