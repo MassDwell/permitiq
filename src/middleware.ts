@@ -19,6 +19,7 @@ const ADMIN_CLERK_ID = process.env.ADMIN_CLERK_ID ?? "user_3Apwsh9Ezdm45M9Rlp23m
 
 export default clerkMiddleware(async (auth, req) => {
   if (isAdminRoute(req)) {
+    await auth.protect();
     const { userId } = await auth();
     if (userId !== ADMIN_CLERK_ID) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
