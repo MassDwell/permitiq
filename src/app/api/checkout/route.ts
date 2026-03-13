@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     }
 
     // AUDIT-FIX: Use NEXT_PUBLIC_APP_URL env var instead of hardcoded domain — works correctly in staging/preview
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://meritlayer.ai";
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "https://meritlayer.ai").trim().replace(/\/$/, "");
     const session = await getStripe().checkout.sessions.create({
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
