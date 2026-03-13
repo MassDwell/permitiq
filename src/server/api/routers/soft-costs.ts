@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { softCosts, projects, projectMembers } from "@/db/schema";
-import { eq, and, sql } from "drizzle-orm";
+import { softCosts } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { assertProjectAccess } from "../project-access";
 
 const CATEGORIES = [
   "legal",
@@ -14,35 +15,11 @@ const CATEGORIES = [
   "other",
 ] as const;
 
-async function verifyProjectAccess(
-  db: Parameters<Parameters<typeof protectedProcedure.query>[0]>[0]["ctx"]["db"],
-  projectId: string,
-  userId: string
-) {
-  const project = await db.query.projects.findFirst({
-    where: eq(projects.id, projectId),
-  });
-  if (!project) throw new TRPCError({ code: "NOT_FOUND" });
-
-  const isOwner = project.userId === userId;
-  if (!isOwner) {
-    const member = await db.query.projectMembers.findFirst({
-      where: and(
-        eq(projectMembers.projectId, projectId),
-        eq(projectMembers.userId, userId),
-        eq(projectMembers.inviteStatus, "accepted")
-      ),
-    });
-    if (!member) throw new TRPCError({ code: "FORBIDDEN" });
-  }
-  return project;
-}
-
 export const softCostsRouter = createTRPCRouter({
   list: protectedProcedure
     .input(z.object({ projectId: z.string() }))
     .query(async ({ ctx, input }) => {
-      await verifyProjectAccess(ctx.db, input.projectId, ctx.dbUser.id);
+      await assertProjectAccess(ctx.db, input.projectId, ctx.dbUser.id, ctx.userId);
       return ctx.db
         .select()
         .from(softCosts)
@@ -63,7 +40,7 @@ export const softCostsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      await verifyProjectAccess(ctx.db, input.projectId, ctx.dbUser.id);
+      await assertProjectAccess(ctx.db, input.projectId, ctx.dbUser.id, ctx.userId);
       const [row] = await ctx.db
         .insert(softCosts)
         .values({
@@ -97,7 +74,7 @@ export const softCostsRouter = createTRPCRouter({
         where: eq(softCosts.id, input.id),
       });
       if (!existing) throw new TRPCError({ code: "NOT_FOUND" });
-      await verifyProjectAccess(ctx.db, existing.projectId, ctx.dbUser.id);
+      await assertProjectAccess(ctx.db, existing.projectId, ctx.dbUser.id, ctx.userId);
 
       const { id, ...fields } = input;
       const updateData: Partial<typeof softCosts.$inferInsert> = { ...fields };
@@ -124,7 +101,7 @@ export const softCostsRouter = createTRPCRouter({
         where: eq(softCosts.id, input.id),
       });
       if (!existing) throw new TRPCError({ code: "NOT_FOUND" });
-      await verifyProjectAccess(ctx.db, existing.projectId, ctx.dbUser.id);
+      await assertProjectAccess(ctx.db, existing.projectId, ctx.dbUser.id, ctx.userId);
       await ctx.db.delete(softCosts).where(eq(softCosts.id, input.id));
       return { success: true };
     }),
@@ -132,7 +109,7 @@ export const softCostsRouter = createTRPCRouter({
   summary: protectedProcedure
     .input(z.object({ projectId: z.string() }))
     .query(async ({ ctx, input }) => {
-      await verifyProjectAccess(ctx.db, input.projectId, ctx.dbUser.id);
+      await assertProjectAccess(ctx.db, input.projectId, ctx.dbUser.id, ctx.userId);
       const rows = await ctx.db
         .select()
         .from(softCosts)

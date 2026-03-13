@@ -3,6 +3,7 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { permitWorkflows, permitComments, projects } from "@/db/schema";
 import { eq, and, desc, count, inArray } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { assertProjectAccess } from "../project-access";
 import {
   BOSTON_BUILDING_REQUIREMENTS,
   BOSTON_TRADE_REQUIREMENTS,
@@ -80,17 +81,7 @@ export const permitWorkflowsRouter = createTRPCRouter({
   getByProject: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      // Verify project ownership
-      const project = await ctx.db.query.projects.findFirst({
-        where: and(
-          eq(projects.id, input.projectId),
-          eq(projects.userId, ctx.dbUser.id)
-        ),
-      });
-
-      if (!project) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
-      }
+      await assertProjectAccess(ctx.db, input.projectId, ctx.dbUser.id, ctx.userId);
 
       const workflows = await ctx.db.query.permitWorkflows.findMany({
         where: eq(permitWorkflows.projectId, input.projectId),
@@ -122,10 +113,7 @@ export const permitWorkflowsRouter = createTRPCRouter({
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
       const workflow = await ctx.db.query.permitWorkflows.findFirst({
-        where: and(
-          eq(permitWorkflows.id, input.id),
-          eq(permitWorkflows.userId, ctx.dbUser.id)
-        ),
+        where: eq(permitWorkflows.id, input.id),
         with: {
           comments: {
             orderBy: [desc(permitComments.createdAt)],
@@ -136,6 +124,8 @@ export const permitWorkflowsRouter = createTRPCRouter({
       if (!workflow) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Permit workflow not found" });
       }
+
+      await assertProjectAccess(ctx.db, workflow.projectId, ctx.dbUser.id, ctx.userId);
 
       return workflow;
     }),
@@ -342,15 +332,14 @@ export const permitWorkflowsRouter = createTRPCRouter({
     .input(z.object({ permitWorkflowId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
       const workflow = await ctx.db.query.permitWorkflows.findFirst({
-        where: and(
-          eq(permitWorkflows.id, input.permitWorkflowId),
-          eq(permitWorkflows.userId, ctx.dbUser.id)
-        ),
+        where: eq(permitWorkflows.id, input.permitWorkflowId),
       });
 
       if (!workflow) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Permit workflow not found" });
       }
+
+      await assertProjectAccess(ctx.db, workflow.projectId, ctx.dbUser.id, ctx.userId);
 
       return ctx.db.query.permitComments.findMany({
         where: eq(permitComments.permitWorkflowId, input.permitWorkflowId),

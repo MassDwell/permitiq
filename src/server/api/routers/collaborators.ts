@@ -4,24 +4,20 @@ import { projectMembers, projects } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { sendTeamInviteEmail } from "@/lib/email";
+import { assertProjectAccess } from "../project-access";
 
 export const collaboratorsRouter = createTRPCRouter({
   getByProject: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      const project = await ctx.db.query.projects.findFirst({
-        where: and(eq(projects.id, input.projectId), eq(projects.userId, ctx.dbUser.id)),
-      });
-
-      if (!project) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
-      }
+      const project = await assertProjectAccess(ctx.db, input.projectId, ctx.dbUser.id, ctx.userId);
 
       const members = await ctx.db.query.projectMembers.findMany({
         where: eq(projectMembers.projectId, input.projectId),
       });
 
-      return { members, isOwner: true };
+      const isOwner = project.userId === ctx.dbUser.id;
+      return { members, isOwner };
     }),
 
   invite: protectedProcedure

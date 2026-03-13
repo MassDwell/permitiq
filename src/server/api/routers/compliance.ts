@@ -2,6 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { complianceItems, projects, jurisdictionRules, complianceSnapshots } from "@/db/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
+import { assertProjectAccess } from "../project-access";
 import { TRPCError } from "@trpc/server";
 import Anthropic from "@anthropic-ai/sdk";
 import {
@@ -139,20 +140,7 @@ export const complianceRouter = createTRPCRouter({
   listForProject: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      // Verify project ownership
-      const project = await ctx.db.query.projects.findFirst({
-        where: and(
-          eq(projects.id, input.projectId),
-          eq(projects.userId, ctx.dbUser.id)
-        ),
-      });
-
-      if (!project) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Project not found",
-        });
-      }
+      await assertProjectAccess(ctx.db, input.projectId, ctx.dbUser.id, ctx.userId);
 
       return ctx.db.query.complianceItems.findMany({
         where: eq(complianceItems.projectId, input.projectId),
@@ -179,12 +167,14 @@ export const complianceRouter = createTRPCRouter({
         },
       });
 
-      if (!item || item.project.userId !== ctx.dbUser.id) {
+      if (!item) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Compliance item not found",
         });
       }
+
+      await assertProjectAccess(ctx.db, item.project.id, ctx.dbUser.id, ctx.userId);
 
       return item;
     }),
@@ -419,16 +409,7 @@ export const complianceRouter = createTRPCRouter({
   detectArticle80: protectedProcedure
     .input(z.object({ projectId: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
-      const project = await ctx.db.query.projects.findFirst({
-        where: and(
-          eq(projects.id, input.projectId),
-          eq(projects.userId, ctx.dbUser.id)
-        ),
-      });
-
-      if (!project) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
-      }
+      const project = await assertProjectAccess(ctx.db, input.projectId, ctx.dbUser.id, ctx.userId);
 
       const jurisdictionLower = (project.jurisdiction ?? "").toLowerCase();
       const isBoston = /boston/.test(jurisdictionLower);

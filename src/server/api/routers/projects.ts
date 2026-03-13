@@ -1,13 +1,15 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { projects, documents, complianceItems, complianceSnapshots } from "@/db/schema";
-import { eq, and, desc, count, sql, gte, lte } from "drizzle-orm";
+import { projects, documents, complianceItems, complianceSnapshots, projectMembers } from "@/db/schema";
+import { eq, and, desc, count, sql, gte, lte, inArray } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { sendProjectCreatedEmail } from "@/lib/email";
+import { assertProjectAccess } from "../project-access";
 
 export const projectsRouter = createTRPCRouter({
   list: protectedProcedure.query(async ({ ctx }) => {
-    const userProjects = await ctx.db.query.projects.findMany({
+    // Owned projects
+    const ownedProjects = await ctx.db.query.projects.findMany({
       where: eq(projects.userId, ctx.dbUser.id),
       orderBy: [desc(projects.updatedAt)],
       with: {
@@ -16,8 +18,36 @@ export const projectsRouter = createTRPCRouter({
       },
     });
 
+    // Projects where user is an accepted collaborator
+    const memberships = await ctx.db.query.projectMembers.findMany({
+      where: and(
+        eq(projectMembers.userId, ctx.userId),
+        eq(projectMembers.inviteStatus, "accepted"),
+      ),
+    });
+
+    let collaboratorProjects: typeof ownedProjects = [];
+    if (memberships.length > 0) {
+      const memberProjectIds = memberships.map((m) => m.projectId);
+      collaboratorProjects = await ctx.db.query.projects.findMany({
+        where: inArray(projects.id, memberProjectIds),
+        orderBy: [desc(projects.updatedAt)],
+        with: {
+          complianceItems: true,
+          documents: true,
+        },
+      });
+    }
+
+    // Merge and sort by updatedAt (owned first for duplicates, but there shouldn't be any)
+    const ownedIds = new Set(ownedProjects.map((p) => p.id));
+    const allProjects = [
+      ...ownedProjects,
+      ...collaboratorProjects.filter((p) => !ownedIds.has(p.id)),
+    ].sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+
     // Calculate health scores
-    return userProjects.map((project) => {
+    return allProjects.map((project) => {
       const totalItems = project.complianceItems.length;
       const metItems = project.complianceItems.filter((i) => i.status === "met").length;
       const overdueItems = project.complianceItems.filter((i) => i.status === "overdue").length;
@@ -45,11 +75,11 @@ export const projectsRouter = createTRPCRouter({
   get: protectedProcedure
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
+      // Verify owner or accepted collaborator
+      await assertProjectAccess(ctx.db, input.id, ctx.dbUser.id, ctx.userId);
+
       const project = await ctx.db.query.projects.findFirst({
-        where: and(
-          eq(projects.id, input.id),
-          eq(projects.userId, ctx.dbUser.id)
-        ),
+        where: eq(projects.id, input.id),
         with: {
           complianceItems: {
             with: {

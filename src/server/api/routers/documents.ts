@@ -5,26 +5,15 @@ import { eq, and, desc, count } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { processDocumentWithAI } from "@/lib/ai/document-processor";
 import { sendDocumentProcessedEmail } from "@/lib/email";
+import { assertProjectAccess } from "../project-access";
 
 export const documentsRouter = createTRPCRouter({
   list: protectedProcedure
     .input(z.object({ projectId: z.string().uuid().optional() }))
     .query(async ({ ctx, input }) => {
       if (input.projectId) {
-        // Verify project ownership
-        const project = await ctx.db.query.projects.findFirst({
-          where: and(
-            eq(projects.id, input.projectId),
-            eq(projects.userId, ctx.dbUser.id)
-          ),
-        });
-
-        if (!project) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Project not found",
-          });
-        }
+        // Verify owner or accepted collaborator
+        await assertProjectAccess(ctx.db, input.projectId, ctx.dbUser.id, ctx.userId);
 
         return ctx.db.query.documents.findMany({
           where: eq(documents.projectId, input.projectId),
@@ -51,10 +40,7 @@ export const documentsRouter = createTRPCRouter({
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
       const doc = await ctx.db.query.documents.findFirst({
-        where: and(
-          eq(documents.id, input.id),
-          eq(documents.userId, ctx.dbUser.id)
-        ),
+        where: eq(documents.id, input.id),
         with: {
           project: true,
           complianceItems: true,
@@ -67,6 +53,8 @@ export const documentsRouter = createTRPCRouter({
           message: "Document not found",
         });
       }
+
+      await assertProjectAccess(ctx.db, doc.projectId, ctx.dbUser.id, ctx.userId);
 
       return doc;
     }),
@@ -258,12 +246,10 @@ export const documentsRouter = createTRPCRouter({
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
       const doc = await ctx.db.query.documents.findFirst({
-        where: and(
-          eq(documents.id, input.id),
-          eq(documents.userId, ctx.dbUser.id)
-        ),
+        where: eq(documents.id, input.id),
         columns: {
           id: true,
+          projectId: true,
           processingStatus: true,
           processingError: true,
           extractedData: true,
@@ -276,6 +262,8 @@ export const documentsRouter = createTRPCRouter({
           message: "Document not found",
         });
       }
+
+      await assertProjectAccess(ctx.db, doc.projectId, ctx.dbUser.id, ctx.userId);
 
       return doc;
     }),

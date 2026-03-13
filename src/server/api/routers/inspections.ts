@@ -3,6 +3,7 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { inspections, projects } from "@/db/schema";
 import { eq, and, asc } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { assertProjectAccess } from "../project-access";
 
 const BOSTON_SEQUENCE = [
   { name: "Foundation/Footing", inspectionType: "building", sortOrder: 1 },
@@ -25,14 +26,7 @@ export const inspectionsRouter = createTRPCRouter({
   list: protectedProcedure
     .input(z.object({ projectId: z.string() }))
     .query(async ({ ctx, input }) => {
-      // Verify user owns the project
-      const project = await ctx.db.query.projects.findFirst({
-        where: and(
-          eq(projects.id, input.projectId),
-          eq(projects.userId, ctx.dbUser.id)
-        ),
-      });
-      if (!project) throw new TRPCError({ code: "NOT_FOUND" });
+      await assertProjectAccess(ctx.db, input.projectId, ctx.dbUser.id, ctx.userId);
 
       return ctx.db
         .select()
