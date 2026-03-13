@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
@@ -21,7 +21,54 @@ import {
   TrendingUp,
   MapPin,
   ChevronRight,
+  Play,
 } from "lucide-react";
+
+const CSS_ANIMATIONS = `
+  @keyframes meshOrb1 {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(-50px, 35px) scale(1.15); }
+    66% { transform: translate(35px, -25px) scale(0.88); }
+  }
+  @keyframes meshOrb2 {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    33% { transform: translate(55px, 22px) scale(0.82); }
+    66% { transform: translate(-25px, -35px) scale(1.22); }
+  }
+  @keyframes meshOrb3 {
+    0%, 100% { transform: translate(0px, 0px) scale(1); }
+    50% { transform: translate(-30px, 45px) scale(1.1); }
+  }
+  @keyframes floatA {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(0.5deg); }
+  }
+  @keyframes floatB {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(12px) rotate(-0.5deg); }
+  }
+  @keyframes floatC {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes statPop {
+    0% { opacity: 0; transform: scale(0.75) translateY(16px); }
+    60% { transform: scale(1.05) translateY(-2px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes pulseRing {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.25); }
+    50% { box-shadow: 0 0 0 8px rgba(59,130,246,0); }
+  }
+  @keyframes lineSlide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  @keyframes badgePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+`;
 
 const features = [
   {
@@ -53,8 +100,7 @@ const features = [
 const pricingPlans = [
   {
     name: "Solo",
-    price: 49,
-    regularPrice: 149,
+    price: 149,
     description: "Perfect for independent developers.",
     features: [
       "Up to 3 active projects",
@@ -68,8 +114,7 @@ const pricingPlans = [
   },
   {
     name: "Developer",
-    price: 99,
-    regularPrice: 349,
+    price: 349,
     description: "For development teams managing multiple projects.",
     features: [
       "Everything in Solo",
@@ -85,8 +130,7 @@ const pricingPlans = [
   },
   {
     name: "Portfolio",
-    price: 199,
-    regularPrice: 749,
+    price: 749,
     description: "For firms managing large project portfolios.",
     features: [
       "Everything in Developer",
@@ -108,10 +152,52 @@ const stats = [
   { value: "6+", label: "MA jurisdictions supported" },
 ];
 
+const avatars = [
+  { initials: "JM", bg: "#1D4ED8" },
+  { initials: "SR", bg: "#7C3AED" },
+  { initials: "AK", bg: "#059669" },
+  { initials: "TC", bg: "#DC2626" },
+  { initials: "BW", bg: "#B45309" },
+];
+
 export default function LandingPage() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
+  const [gaugeScore, setGaugeScore] = useState(0);
+  const [statsVisible, setStatsVisible] = useState(false);
+  const statsRef = useRef<HTMLDivElement>(null);
+
+  // Animate compliance score gauge on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      let current = 0;
+      const interval = setInterval(() => {
+        current += 1;
+        setGaugeScore(current);
+        if (current >= 94) clearInterval(interval);
+      }, 14);
+      return () => clearInterval(interval);
+    }, 700);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Intersection Observer for stats animation
+  useEffect(() => {
+    const el = statsRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStatsVisible(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.25 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   const joinWaitlist = trpc.waitlist.join.useMutation({
     onSuccess: () => {
@@ -134,13 +220,19 @@ export default function LandingPage() {
     joinWaitlist.mutate({ email, name, company });
   };
 
+  // SVG gauge params
+  const gaugeRadius = 50;
+  const gaugeCircumference = 2 * Math.PI * gaugeRadius; // ≈ 314.16
+  const gaugeOffset = gaugeCircumference * (1 - gaugeScore / 100);
+
   return (
     <div className="min-h-screen text-[#F1F5F9]" style={{ background: "#060D1A" }}>
+      <style>{CSS_ANIMATIONS}</style>
 
       {/* ── NAVIGATION ── */}
       <nav
         className="sticky top-0 z-50 backdrop-blur-md"
-        style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(6,13,26,0.88)" }}
+        style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(6,13,26,0.92)" }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -176,38 +268,60 @@ export default function LandingPage() {
       </nav>
 
       {/* ── HERO ── */}
-      <section className="relative overflow-hidden pt-24 pb-20">
-        {/* Background glow */}
-        <div
-          className="absolute inset-0 -z-10"
-          style={{
-            background:
-              "radial-gradient(ellipse 90% 60% at 50% -5%, rgba(59,130,246,0.18) 0%, transparent 65%)",
-          }}
-        />
-        <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-px -z-10"
-          style={{ background: "linear-gradient(90deg, transparent, rgba(59,130,246,0.4), transparent)" }}
-        />
+      <section
+        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+        style={{ paddingTop: "80px", paddingBottom: "60px" }}
+      >
+        {/* Animated gradient mesh background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+          <div
+            style={{
+              position: "absolute",
+              top: "5%",
+              left: "10%",
+              width: "700px",
+              height: "700px",
+              borderRadius: "50%",
+              background: "radial-gradient(circle, rgba(59,130,246,0.14) 0%, transparent 70%)",
+              animation: "meshOrb1 14s ease-in-out infinite",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              top: "25%",
+              right: "5%",
+              width: "550px",
+              height: "550px",
+              borderRadius: "50%",
+              background: "radial-gradient(circle, rgba(6,182,212,0.11) 0%, transparent 70%)",
+              animation: "meshOrb2 17s ease-in-out infinite",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: "10%",
+              left: "30%",
+              width: "450px",
+              height: "450px",
+              borderRadius: "50%",
+              background: "radial-gradient(circle, rgba(99,102,241,0.09) 0%, transparent 70%)",
+              animation: "meshOrb3 20s ease-in-out infinite",
+            }}
+          />
+          {/* Top horizon line */}
+          <div
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-px"
+            style={{ background: "linear-gradient(90deg, transparent, rgba(59,130,246,0.5), rgba(6,182,212,0.3), transparent)" }}
+          />
+        </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            {/* Badge */}
-            <div
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-8"
-              style={{
-                border: "1px solid rgba(59,130,246,0.3)",
-                background: "rgba(59,130,246,0.08)",
-                color: "#93C5FD",
-              }}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-              AI-Powered Permit &amp; Compliance Management
-            </div>
-
-            {/* Headline */}
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.05] text-white mb-6">
-              Your permit deadlines
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          {/* Headline block */}
+          <div className="text-center max-w-4xl mx-auto mb-14">
+            <h1 className="text-5xl md:text-[4.5rem] lg:text-[5.25rem] font-extrabold tracking-tight leading-[1.04] text-white mb-6">
+              Every deadline tracked.
               <br />
               <span
                 style={{
@@ -216,24 +330,24 @@ export default function LandingPage() {
                   WebkitTextFillColor: "transparent",
                 }}
               >
-                don&apos;t care about spreadsheets.
+                Every project protected.
               </span>
             </h1>
 
-            {/* Sub */}
             <p className="text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed" style={{ color: "#94A3B8" }}>
-              MeritLayer reads your compliance documents, maps every deadline, and alerts your team before
-              anything falls through the cracks. Built for Boston developers and GCs.
+              MeritLayer reads your permit documents, maps every deadline, and alerts your team
+              before anything slips through the cracks. Built for Boston developers and GCs.
             </p>
 
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {/* CTA buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
               <Link href="/sign-up">
                 <button
-                  className="px-8 py-4 rounded-xl font-semibold text-white transition-all hover:scale-[1.03] flex items-center gap-2 text-base"
+                  className="px-9 py-4 rounded-xl font-bold text-white transition-all hover:scale-[1.03] flex items-center gap-2.5 text-base"
                   style={{
                     background: "linear-gradient(135deg, #3B82F6, #06B6D4)",
-                    boxShadow: "0 0 40px rgba(59,130,246,0.35), 0 4px 20px rgba(0,0,0,0.4)",
+                    boxShadow: "0 0 50px rgba(59,130,246,0.45), 0 6px 24px rgba(0,0,0,0.4)",
+                    animation: "pulseRing 3s ease-in-out infinite",
                   }}
                 >
                   Start Free Trial
@@ -242,80 +356,224 @@ export default function LandingPage() {
               </Link>
               <a href="#how-it-works">
                 <button
-                  className="px-8 py-4 rounded-xl font-semibold transition-all hover:bg-white/5 text-base"
-                  style={{ border: "1px solid rgba(255,255,255,0.12)", color: "#94A3B8" }}
+                  className="px-9 py-4 rounded-xl font-semibold transition-all hover:bg-white/5 text-base flex items-center gap-2.5"
+                  style={{ border: "1px solid rgba(255,255,255,0.14)", color: "#94A3B8" }}
                 >
-                  See How It Works
+                  <Play className="h-4 w-4" style={{ fill: "#94A3B8" }} />
+                  Watch Demo
                 </button>
               </a>
             </div>
 
-            {/* Social proof bar */}
-            <p className="mt-10 text-sm" style={{ color: "#475569" }}>
-              <MapPin className="inline h-3.5 w-3.5 mr-1 -mt-0.5" />
-              Trusted by developers managing projects across Massachusetts
-            </p>
+            {/* Social proof strip */}
+            <div className="flex items-center justify-center gap-3">
+              <div className="flex -space-x-2.5">
+                {avatars.map((av, i) => (
+                  <div
+                    key={i}
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white border-2 shrink-0"
+                    style={{ background: av.bg, borderColor: "#060D1A" }}
+                  >
+                    {av.initials}
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm" style={{ color: "#64748B" }}>
+                Trusted by{" "}
+                <span style={{ color: "#CBD5E1", fontWeight: 600 }}>47+</span>{" "}
+                Boston developers
+              </p>
+            </div>
           </div>
 
-          {/* Dashboard Mockup */}
-          <div className="mt-16 relative max-w-5xl mx-auto">
+          {/* Dashboard Mockup with Floating Cards */}
+          <div className="relative max-w-4xl mx-auto">
+            {/* Floating Card — Foundation Inspection (left) */}
             <div
-              className="absolute inset-0 -z-10 blur-3xl"
-              style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(59,130,246,0.12), transparent 70%)" }}
-            />
+              className="absolute -left-6 top-[28%] z-10 hidden xl:block"
+              style={{ animation: "floatA 4.2s ease-in-out infinite" }}
+            >
+              <div
+                className="rounded-xl px-4 py-3"
+                style={{
+                  background: "#111827",
+                  border: "1px solid rgba(245,158,11,0.45)",
+                  boxShadow: "0 0 24px rgba(245,158,11,0.18), 0 10px 36px rgba(0,0,0,0.45)",
+                }}
+              >
+                <div className="flex items-center gap-2.5">
+                  <div
+                    className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ background: "rgba(245,158,11,0.12)" }}
+                  >
+                    <Clock className="h-3.5 w-3.5 text-amber-400" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-[#64748B] leading-none mb-0.5">Foundation Inspection</p>
+                    <p className="text-xs font-bold text-amber-400 leading-none">Due in 3 days</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Floating Card — Certificate of Occupancy (right) */}
+            <div
+              className="absolute -right-6 top-[40%] z-10 hidden xl:block"
+              style={{ animation: "floatB 5.5s ease-in-out infinite" }}
+            >
+              <div
+                className="rounded-xl px-4 py-3"
+                style={{
+                  background: "#111827",
+                  border: "1px solid rgba(59,130,246,0.45)",
+                  boxShadow: "0 0 24px rgba(59,130,246,0.18), 0 10px 36px rgba(0,0,0,0.45)",
+                }}
+              >
+                <div className="flex items-center gap-2.5">
+                  <div
+                    className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ background: "rgba(59,130,246,0.12)" }}
+                  >
+                    <Shield className="h-3.5 w-3.5 text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-[#64748B] leading-none mb-0.5">Certificate of Occupancy</p>
+                    <p className="text-xs font-bold text-blue-400 leading-none">Due in 12 days</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Floating Card — Electrical OVERDUE (top-right) */}
+            <div
+              className="absolute -right-2 -top-8 z-10 hidden xl:block"
+              style={{ animation: "floatC 3.8s ease-in-out infinite" }}
+            >
+              <div
+                className="rounded-xl px-4 py-3"
+                style={{
+                  background: "#111827",
+                  border: "1px solid rgba(239,68,68,0.5)",
+                  boxShadow: "0 0 24px rgba(239,68,68,0.22), 0 10px 36px rgba(0,0,0,0.45)",
+                }}
+              >
+                <div className="flex items-center gap-2.5">
+                  <div
+                    className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ background: "rgba(239,68,68,0.12)" }}
+                  >
+                    <AlertTriangle className="h-3.5 w-3.5 text-red-400" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-[#64748B] leading-none mb-0.5">Electrical Permit</p>
+                    <p className="text-xs font-bold text-red-400 leading-none tracking-wide">OVERDUE</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Main Dashboard Window */}
             <div
               className="rounded-2xl overflow-hidden"
               style={{
-                border: "1px solid rgba(59,130,246,0.2)",
+                border: "1px solid rgba(59,130,246,0.22)",
                 background: "#0D1526",
-                boxShadow: "0 0 60px rgba(59,130,246,0.1), 0 20px 60px rgba(0,0,0,0.6)",
+                boxShadow:
+                  "0 0 100px rgba(59,130,246,0.14), 0 40px 100px rgba(0,0,0,0.65)",
               }}
             >
               {/* Window chrome */}
               <div
-                className="flex items-center gap-2 px-4 py-3"
-                style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "#0A1020" }}
+                className="flex items-center gap-2 px-5 py-3.5"
+                style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "#080F1E" }}
               >
-                <span className="w-3 h-3 rounded-full bg-red-500/70" />
-                <span className="w-3 h-3 rounded-full bg-yellow-500/70" />
-                <span className="w-3 h-3 rounded-full bg-green-500/70" />
-                <span className="ml-4 text-xs text-[#475569]">MeritLayer — Project Dashboard</span>
+                <span className="w-3 h-3 rounded-full" style={{ background: "#FF5F57" }} />
+                <span className="w-3 h-3 rounded-full" style={{ background: "#FEBC2E" }} />
+                <span className="w-3 h-3 rounded-full" style={{ background: "#28C840" }} />
+                <span className="ml-4 text-xs" style={{ color: "#334155" }}>
+                  MeritLayer — Project Dashboard
+                </span>
+                <div className="ml-auto flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-400" style={{ animation: "badgePulse 2s ease-in-out infinite" }} />
+                  <span className="text-[10px] text-green-400">Live</span>
+                </div>
               </div>
 
-              {/* Dashboard content */}
-              <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Compliance Score */}
+              {/* Dashboard grid */}
+              <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Compliance Score Gauge */}
                 <div
-                  className="rounded-xl p-4 col-span-1"
+                  className="rounded-xl p-5 col-span-1 flex flex-col items-center"
                   style={{ background: "#060D1A", border: "1px solid rgba(59,130,246,0.15)" }}
                 >
-                  <p className="text-xs text-[#475569] uppercase tracking-wider mb-1">Compliance Score</p>
-                  <div className="flex items-end gap-2">
-                    <span className="text-4xl font-bold text-green-400">94</span>
-                    <span className="text-green-400 text-sm mb-1">/ 100</span>
+                  <p className="text-[10px] text-[#475569] uppercase tracking-widest mb-3 self-start font-semibold">
+                    Compliance Score
+                  </p>
+                  <div className="relative flex items-center justify-center">
+                    <svg width="120" height="120" viewBox="0 0 120 120" aria-label={`Compliance score: ${gaugeScore}%`}>
+                      {/* Track */}
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r={gaugeRadius}
+                        fill="none"
+                        stroke="rgba(255,255,255,0.05)"
+                        strokeWidth="9"
+                      />
+                      {/* Progress */}
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r={gaugeRadius}
+                        fill="none"
+                        stroke="url(#gaugeGrad)"
+                        strokeWidth="9"
+                        strokeLinecap="round"
+                        strokeDasharray={gaugeCircumference}
+                        strokeDashoffset={gaugeOffset}
+                        transform="rotate(-90 60 60)"
+                        style={{ transition: "stroke-dashoffset 0.04s linear" }}
+                      />
+                      <defs>
+                        <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" stopColor="#22C55E" />
+                          <stop offset="100%" stopColor="#4ADE80" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-3xl font-extrabold text-white leading-none">{gaugeScore}</span>
+                      <span className="text-[11px] mt-0.5" style={{ color: "#475569" }}>/ 100</span>
+                    </div>
                   </div>
-                  <div className="mt-3 h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
-                    <div className="h-full w-[94%] rounded-full" style={{ background: "linear-gradient(90deg, #22C55E, #16A34A)" }} />
+                  <div className="flex items-center gap-1.5 mt-2">
+                    <CheckCircle className="h-3.5 w-3.5 text-green-400" />
+                    <span className="text-xs font-semibold text-green-400">On track</span>
                   </div>
-                  <p className="text-xs mt-2" style={{ color: "#22C55E" }}>On track</p>
                 </div>
 
-                {/* Active Deadlines */}
+                {/* Deadlines */}
                 <div
                   className="rounded-xl p-4 col-span-1"
                   style={{ background: "#060D1A", border: "1px solid rgba(255,255,255,0.06)" }}
                 >
-                  <p className="text-xs text-[#475569] uppercase tracking-wider mb-3">Upcoming Deadlines</p>
+                  <p className="text-[10px] text-[#475569] uppercase tracking-widest mb-3 font-semibold">
+                    Upcoming Deadlines
+                  </p>
                   <div className="space-y-2">
                     {[
-                      { label: "Foundation Inspection", days: 3, color: "#F59E0B" },
-                      { label: "Framing Permit Renewal", days: 7, color: "#3B82F6" },
-                      { label: "Electrical Sign-Off", days: 14, color: "#22C55E" },
+                      { label: "Foundation Inspection", tag: "3 days", color: "#F59E0B", bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.2)" },
+                      { label: "Certificate of Occupancy", tag: "12 days", color: "#3B82F6", bg: "rgba(59,130,246,0.08)", border: "rgba(59,130,246,0.2)" },
+                      { label: "Electrical Permit", tag: "OVERDUE", color: "#EF4444", bg: "rgba(239,68,68,0.1)", border: "rgba(239,68,68,0.25)" },
                     ].map((d) => (
-                      <div key={d.label} className="flex items-center justify-between">
-                        <span className="text-xs text-[#94A3B8] truncate">{d.label}</span>
-                        <span className="text-xs font-semibold ml-2 shrink-0" style={{ color: d.color }}>
-                          {d.days}d
+                      <div
+                        key={d.label}
+                        className="flex items-center justify-between px-3 py-2 rounded-lg"
+                        style={{ background: d.bg, border: `1px solid ${d.border}` }}
+                      >
+                        <span className="text-xs text-[#94A3B8] truncate pr-2">{d.label}</span>
+                        <span className="text-[11px] font-bold shrink-0" style={{ color: d.color }}>
+                          {d.tag}
                         </span>
                       </div>
                     ))}
@@ -327,46 +585,65 @@ export default function LandingPage() {
                   className="rounded-xl p-4 col-span-1"
                   style={{ background: "#060D1A", border: "1px solid rgba(239,68,68,0.15)" }}
                 >
-                  <p className="text-xs uppercase tracking-wider mb-3" style={{ color: "#475569" }}>Active Alerts</p>
+                  <p className="text-[10px] text-[#475569] uppercase tracking-widest mb-3 font-semibold">
+                    Active Alerts
+                  </p>
                   <div className="space-y-2">
-                    <div className="flex items-start gap-2">
+                    <div
+                      className="flex items-start gap-2 p-2 rounded-lg"
+                      style={{ background: "rgba(239,68,68,0.07)" }}
+                    >
                       <AlertTriangle className="h-3.5 w-3.5 text-red-400 mt-0.5 shrink-0" />
-                      <span className="text-xs text-[#94A3B8]">Article 80 review due in 3 days</span>
+                      <span className="text-xs text-[#94A3B8]">Electrical permit expired — action required</span>
                     </div>
-                    <div className="flex items-start gap-2">
+                    <div
+                      className="flex items-start gap-2 p-2 rounded-lg"
+                      style={{ background: "rgba(245,158,11,0.07)" }}
+                    >
                       <Clock className="h-3.5 w-3.5 text-amber-400 mt-0.5 shrink-0" />
-                      <span className="text-xs text-[#94A3B8]">Zoning variance expires soon</span>
+                      <span className="text-xs text-[#94A3B8]">Foundation inspection due in 3 days</span>
                     </div>
-                    <div className="flex items-start gap-2">
+                    <div
+                      className="flex items-start gap-2 p-2 rounded-lg"
+                      style={{ background: "rgba(34,197,94,0.07)" }}
+                    >
                       <CheckCircle className="h-3.5 w-3.5 text-green-400 mt-0.5 shrink-0" />
                       <span className="text-xs text-[#94A3B8]">Building permit renewed ✓</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Projects row */}
+                {/* Projects */}
                 <div
                   className="rounded-xl p-4 col-span-1 md:col-span-3"
                   style={{ background: "#060D1A", border: "1px solid rgba(255,255,255,0.06)" }}
                 >
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-xs text-[#475569] uppercase tracking-wider">Active Projects</p>
-                    <span className="text-xs text-blue-400">View all →</span>
+                    <p className="text-[10px] text-[#475569] uppercase tracking-widest font-semibold">Active Projects</p>
+                    <span className="text-xs text-blue-400 cursor-pointer hover:text-blue-300 transition-colors">
+                      View all →
+                    </span>
                   </div>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-3 gap-4">
                     {[
-                      { name: "Seaport Mixed-Use", status: "On Track", pct: 78, color: "#22C55E" },
-                      { name: "South End ADU", status: "Action Needed", pct: 55, color: "#F59E0B" },
-                      { name: "Fenway Renovation", status: "On Track", pct: 91, color: "#22C55E" },
+                      { name: "Seaport Mixed-Use", pct: 78, color: "#F59E0B", status: "Action Needed" },
+                      { name: "South End ADU", pct: 55, color: "#EF4444", status: "At Risk" },
+                      { name: "Fenway Renovation", pct: 91, color: "#22C55E", status: "On Track" },
                     ].map((p) => (
                       <div key={p.name}>
-                        <div className="flex justify-between items-center mb-1">
+                        <div className="flex justify-between items-center mb-1.5">
                           <span className="text-xs text-[#94A3B8] truncate">{p.name}</span>
-                          <span className="text-xs font-semibold ml-1 shrink-0" style={{ color: p.color }}>{p.pct}%</span>
+                          <span className="text-xs font-bold ml-1 shrink-0" style={{ color: p.color }}>
+                            {p.pct}%
+                          </span>
                         </div>
-                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
-                          <div className="h-full rounded-full" style={{ width: `${p.pct}%`, background: p.color, opacity: 0.7 }} />
+                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.05)" }}>
+                          <div
+                            className="h-full rounded-full"
+                            style={{ width: `${p.pct}%`, background: p.color, opacity: 0.85 }}
+                          />
                         </div>
+                        <p className="text-[10px] mt-1" style={{ color: p.color, opacity: 0.7 }}>{p.status}</p>
                       </div>
                     ))}
                   </div>
@@ -384,7 +661,7 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Permit delays don&apos;t happen by accident.
               <br />
-              <span style={{ color: "#94A3B8" }}>They happen because teams can&apos;t see what&apos;s coming.</span>
+              <span style={{ color: "#64748B" }}>They happen because teams can&apos;t see what&apos;s coming.</span>
             </h2>
           </div>
 
@@ -393,44 +670,51 @@ export default function LandingPage() {
               {
                 icon: FileText,
                 color: "#EF4444",
-                bg: "rgba(239,68,68,0.08)",
+                bg: "rgba(239,68,68,0.07)",
                 border: "rgba(239,68,68,0.2)",
+                glow: "rgba(239,68,68,0.08)",
                 title: "Permit deadlines buried in email threads",
                 desc: "Critical dates get lost across inboxes, Slack channels, and spreadsheets. One missed email costs weeks of delay.",
               },
               {
                 icon: AlertTriangle,
                 color: "#F59E0B",
-                bg: "rgba(245,158,11,0.08)",
+                bg: "rgba(245,158,11,0.07)",
                 border: "rgba(245,158,11,0.2)",
+                glow: "rgba(245,158,11,0.08)",
                 title: "Compliance violations blindside you at closing",
                 desc: "Conditions buried in 80-page approval documents. Violations discovered during final walkthrough. $5K–$50K fines per incident.",
               },
               {
                 icon: Clock,
                 color: "#F97316",
-                bg: "rgba(249,115,22,0.08)",
+                bg: "rgba(249,115,22,0.07)",
                 border: "rgba(249,115,22,0.2)",
+                glow: "rgba(249,115,22,0.08)",
                 title: "Hours wasted tracking down inspection status",
                 desc: "Your PM calls the city. Again. 25+ hours per week chasing permit offices instead of closing projects.",
               },
             ].map((item) => (
               <div
                 key={item.title}
-                className="rounded-2xl p-6 transition-all hover:translate-y-[-2px]"
+                className="rounded-2xl p-7 transition-all hover:translate-y-[-3px]"
                 style={{
                   background: item.bg,
                   border: `1px solid ${item.border}`,
-                  backdropFilter: "blur(10px)",
+                  boxShadow: `0 0 40px ${item.glow}`,
                 }}
               >
                 <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                  style={{ background: item.bg, border: `1px solid ${item.border}` }}
+                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
+                  style={{
+                    background: item.bg,
+                    border: `1px solid ${item.border}`,
+                    boxShadow: `0 0 20px ${item.glow}`,
+                  }}
                 >
                   <item.icon className="h-6 w-6" style={{ color: item.color }} />
                 </div>
-                <h3 className="text-base font-semibold text-white mb-2">{item.title}</h3>
+                <h3 className="text-base font-semibold text-white mb-2.5">{item.title}</h3>
                 <p className="text-sm leading-relaxed" style={{ color: "#64748B" }}>{item.desc}</p>
               </div>
             ))}
@@ -438,12 +722,12 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── SOLUTION / FEATURES ── */}
+      {/* ── FEATURES ── */}
       <section className="py-24" style={{ background: "#060D1A" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-4"
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-5"
               style={{ border: "1px solid rgba(59,130,246,0.25)", background: "rgba(59,130,246,0.06)", color: "#93C5FD" }}
             >
               <Zap className="h-3 w-3" />
@@ -463,8 +747,7 @@ export default function LandingPage() {
               </span>
             </h2>
             <p className="text-lg max-w-2xl mx-auto" style={{ color: "#94A3B8" }}>
-              Upload your documents and let our AI do the heavy lifting. No more manual data entry.
-              No more missed deadlines.
+              Upload your documents and let our AI do the heavy lifting. No more manual data entry. No more missed deadlines.
             </p>
           </div>
 
@@ -472,18 +755,18 @@ export default function LandingPage() {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="rounded-2xl p-6 transition-all hover:translate-y-[-2px] hover:border-blue-500/30 group"
+                className="rounded-2xl p-7 transition-all hover:translate-y-[-2px] group"
                 style={{
                   background: "#0D1526",
                   border: "1px solid rgba(255,255,255,0.07)",
-                  backdropFilter: "blur(10px)",
                 }}
               >
                 <div
-                  className="h-10 w-10 rounded-xl flex items-center justify-center mb-4 transition-all group-hover:scale-110"
+                  className="h-11 w-11 rounded-xl flex items-center justify-center mb-5 transition-all group-hover:scale-110"
                   style={{
                     background: "rgba(59,130,246,0.1)",
-                    boxShadow: "0 0 15px rgba(59,130,246,0.15)",
+                    border: "1px solid rgba(59,130,246,0.2)",
+                    boxShadow: "0 0 20px rgba(59,130,246,0.15)",
                   }}
                 >
                   <feature.icon className="h-5 w-5 text-blue-400" />
@@ -500,22 +783,24 @@ export default function LandingPage() {
             style={{
               background: "#0D1526",
               border: "1px solid rgba(59,130,246,0.15)",
-              boxShadow: "0 0 40px rgba(59,130,246,0.06)",
+              boxShadow: "0 0 60px rgba(59,130,246,0.06)",
             }}
           >
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-lg font-semibold text-white">Compliance Checklist</h3>
-                <p className="text-sm text-[#64748B]">Seaport Mixed-Use Development · Boston ISD</p>
+                <p className="text-sm mt-0.5" style={{ color: "#64748B" }}>
+                  Seaport Mixed-Use Development · Boston ISD
+                </p>
               </div>
               <div
-                className="px-3 py-1 rounded-full text-xs font-semibold"
+                className="px-3 py-1.5 rounded-full text-xs font-bold"
                 style={{ background: "rgba(34,197,94,0.1)", color: "#22C55E", border: "1px solid rgba(34,197,94,0.2)" }}
               >
                 94% Complete
               </div>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {[
                 { label: "Building Permit Application", status: "complete" },
                 { label: "Zoning Variance Approval (Article 80)", status: "complete" },
@@ -526,8 +811,11 @@ export default function LandingPage() {
               ].map((item) => (
                 <div
                   key={item.label}
-                  className="flex items-center justify-between py-2.5 px-4 rounded-xl"
-                  style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}
+                  className="flex items-center justify-between py-3 px-4 rounded-xl"
+                  style={{
+                    background: "rgba(255,255,255,0.025)",
+                    border: "1px solid rgba(255,255,255,0.05)",
+                  }}
                 >
                   <div className="flex items-center gap-3">
                     {item.status === "complete" ? (
@@ -542,7 +830,7 @@ export default function LandingPage() {
                       style={{
                         color:
                           item.status === "complete"
-                            ? "#64748B"
+                            ? "#475569"
                             : item.status === "pending"
                             ? "#F1F5F9"
                             : "#94A3B8",
@@ -554,10 +842,11 @@ export default function LandingPage() {
                   </div>
                   {item.due && (
                     <span
-                      className="text-xs font-medium px-2 py-0.5 rounded-md"
+                      className="text-xs font-semibold px-2.5 py-0.5 rounded-md shrink-0"
                       style={{
-                        background: item.status === "pending" ? "rgba(245,158,11,0.1)" : "rgba(59,130,246,0.08)",
+                        background: item.status === "pending" ? "rgba(245,158,11,0.12)" : "rgba(59,130,246,0.08)",
                         color: item.status === "pending" ? "#F59E0B" : "#60A5FA",
+                        border: `1px solid ${item.status === "pending" ? "rgba(245,158,11,0.2)" : "rgba(59,130,246,0.15)"}`,
                       }}
                     >
                       {item.due}
@@ -575,7 +864,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-4"
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-5"
               style={{ border: "1px solid rgba(59,130,246,0.25)", background: "rgba(59,130,246,0.06)", color: "#93C5FD" }}
             >
               How It Works
@@ -589,12 +878,10 @@ export default function LandingPage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Connecting line */}
             <div
               className="absolute top-10 left-[calc(16.67%+1rem)] right-[calc(16.67%+1rem)] h-px hidden md:block -z-10"
-              style={{ background: "linear-gradient(90deg, transparent, rgba(59,130,246,0.3), rgba(59,130,246,0.3), transparent)" }}
+              style={{ background: "linear-gradient(90deg, transparent, rgba(59,130,246,0.35), rgba(59,130,246,0.35), transparent)" }}
             />
-
             {[
               {
                 n: "01",
@@ -621,13 +908,13 @@ export default function LandingPage() {
                   style={{
                     background: "rgba(59,130,246,0.08)",
                     border: "1px solid rgba(59,130,246,0.25)",
-                    boxShadow: "0 0 30px rgba(59,130,246,0.1)",
+                    boxShadow: "0 0 30px rgba(59,130,246,0.12)",
                   }}
                 >
                   <Icon className="h-8 w-8 text-blue-400" />
                   <span
-                    className="absolute -top-2.5 -right-2.5 w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center"
-                    style={{ background: "linear-gradient(135deg, #3B82F6, #06B6D4)", color: "white" }}
+                    className="absolute -top-2.5 -right-2.5 w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center text-white"
+                    style={{ background: "linear-gradient(135deg, #3B82F6, #06B6D4)" }}
                   >
                     {n.replace("0", "")}
                   </span>
@@ -644,23 +931,33 @@ export default function LandingPage() {
       <section className="py-20" style={{ background: "#060D1A" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
-            className="rounded-2xl p-8 md:p-12"
+            className="rounded-2xl p-10 md:p-14"
             style={{
-              background: "linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(6,182,212,0.06) 100%)",
+              background: "linear-gradient(135deg, rgba(59,130,246,0.07) 0%, rgba(6,182,212,0.05) 100%)",
               border: "1px solid rgba(59,130,246,0.15)",
-              boxShadow: "0 0 60px rgba(59,130,246,0.06)",
+              boxShadow: "0 0 80px rgba(59,130,246,0.06)",
             }}
           >
-            <div className="text-center mb-10">
+            <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-bold text-white">
                 Real results for real projects.
               </h2>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {stats.map((s) => (
-                <div key={s.value} className="text-center">
+            <div ref={statsRef} className="grid grid-cols-2 md:grid-cols-4 gap-10">
+              {stats.map((s, i) => (
+                <div
+                  key={s.value}
+                  className="text-center"
+                  style={
+                    statsVisible
+                      ? {
+                          animation: `statPop 0.6s cubic-bezier(0.34,1.56,0.64,1) ${i * 0.12}s both`,
+                        }
+                      : { opacity: 0 }
+                  }
+                >
                   <div
-                    className="text-3xl md:text-4xl font-extrabold mb-2"
+                    className="text-4xl md:text-5xl font-extrabold mb-3 leading-none"
                     style={{
                       background: "linear-gradient(135deg, #60A5FA, #22D3EE)",
                       WebkitBackgroundClip: "text",
@@ -669,7 +966,7 @@ export default function LandingPage() {
                   >
                     {s.value}
                   </div>
-                  <div className="text-sm" style={{ color: "#64748B" }}>{s.label}</div>
+                  <div className="text-sm leading-snug" style={{ color: "#64748B" }}>{s.label}</div>
                 </div>
               ))}
             </div>
@@ -682,16 +979,16 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-4"
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-5"
               style={{ border: "1px solid rgba(59,130,246,0.25)", background: "rgba(59,130,246,0.06)", color: "#93C5FD" }}
             >
               Pricing
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Lock in your rate before prices go up.
+              Simple, transparent pricing.
             </h2>
             <p className="text-lg max-w-xl mx-auto" style={{ color: "#94A3B8" }}>
-              Founding member pricing is locked in forever. Regular pricing launches April 15, 2026.
+              Start with a 14-day free trial. No credit card required.
             </p>
           </div>
 
@@ -699,11 +996,11 @@ export default function LandingPage() {
             {pricingPlans.map((plan) => (
               <div
                 key={plan.name}
-                className="relative rounded-2xl p-7 transition-all hover:translate-y-[-2px]"
+                className="relative rounded-2xl p-7 transition-all hover:translate-y-[-3px]"
                 style={{
                   background: plan.popular ? "rgba(59,130,246,0.06)" : "#0D1526",
                   border: plan.popular ? "1px solid rgba(59,130,246,0.4)" : "1px solid rgba(255,255,255,0.07)",
-                  boxShadow: plan.popular ? "0 0 40px rgba(59,130,246,0.12)" : "none",
+                  boxShadow: plan.popular ? "0 0 50px rgba(59,130,246,0.13)" : "none",
                 }}
               >
                 {plan.popular && (
@@ -718,28 +1015,27 @@ export default function LandingPage() {
                 )}
 
                 <h3 className="text-xl font-bold text-white mb-1">{plan.name}</h3>
-                <p className="text-sm mb-5" style={{ color: "#475569" }}>{plan.description}</p>
+                <p className="text-sm mb-6" style={{ color: "#475569" }}>{plan.description}</p>
 
                 <div className="mb-7">
                   <span
-                    className="text-4xl font-extrabold"
-                    style={{
-                      background: plan.popular
-                        ? "linear-gradient(135deg, #60A5FA, #22D3EE)"
-                        : "none",
-                      WebkitBackgroundClip: plan.popular ? "text" : "unset",
-                      WebkitTextFillColor: plan.popular ? "transparent" : "#F1F5F9",
-                    }}
+                    className="text-5xl font-extrabold"
+                    style={
+                      plan.popular
+                        ? {
+                            background: "linear-gradient(135deg, #60A5FA, #22D3EE)",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                          }
+                        : { color: "#F1F5F9" }
+                    }
                   >
                     ${plan.price.toLocaleString()}
                   </span>
-                  <span className="text-sm ml-1" style={{ color: "#475569" }}>/month</span>
-                  {plan.regularPrice && (
-                    <span className="ml-2 text-sm line-through" style={{ color: "#475569" }}>${plan.regularPrice}/mo</span>
-                  )}
+                  <span className="text-sm ml-1.5" style={{ color: "#475569" }}>/month</span>
                 </div>
 
-                <ul className="space-y-3 mb-7">
+                <ul className="space-y-3 mb-8">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex items-center gap-3">
                       <CheckCircle
@@ -753,13 +1049,13 @@ export default function LandingPage() {
 
                 <Link href="/sign-up" className="block">
                   <button
-                    className="w-full py-3 rounded-xl font-semibold text-sm transition-all hover:scale-[1.02]"
+                    className="w-full py-3.5 rounded-xl font-semibold text-sm transition-all hover:scale-[1.02]"
                     style={
                       plan.popular
                         ? {
                             background: "linear-gradient(135deg, #3B82F6, #06B6D4)",
                             color: "white",
-                            boxShadow: "0 0 25px rgba(59,130,246,0.3)",
+                            boxShadow: "0 0 30px rgba(59,130,246,0.3)",
                           }
                         : {
                             border: "1px solid rgba(255,255,255,0.12)",
@@ -768,14 +1064,14 @@ export default function LandingPage() {
                           }
                     }
                   >
-                    Claim Founding Price
+                    Get Started Free
                   </button>
                 </Link>
               </div>
             ))}
           </div>
 
-          <p className="text-center text-sm mt-8" style={{ color: "#475569" }}>
+          <p className="text-center text-sm mt-10" style={{ color: "#475569" }}>
             Need a custom plan?{" "}
             <a href="mailto:hello@meritlayer.ai" className="text-blue-400 hover:text-blue-300 transition-colors">
               Contact us →
@@ -785,22 +1081,25 @@ export default function LandingPage() {
       </section>
 
       {/* ── FINAL CTA ── */}
-      <section className="py-24 relative overflow-hidden" style={{ background: "#060D1A" }}>
+      <section className="py-28 relative overflow-hidden" style={{ background: "#060D1A" }}>
         <div
           className="absolute inset-0 -z-10"
           style={{
-            background:
-              "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(59,130,246,0.12) 0%, transparent 70%)",
+            background: "radial-gradient(ellipse 80% 70% at 50% 50%, rgba(59,130,246,0.15) 0%, transparent 70%)",
           }}
         />
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-px -z-10"
-          style={{ background: "linear-gradient(90deg, transparent, rgba(59,130,246,0.5), transparent)" }}
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-px -z-10"
+          style={{ background: "linear-gradient(90deg, transparent, rgba(59,130,246,0.6), rgba(6,182,212,0.4), transparent)" }}
+        />
+        <div
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-px -z-10"
+          style={{ background: "linear-gradient(90deg, transparent, rgba(59,130,246,0.3), transparent)" }}
         />
 
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
-            Start managing permits
+          <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-5 leading-tight">
+            Stop managing permits
             <br />
             <span
               style={{
@@ -809,24 +1108,24 @@ export default function LandingPage() {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              like a professional.
+              in spreadsheets.
             </span>
           </h2>
-          <p className="text-lg mb-10" style={{ color: "#94A3B8" }}>
+          <p className="text-xl mb-12" style={{ color: "#94A3B8" }}>
             No credit card required. 14-day free trial. Cancel anytime.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20">
             <Link href="/sign-up">
               <button
-                className="px-10 py-4 rounded-xl font-bold text-white text-base transition-all hover:scale-[1.04] flex items-center gap-2"
+                className="px-12 py-5 rounded-xl font-bold text-white text-lg transition-all hover:scale-[1.04] flex items-center gap-2.5"
                 style={{
                   background: "linear-gradient(135deg, #3B82F6, #06B6D4)",
-                  boxShadow: "0 0 50px rgba(59,130,246,0.4), 0 4px 20px rgba(0,0,0,0.4)",
+                  boxShadow: "0 0 60px rgba(59,130,246,0.5), 0 6px 28px rgba(0,0,0,0.4)",
                 }}
               >
                 Get Started Free
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="h-6 w-6" />
               </button>
             </Link>
           </div>
@@ -838,7 +1137,7 @@ export default function LandingPage() {
           >
             <p className="text-sm font-semibold text-white mb-1">Join the early access waitlist</p>
             <p className="text-sm mb-6" style={{ color: "#475569" }}>
-              Get exclusive early access pricing and be first to hear about new features.
+              Get exclusive early access and be first to hear about new features.
             </p>
             <form onSubmit={handleWaitlistSubmit} className="space-y-3">
               <div className="flex flex-col sm:flex-row gap-3">
@@ -868,11 +1167,11 @@ export default function LandingPage() {
               <button
                 type="submit"
                 disabled={joinWaitlist.isPending}
-                className="w-full py-3 rounded-xl font-semibold text-sm transition-all hover:scale-[1.01] disabled:opacity-60"
+                className="w-full py-3.5 rounded-xl font-semibold text-sm transition-all hover:scale-[1.01] disabled:opacity-60"
                 style={{
                   background: "linear-gradient(135deg, #3B82F6, #06B6D4)",
                   color: "white",
-                  boxShadow: "0 0 20px rgba(59,130,246,0.2)",
+                  boxShadow: "0 0 24px rgba(59,130,246,0.2)",
                 }}
               >
                 {joinWaitlist.isPending ? "Joining..." : "Join Waitlist →"}
@@ -883,36 +1182,36 @@ export default function LandingPage() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="py-12" style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "#060D1A" }}>
+      <footer className="py-14" style={{ borderTop: "1px solid rgba(255,255,255,0.05)", background: "#060D1A" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8 mb-10">
+          <div className="grid md:grid-cols-4 gap-8 mb-12">
             <div className="md:col-span-2">
               <Logo size="sm" />
-              <p className="mt-3 text-sm max-w-xs" style={{ color: "#475569" }}>
+              <p className="mt-3 text-sm max-w-xs leading-relaxed" style={{ color: "#475569" }}>
                 AI-powered permit and compliance management for Boston&apos;s real estate developers and construction firms.
               </p>
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#334155" }}>Product</p>
-              <div className="space-y-2">
-                <a href="#how-it-works" className="block text-sm transition-colors" style={{ color: "#64748B" }}>
+              <div className="space-y-2.5">
+                <a href="#how-it-works" className="block text-sm transition-colors hover:text-[#94A3B8]" style={{ color: "#64748B" }}>
                   How It Works
                 </a>
-                <a href="#pricing" className="block text-sm transition-colors" style={{ color: "#64748B" }}>
+                <a href="#pricing" className="block text-sm transition-colors hover:text-[#94A3B8]" style={{ color: "#64748B" }}>
                   Pricing
                 </a>
-                <Link href="/permits" className="block text-sm transition-colors" style={{ color: "#64748B" }}>
+                <Link href="/permits" className="block text-sm transition-colors hover:text-[#94A3B8]" style={{ color: "#64748B" }}>
                   Permit Guides
                 </Link>
               </div>
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: "#334155" }}>Account</p>
-              <div className="space-y-2">
-                <Link href="/sign-in" className="block text-sm transition-colors" style={{ color: "#64748B" }}>
+              <div className="space-y-2.5">
+                <Link href="/sign-in" className="block text-sm transition-colors hover:text-[#94A3B8]" style={{ color: "#64748B" }}>
                   Sign In
                 </Link>
-                <Link href="/sign-up" className="block text-sm transition-colors" style={{ color: "#64748B" }}>
+                <Link href="/sign-up" className="block text-sm transition-colors hover:text-[#94A3B8]" style={{ color: "#64748B" }}>
                   Start Free Trial
                 </Link>
               </div>
@@ -921,7 +1220,7 @@ export default function LandingPage() {
 
           <div
             className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8"
-            style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
+            style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}
           >
             <p className="text-xs" style={{ color: "#334155" }}>
               &copy; 2026 MeritLayer. All rights reserved.
