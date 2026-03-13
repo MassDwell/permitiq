@@ -7,13 +7,15 @@ import { eq } from "drizzle-orm";
 
 const getStripe = () =>
   new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
-    apiVersion: "2024-12-18.acacia",
+    apiVersion: "2026-02-25.clover",
   });
+
+type PlanName = "starter" | "professional" | "enterprise";
 
 // Map Stripe price IDs to plan names
 // Includes both founder (introductory) and regular price IDs
 // These IDs are already public in the client-side pricing page
-const PRICE_TO_PLAN: Record<string, "starter" | "professional" | "enterprise"> = {
+const HARDCODED_PRICES: Record<string, PlanName> = {
   // Solo / Starter — founder + regular
   "price_1TAKUV8WeSNkRrKoSn83vPyr": "starter",
   "price_1TAIiZ94ePmNThnD8A8bjdVn": "starter",
@@ -23,11 +25,14 @@ const PRICE_TO_PLAN: Record<string, "starter" | "professional" | "enterprise"> =
   // Portfolio / Enterprise — founder + regular
   "price_1TAKUX8WeSNkRrKoG6rVbNmn": "enterprise",
   "price_1TAIib94ePmNThnDBfqopr9e": "enterprise",
-  // Also accept env var overrides if configured
-  ...(process.env.STRIPE_STARTER_PRICE_ID ? { [process.env.STRIPE_STARTER_PRICE_ID]: "starter" as const } : {}),
-  ...(process.env.STRIPE_PROFESSIONAL_PRICE_ID ? { [process.env.STRIPE_PROFESSIONAL_PRICE_ID]: "professional" as const } : {}),
-  ...(process.env.STRIPE_ENTERPRISE_PRICE_ID ? { [process.env.STRIPE_ENTERPRISE_PRICE_ID]: "enterprise" as const } : {}),
 };
+
+const ENV_PRICES: Record<string, PlanName> = {};
+if (process.env.STRIPE_STARTER_PRICE_ID) ENV_PRICES[process.env.STRIPE_STARTER_PRICE_ID] = "starter";
+if (process.env.STRIPE_PROFESSIONAL_PRICE_ID) ENV_PRICES[process.env.STRIPE_PROFESSIONAL_PRICE_ID] = "professional";
+if (process.env.STRIPE_ENTERPRISE_PRICE_ID) ENV_PRICES[process.env.STRIPE_ENTERPRISE_PRICE_ID] = "enterprise";
+
+const PRICE_TO_PLAN: Record<string, PlanName> = { ...HARDCODED_PRICES, ...ENV_PRICES };
 
 export async function POST(req: NextRequest) {
   try {
@@ -74,6 +79,14 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: session.url });
   } catch (err) {
+    const stripeErr = err as { type?: string; code?: string; statusCode?: number; message?: string };
+    console.error("[checkout] Stripe error:", {
+      type: stripeErr?.type,
+      code: stripeErr?.code,
+      statusCode: stripeErr?.statusCode,
+      message: stripeErr?.message,
+      keyMode: process.env.STRIPE_SECRET_KEY?.startsWith("sk_live") ? "live" : "test",
+    });
     const message = err instanceof Error ? err.message : "Checkout failed";
     return NextResponse.json({ error: message }, { status: 500 });
   }
