@@ -2,6 +2,7 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { users, projects, documents, complianceItems } from "@/db/schema";
 import { count, eq, gte, sql, desc, ne } from "drizzle-orm";
+import Stripe from "stripe";
 
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.dbUser.clerkId !== process.env.ADMIN_CLERK_ID) {
@@ -219,5 +220,73 @@ export const adminRouter = createTRPCRouter({
 
   getPlanDistribution: adminProcedure.query(async ({ ctx }) => {
     return ctx.db.select({ plan: users.plan, count: count() }).from(users).groupBy(users.plan);
+  }),
+
+  getStripeMetrics: adminProcedure.query(async () => {
+    const zero = { mrr: 0, arr: 0, activeSubscribers: 0, newMrrThisMonth: 0, churnRate: 0, totalCollectedYTD: 0 };
+    try {
+      const stripe = new Stripe((process.env.STRIPE_SECRET_KEY ?? "").trim());
+
+      const now = new Date();
+      const startOfMonth = Math.floor(new Date(now.getFullYear(), now.getMonth(), 1).getTime() / 1000);
+      const startOfYear = Math.floor(new Date(now.getFullYear(), 0, 1).getTime() / 1000);
+
+      // Fetch active subscriptions (up to 100)
+      const activeSubs = await stripe.subscriptions.list({ status: "active", limit: 100 });
+
+      let mrr = 0;
+      let newMrrThisMonth = 0;
+      for (const sub of activeSubs.data) {
+        let subMrr = 0;
+        for (const item of sub.items.data) {
+          const price = item.price;
+          const amount = (price.unit_amount ?? 0) * (item.quantity ?? 1) / 100;
+          subMrr += price.recurring?.interval === "year" ? amount / 12 : amount;
+        }
+        mrr += subMrr;
+        if (sub.created >= startOfMonth) {
+          newMrrThisMonth += subMrr;
+        }
+      }
+
+      const arr = mrr * 12;
+      const activeSubscribers = activeSubs.data.length;
+
+      // Canceled this month
+      const canceledSubs = await stripe.subscriptions.list({
+        status: "canceled",
+        created: { gte: startOfMonth },
+        limit: 100,
+      });
+      const canceledThisMonth = canceledSubs.data.length;
+
+      // Churn: canceled / (active + canceled) * 100
+      const activeLastMonth = activeSubscribers + canceledThisMonth;
+      const churnRate = activeLastMonth > 0 ? (canceledThisMonth / activeLastMonth) * 100 : 0;
+
+      // Total collected YTD via balance transactions
+      let totalCollectedYTD = 0;
+      let hasMore = true;
+      let startingAfter: string | undefined = undefined;
+      while (hasMore) {
+        const txns = await stripe.balanceTransactions.list({
+          type: "charge",
+          created: { gte: startOfYear },
+          limit: 100,
+          ...(startingAfter ? { starting_after: startingAfter } : {}),
+        });
+        for (const txn of txns.data) {
+          totalCollectedYTD += txn.net / 100;
+        }
+        hasMore = txns.has_more;
+        if (hasMore && txns.data.length > 0) {
+          startingAfter = txns.data[txns.data.length - 1]!.id;
+        }
+      }
+
+      return { mrr, arr, activeSubscribers, newMrrThisMonth, churnRate, totalCollectedYTD };
+    } catch {
+      return zero;
+    }
   }),
 });

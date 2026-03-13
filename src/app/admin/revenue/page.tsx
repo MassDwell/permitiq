@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@/lib/trpc/client";
-import { DollarSign, Users, TrendingUp } from "lucide-react";
+import { DollarSign, Users, TrendingUp, BarChart2, PlusCircle, CreditCard } from "lucide-react";
 
 const planStyles: Record<string, string> = {
   starter: "bg-slate-700/60 text-slate-300",
@@ -9,22 +9,39 @@ const planStyles: Record<string, string> = {
   enterprise: "bg-purple-900/50 text-purple-400",
 };
 
+function fmt(n: number) {
+  return "$" + n.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
 export default function AdminRevenuePage() {
   const { data: stats } = trpc.admin.getStats.useQuery();
   const { data: distribution } = trpc.admin.getPlanDistribution.useQuery();
+  const { data: metrics, isLoading } = trpc.admin.getStripeMetrics.useQuery();
+
+  const cards = [
+    { label: "MRR", value: metrics ? fmt(metrics.mrr) : "—", icon: DollarSign },
+    { label: "ARR", value: metrics ? fmt(metrics.arr) : "—", icon: TrendingUp },
+    { label: "Churn Rate", value: metrics ? `${metrics.churnRate.toFixed(1)}%` : "—", icon: BarChart2 },
+    { label: "Active Subscribers", value: metrics ? String(metrics.activeSubscribers) : "—", icon: Users },
+    { label: "New MRR This Month", value: metrics ? fmt(metrics.newMrrThisMonth) : "—", icon: PlusCircle },
+    { label: "Total Collected YTD", value: metrics ? fmt(metrics.totalCollectedYTD) : "—", icon: CreditCard },
+  ];
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold text-white mb-1">Revenue</h1>
+      <div className="flex items-center gap-2 mb-1">
+        <h1 className="text-2xl font-bold text-white">Revenue</h1>
+        {!isLoading && metrics && (
+          <span className="flex items-center gap-1 text-xs text-emerald-400 font-medium">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
+            Live
+          </span>
+        )}
+      </div>
       <p className="text-slate-400 text-sm mb-8">Billing overview and plan distribution</p>
 
-      {/* Stripe placeholder MRR cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-        {[
-          { label: "MRR", icon: DollarSign },
-          { label: "ARR", icon: TrendingUp },
-          { label: "Churn Rate", icon: Users },
-        ].map((card) => (
+        {cards.map((card) => (
           <div
             key={card.label}
             className="rounded-xl p-5"
@@ -34,23 +51,9 @@ export default function AdminRevenuePage() {
               <p className="text-sm text-slate-400">{card.label}</p>
               <card.icon className="h-4 w-4 text-slate-600" />
             </div>
-            <p className="text-3xl font-bold text-slate-500">—</p>
-            <button className="mt-3 text-xs text-teal-400 hover:text-teal-300 transition-colors">
-              Connect Stripe →
-            </button>
+            <p className="text-3xl font-bold text-white">{isLoading ? <span className="text-slate-500">…</span> : card.value}</p>
           </div>
         ))}
-      </div>
-
-      {/* Stripe note */}
-      <div
-        className="rounded-xl p-5 mb-8 max-w-lg"
-        style={{ background: "rgba(20,184,166,0.05)", border: "1px solid rgba(20,184,166,0.15)" }}
-      >
-        <p className="text-sm text-teal-300 font-medium mb-1">Stripe webhook integration coming soon</p>
-        <p className="text-xs text-slate-400">
-          Connect your Stripe account to see live MRR, ARR, and churn metrics automatically synced from subscription events.
-        </p>
       </div>
 
       {/* Plan distribution */}
