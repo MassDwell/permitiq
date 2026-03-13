@@ -168,6 +168,7 @@ export default function ProjectDetailPage() {
   const [generatedShareUrl, setGeneratedShareUrl] = useState("");
   const [copiedShareUrl, setCopiedShareUrl] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [upgradeModalConfig, setUpgradeModalConfig] = useState<{ title: string; description: string }>({
     title: "Upgrade to Professional",
@@ -316,6 +317,33 @@ export default function ProjectDetailPage() {
   };
 
   const updateItem = updateComplianceItem;
+
+  // Group compliance items by permit process
+  const getPermitGroup = (item: { ruleId: string | null; source: string | null; requirementType: string; document?: { filename: string } | null }): string => {
+    const ruleId = item.ruleId ?? "";
+    if (ruleId.startsWith("boston-isd-demo") || /demolition/i.test(item.requirementType)) return "Demolition Permit";
+    if (ruleId.startsWith("boston-isd-building")) return "Building Permit";
+    if (ruleId.startsWith("boston-isd-trade")) return "Trade Permits";
+    if (ruleId.startsWith("boston-isd-article-80-large") || ruleId.startsWith("boston-article-80-large")) return "Article 80 Large Project Review";
+    if (ruleId.startsWith("boston-isd-article-80-small") || ruleId.startsWith("boston-article-80-small")) return "Article 80 Small Project Review";
+    if (ruleId.startsWith("cambridge")) return "Cambridge Building Permit";
+    if (ruleId.startsWith("brookline")) return "Brookline Building Permit";
+    if (ruleId.startsWith("salem")) return "Salem Building Permit";
+    if (ruleId.startsWith("lowell")) return "Lowell Building Permit";
+    if (ruleId.startsWith("springfield")) return "Springfield Building Permit";
+    if (ruleId.startsWith("ma-state") || ruleId.startsWith("ma_state") || ruleId.startsWith("ma-statewide")) return "Massachusetts State Requirements";
+    if (item.source === "extracted") return item.document?.filename ? `From: ${item.document.filename}` : "Uploaded Documents";
+    if (item.source === "manual") return "Custom Requirements";
+    return "Other Requirements";
+  };
+
+  const toggleGroup = (group: string) => {
+    setCollapsedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(group)) next.delete(group); else next.add(group);
+      return next;
+    });
+  };
 
   const handleStatusChange = (itemId: string, newStatus: string) => {
     updateComplianceItem.mutate({ id: itemId, status: newStatus as "pending" | "in_progress" | "met" | "overdue" | "not_applicable" });
@@ -772,10 +800,54 @@ export default function ProjectDetailPage() {
                     </div>
                   )}
 
-                  {/* Numbered steps */}
-                  <div className="space-y-3">
-                    {items.map((item, idx) => {
-                      const isNext = idx === nextActionIdx;
+                  {/* Grouped steps */}
+                  {(() => {
+                    // Build ordered groups preserving insertion order
+                    const groupMap = new Map<string, typeof items>();
+                    for (const item of items) {
+                      const g = getPermitGroup(item);
+                      if (!groupMap.has(g)) groupMap.set(g, []);
+                      groupMap.get(g)!.push(item);
+                    }
+                    const groups = Array.from(groupMap.entries());
+                    const multiGroup = groups.length > 1;
+                    return (
+                      <div className="space-y-4">
+                        {groups.map(([groupName, groupItems]) => {
+                          const collapsed = collapsedGroups.has(groupName);
+                          const metCount = groupItems.filter((i) => i.status === "met").length;
+                          const overdueCount = groupItems.filter((i) => i.status === "overdue").length;
+                          return (
+                            <div key={groupName}>
+                              {multiGroup && (
+                                <button
+                                  onClick={() => toggleGroup(groupName)}
+                                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl mb-2 text-left transition-colors hover:bg-white/5"
+                                  style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-sm font-semibold text-[#F1F5F9]">{groupName}</span>
+                                    <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: 'rgba(255,255,255,0.07)', color: '#94A3B8' }}>
+                                      {groupItems.length} step{groupItems.length !== 1 ? "s" : ""}
+                                    </span>
+                                    {overdueCount > 0 && (
+                                      <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: 'rgba(239,68,68,0.15)', color: '#F87171' }}>
+                                        {overdueCount} overdue
+                                      </span>
+                                    )}
+                                    {metCount === groupItems.length && (
+                                      <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ background: 'rgba(16,185,129,0.15)', color: '#4ADE80' }}>
+                                        ✓ Complete
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className="text-[#475569] text-sm">{collapsed ? "▶" : "▼"}</span>
+                                </button>
+                              )}
+                              {!collapsed && (
+                                <div className="space-y-3">
+                                  {groupItems.map((item, gIdx) => {
+                                    const idx = items.indexOf(item);
+                                    const isNext = idx === nextActionIdx;
                       const sc =
                         item.status === "met"      ? { border: 'rgba(16,185,129,0.3)', bg: 'rgba(16,185,129,0.04)', num: '#10B981', badge: 'rgba(16,185,129,0.15)', badgeText: '#4ADE80' }
                         : item.status === "overdue"   ? { border: 'rgba(239,68,68,0.4)', bg: 'rgba(239,68,68,0.05)', num: '#EF4444', badge: 'rgba(239,68,68,0.15)', badgeText: '#F87171' }
@@ -793,7 +865,7 @@ export default function ProjectDetailPage() {
                               {/* Step number */}
                               <div className="h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold"
                                 style={{ background: `${sc.num}20`, color: sc.num, border: `1px solid ${sc.num}40` }}>
-                                {item.status === "met" ? "✓" : idx + 1}
+                                {item.status === "met" ? "✓" : gIdx + 1}
                               </div>
 
                               <div className="flex-1 min-w-0">
@@ -876,7 +948,14 @@ export default function ProjectDetailPage() {
                         </div>
                       );
                     })}
-                  </div>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
                 </>
               );
             })() : (
