@@ -49,9 +49,18 @@ export async function POST(req: Request) {
     }
 
     // AUDIT-FIX: Verify ownership — look up DB user and scope project query to their ID
-    const dbUser = await db.query.users.findFirst({
-      where: eq(users.clerkId, clerkUserId),
-    });
+    let dbUser;
+    try {
+      dbUser = await db.query.users.findFirst({
+        where: eq(users.clerkId, clerkUserId),
+      });
+    } catch (dbErr) {
+      console.error("[document-chat] user lookup failed:", dbErr);
+      return new Response(
+        JSON.stringify({ error: `DB user lookup: ${dbErr instanceof Error ? dbErr.message : String(dbErr)}` }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
     if (!dbUser) {
       return new Response(JSON.stringify({ error: "User not found" }), {
@@ -61,20 +70,29 @@ export async function POST(req: Request) {
     }
 
     // Load project data scoped to the authenticated user
-    const project = await db.query.projects.findFirst({
-      where: and(eq(projects.id, projectId), eq(projects.userId, dbUser.id)),
-      with: {
-        complianceItems: {
-          orderBy: (ci, { asc }) => [asc(ci.deadline)],
+    let project;
+    try {
+      project = await db.query.projects.findFirst({
+        where: and(eq(projects.id, projectId), eq(projects.userId, dbUser.id)),
+        with: {
+          complianceItems: {
+            orderBy: (ci, { asc }) => [asc(ci.deadline)],
+          },
+          documents: {
+            orderBy: (d, { desc }) => [desc(d.createdAt)],
+          },
+          permitWorkflows: {
+            orderBy: (pw, { asc }) => [asc(pw.createdAt)],
+          },
         },
-        documents: {
-          orderBy: (d, { desc }) => [desc(d.createdAt)],
-        },
-        permitWorkflows: {
-          orderBy: (pw, { asc }) => [asc(pw.createdAt)],
-        },
-      },
-    });
+      });
+    } catch (dbErr) {
+      console.error("[document-chat] project query failed:", dbErr);
+      return new Response(
+        JSON.stringify({ error: `DB project query: ${dbErr instanceof Error ? dbErr.message : String(dbErr)}` }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
     if (!project) {
       return new Response(JSON.stringify({ error: "Project not found" }), {
@@ -143,7 +161,8 @@ export async function POST(req: Request) {
       { role: "user", content: message },
     ];
 
-    const stream = await client.messages.stream({
+    // Buffer the full response instead of streaming — more reliable on Vercel serverless
+    const aiResponse = await client.messages.create({
       model: "claude-3-5-haiku-latest",
       max_tokens: 1024,
       system:
@@ -151,37 +170,19 @@ export async function POST(req: Request) {
       messages: anthropicMessages,
     });
 
-    const encoder = new TextEncoder();
-    const readable = new ReadableStream({
-      async start(controller) {
-        try {
-          for await (const chunk of stream) {
-            if (
-              chunk.type === "content_block_delta" &&
-              chunk.delta.type === "text_delta"
-            ) {
-              controller.enqueue(encoder.encode(chunk.delta.text));
-            }
-          }
-          controller.close();
-        } catch (err) {
-          controller.error(err);
-        }
-      },
-    });
+    const text = aiResponse.content[0]?.type === "text" ? aiResponse.content[0].text : "";
 
-    return new Response(readable, {
+    return new Response(text, {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
-        "Transfer-Encoding": "chunked",
         "Cache-Control": "no-cache",
       },
     });
   } catch (err) {
     console.error("[document-chat]", err);
-    return new Response(JSON.stringify({ error: "Failed to process request" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: err instanceof Error ? err.message : "Failed to process request" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 }
