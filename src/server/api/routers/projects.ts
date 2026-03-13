@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { projects, documents, complianceItems, complianceSnapshots } from "@/db/schema";
-import { eq, and, desc, count, sql, gte } from "drizzle-orm";
+import { eq, and, desc, count, sql, gte, lte } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 export const projectsRouter = createTRPCRouter({
@@ -286,6 +286,7 @@ export const projectsRouter = createTRPCRouter({
       orderBy: [desc(projects.updatedAt)],
       with: {
         complianceItems: true,
+        documents: true,
       },
     });
 
@@ -364,12 +365,22 @@ export const projectsRouter = createTRPCRouter({
       (d) => d.daysRemaining !== null && d.daysRemaining <= 30
     ).length;
     const projectsNeedingAttention = projectStats.filter((p) => p.complianceScore < 50).length;
+    const activePermits = userProjects.reduce(
+      (acc, p) => acc + p.complianceItems.filter((i) => i.status === "pending" || i.status === "in_progress").length,
+      0
+    );
+    const docsProcessed = userProjects.reduce(
+      (acc, p) => acc + p.documents.filter((d) => d.processingStatus === "completed").length,
+      0
+    );
 
     return {
       totalProjects,
       avgComplianceScore,
       deadlinesNext30Days,
       projectsNeedingAttention,
+      activePermits,
+      docsProcessed,
       projects: projectStats,
       upcomingDeadlines,
     };

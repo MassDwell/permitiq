@@ -28,6 +28,8 @@ export const users = pgTable("users", {
   plan: planEnum("plan").notNull().default("starter"),
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
+  referralCode: text("referral_code").unique(),
+  referredBy: uuid("referred_by"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -132,6 +134,12 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   documents: many(documents),
   alerts: many(alerts),
   settings: one(userSettings),
+  referrer: one(users, {
+    fields: [users.referredBy],
+    references: [users.id],
+    relationName: "referrals",
+  }),
+  referrals: many(users, { relationName: "referrals" }),
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
