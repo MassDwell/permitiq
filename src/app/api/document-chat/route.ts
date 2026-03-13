@@ -163,7 +163,7 @@ export async function POST(req: Request) {
 
     // Buffer the full response instead of streaming — more reliable on Vercel serverless
     const aiResponse = await client.messages.create({
-      model: "claude-3-5-haiku-latest",
+      model: "claude-3-5-haiku-20241022",
       max_tokens: 1024,
       system:
         "You are a permit compliance assistant for MeritLayer. Answer questions about this construction project based on the provided project data. Be specific, cite deadlines and requirements. Format your responses clearly using plain text (no markdown headers, but you can use bullet points). If you don't know something from the data, say so. Keep answers concise and actionable.",
