@@ -385,7 +385,7 @@ export default function BostonADUPermitPage() {
                   <th className="text-right py-1.5 text-[#64748B] font-medium">Fee</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-white/6">
                 {[
                   { range: "Up to $1,000", fee: "$25 min" },
                   { range: "$1,001 – $10,000", fee: "$25 + $9/$1k" },

@@ -219,7 +219,7 @@ export default function Article80ReviewPage() {
             </div>
             <div className="border-2 border-white/10 bg-[#111827] rounded-2xl p-6">
               <div className="flex items-center gap-2 mb-3">
-                <span className="bg-gray-700 text-white text-xs font-bold px-2.5 py-1 rounded-full">SMALL</span>
+                <span className="text-white text-xs font-bold px-2.5 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.12)' }}>SMALL</span>
                 <p className="font-semibold text-white">Small Project Review</p>
               </div>
               <ul className="space-y-2 text-sm text-[#94A3B8]">

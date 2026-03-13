@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
+import { PublicNavAuth } from "@/components/public-nav-auth";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -33,20 +34,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
                 Zoning Lookup
               </Link>
             </div>
-            <div className="flex items-center gap-3">
-              <Link
-                href="/sign-in"
-                className="text-sm text-[#94A3B8] hover:text-white transition-colors"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/sign-up"
-                className="text-sm px-4 py-1.5 rounded-lg font-medium bg-[#14B8A6] text-white hover:bg-[#0D9488] transition-colors"
-              >
-                Get Started
-              </Link>
-            </div>
+            <PublicNavAuth />
           </div>
         </div>
       </nav>
