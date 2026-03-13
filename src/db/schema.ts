@@ -31,6 +31,8 @@ export const users = pgTable("users", {
   subscriptionStatus: text("subscription_status"), // active, trialing, past_due, canceled, etc.
   subscriptionPeriodEnd: timestamp("subscription_period_end"),
   onboardingCompleted: boolean("onboarding_completed").notNull().default(false),
+  referralCode: text("referral_code").unique(),
+  referredBy: uuid("referred_by"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -135,6 +137,12 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   documents: many(documents),
   alerts: many(alerts),
   settings: one(userSettings),
+  referrer: one(users, {
+    fields: [users.referredBy],
+    references: [users.id],
+    relationName: "referrals",
+  }),
+  referrals: many(users, { relationName: "referrals" }),
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({

@@ -13,6 +13,8 @@ import { inspectionsRouter } from "./routers/inspections";
 import { collaboratorsRouter } from "./routers/collaborators";
 import { sharesRouter } from "./routers/shares";
 import { softCostsRouter } from "./routers/soft-costs";
+import { referralsRouter } from "./routers/referrals";
+import { apiKeysRouter } from "./routers/apiKeys";
 
 export const appRouter = createTRPCRouter({
   admin: adminRouter,
@@ -29,6 +31,8 @@ export const appRouter = createTRPCRouter({
   collaborators: collaboratorsRouter,
   shares: sharesRouter,
   softCosts: softCostsRouter,
+  referrals: referralsRouter,
+  apiKeys: apiKeysRouter,
 });
 
 export type AppRouter = typeof appRouter;

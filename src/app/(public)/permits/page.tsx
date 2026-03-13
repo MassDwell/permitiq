@@ -262,7 +262,7 @@ export default function PermitsIndexPage() {
           <p className="text-sm mb-4" style={{ color: '#64748B' }}>
             City-specific permit intelligence — not generic national guides
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             {[
               {
                 city: "Boston",
@@ -290,9 +290,33 @@ export default function PermitsIndexPage() {
               },
               {
                 city: "Newton",
-                desc: "Building Dept",
-                href: null,
-                available: false,
+                desc: "Building Dept · Inspectional",
+                href: "/permits/newton/building-permit",
+                available: true,
+              },
+              {
+                city: "Lynn",
+                desc: "Building Dept · Essex County",
+                href: "/permits/lynn/building-permit",
+                available: true,
+              },
+              {
+                city: "Quincy",
+                desc: "Building Dept · Norfolk County",
+                href: "/permits/quincy/building-permit",
+                available: true,
+              },
+              {
+                city: "Waltham",
+                desc: "Building Dept · Middlesex County",
+                href: "/permits/waltham/building-permit",
+                available: true,
+              },
+              {
+                city: "Worcester",
+                desc: "Building Dept · Central MA",
+                href: "/permits/worcester/building-permit",
+                available: true,
               },
             ].map((item) =>
               item.available && item.href ? (

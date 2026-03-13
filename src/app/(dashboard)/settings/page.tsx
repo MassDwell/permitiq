@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -22,7 +23,11 @@ import {
   Building2,
   Zap,
   ArrowRight,
+  Users,
+  Copy,
+  Check,
 } from "lucide-react";
+import { useState } from "react";
 
 const CARD_STYLE = {
   background: '#0E1525',
@@ -62,6 +67,7 @@ function PlanBadge({ plan }: { plan: string }) {
 
 export default function SettingsPage() {
   const utils = trpc.useUtils();
+  const [copied, setCopied] = useState(false);
 
   const { data: profile, isLoading: profileLoading } =
     trpc.settings.getProfile.useQuery();
@@ -69,6 +75,8 @@ export default function SettingsPage() {
     trpc.settings.get.useQuery();
   const { data: subscription, isLoading: subscriptionLoading } =
     trpc.billing.getSubscription.useQuery();
+  const { data: referralData, isLoading: referralLoading } =
+    trpc.referrals.getMyCode.useQuery();
 
   const updateSettings = trpc.settings.update.useMutation({
     onSuccess: () => {
@@ -304,6 +312,66 @@ export default function SettingsPage() {
                       updateSettings.mutate({ dailyDigest: checked })
                     }
                   />
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Invite a Colleague */}
+        <div style={CARD_STYLE}>
+          <div className="px-6 py-5" style={SECTION_HEADER_STYLE}>
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4 text-[#14B8A6]" />
+              <h2 className="text-base font-semibold text-[#F1F5F9]">Invite a Colleague</h2>
+            </div>
+            <p className="text-sm text-[#475569] mt-0.5">Share MeritLayer with your team</p>
+          </div>
+          <div className="px-6 py-5 space-y-4">
+            {referralLoading ? (
+              <Skeleton className="h-20 w-full" />
+            ) : (
+              <>
+                <div>
+                  <Label className="text-[#475569] text-xs uppercase tracking-wide">Your Referral Link</Label>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Input
+                      readOnly
+                      value={referralData?.referralLink ?? ""}
+                      className="flex-1 text-sm"
+                      style={{
+                        background: '#141C2E',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        color: '#94A3B8',
+                      }}
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if (referralData?.referralLink) {
+                          navigator.clipboard.writeText(referralData.referralLink);
+                          setCopied(true);
+                          toast.success("Referral link copied!");
+                          setTimeout(() => setCopied(false), 2000);
+                        }
+                      }}
+                      style={{ borderColor: 'rgba(255,255,255,0.15)', color: '#94A3B8' }}
+                      className="hover:bg-white/5 shrink-0"
+                    >
+                      {copied ? (
+                        <Check className="h-4 w-4 text-[#10B981]" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg" style={{ background: 'rgba(20,184,166,0.06)', border: '1px solid rgba(20,184,166,0.15)' }}>
+                  <div className="text-2xl font-bold text-[#14B8A6]">{referralData?.referralCount ?? 0}</div>
+                  <p className="text-sm text-[#64748B]">
+                    colleague{(referralData?.referralCount ?? 0) !== 1 ? "s" : ""} joined using your link
+                  </p>
                 </div>
               </>
             )}

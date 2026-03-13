@@ -59,6 +59,10 @@ export async function POST(req: Request) {
 
     const fullName = [first_name, last_name].filter(Boolean).join(" ") || null;
 
+    // Generate a unique 8-char referral code
+    const referralCode = Math.random().toString(36).substring(2, 6).toUpperCase() +
+      Math.random().toString(36).substring(2, 6).toUpperCase();
+
     // Create user in database
     const [newUser] = await db
       .insert(users)
@@ -67,6 +71,7 @@ export async function POST(req: Request) {
         email: primaryEmail,
         name: fullName,
         plan: "starter",
+        referralCode,
       })
       .returning();
 
@@ -78,7 +83,7 @@ export async function POST(req: Request) {
       dailyDigest: false,
     });
 
-    console.log(`Created user ${newUser.id} for Clerk user ${id}`);
+    console.log(`Created user ${newUser.id} for Clerk user ${id} with referral code ${referralCode}`);
   }
 
   if (eventType === "user.updated") {
