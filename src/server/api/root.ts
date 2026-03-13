@@ -1,4 +1,5 @@
 import { createCallerFactory, createTRPCRouter } from "./trpc";
+import { adminRouter } from "./routers/admin";
 import { projectsRouter } from "./routers/projects";
 import { documentsRouter } from "./routers/documents";
 import { complianceRouter } from "./routers/compliance";
@@ -14,6 +15,7 @@ import { sharesRouter } from "./routers/shares";
 import { softCostsRouter } from "./routers/soft-costs";
 
 export const appRouter = createTRPCRouter({
+  admin: adminRouter,
   projects: projectsRouter,
   documents: documentsRouter,
   compliance: complianceRouter,
