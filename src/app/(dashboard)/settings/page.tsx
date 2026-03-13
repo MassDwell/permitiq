@@ -188,7 +188,7 @@ export default function SettingsPage() {
                   <div>
                     <Label className="text-[#475569] text-xs uppercase tracking-wide">Renews</Label>
                     <p className="font-medium text-[#F1F5F9] mt-0.5">
-                      {subscription.currentPeriodEnd.toLocaleDateString()}
+                      {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
