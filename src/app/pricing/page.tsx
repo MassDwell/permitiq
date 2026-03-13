@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { Check, Zap, ChevronDown, ChevronUp } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
+import { toast } from "sonner";
 
 // ---------------------------------------------------------------------------
 // Data
@@ -307,10 +308,12 @@ function PricingContent() {
         window.location.href = data.url;
       } else {
         console.error("Checkout error:", data.error);
+        toast.error(data.error || "Checkout failed — please try again.");
         setLoadingTier(null);
       }
     } catch (err) {
       console.error("Checkout failed:", err);
+      toast.error("Something went wrong. Please try again.");
       setLoadingTier(null);
     }
   }
