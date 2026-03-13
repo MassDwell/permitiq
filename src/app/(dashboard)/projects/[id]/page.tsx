@@ -187,10 +187,14 @@ export default function ProjectDetailPage() {
 
   const utils = trpc.useUtils();
 
-  const { data: project, isLoading, error } = trpc.projects.get.useQuery({
-    id: projectId,
-  });
-  const { data: profile } = trpc.settings.getProfile.useQuery();
+  const { data: project, isLoading, error } = trpc.projects.get.useQuery(
+    { id: projectId },
+    { staleTime: 30_000, retry: 2 }
+  );
+  const { data: profile } = trpc.settings.getProfile.useQuery(
+    undefined,
+    { staleTime: 60_000 }
+  );
   const isStarterPlan = !profile?.plan || profile.plan === "starter";
 
   const showUpgradeModal = (title: string, description: string) => {
@@ -340,19 +344,43 @@ export default function ProjectDetailPage() {
 
   if (error || !project) {
     return (
-      <div className="p-8 text-center">
-        <h1 className="text-2xl font-bold text-foreground mb-2">
-          {error ? "Failed to load project" : "Project not found"}
-        </h1>
-        <p className="text-muted-foreground mb-4">
-          {error ? error.message : "This project doesn't exist or you don't have access to it."}
-        </p>
-        <Link href="/dashboard">
-          <Button>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
-          </Button>
-        </Link>
+      <div className="p-8 flex items-center justify-center min-h-[60vh]">
+        <div
+          className="text-center rounded-2xl p-10 max-w-md w-full"
+          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)' }}
+        >
+          <div
+            className="h-14 w-14 rounded-full flex items-center justify-center mx-auto mb-5"
+            style={{ background: 'rgba(239,68,68,0.1)' }}
+          >
+            <AlertTriangle className="h-7 w-7 text-red-400" />
+          </div>
+          <h1 className="text-xl font-bold text-[#F1F5F9] mb-2">
+            {error ? "Failed to load project" : "Project not found"}
+          </h1>
+          <p className="text-[#475569] text-sm mb-6">
+            {error
+              ? "There was a problem loading this project. Please try again."
+              : "This project doesn't exist or you don't have access to it."}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            {error && (
+              <Button
+                variant="outline"
+                onClick={() => window.location.reload()}
+                style={{ borderColor: 'rgba(255,255,255,0.12)', color: '#94A3B8' }}
+              >
+                Try Again
+              </Button>
+            )}
+            <Link href="/dashboard">
+              <Button className="bg-[#14B8A6] hover:bg-[#0D9488] text-white">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Dashboard
+              </Button>
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
@@ -367,9 +395,9 @@ export default function ProjectDetailPage() {
         onAddPermit={() => setAddPermitOpen(true)}
       />
 
-      <div className="p-8">
+      <div className="p-4 sm:p-8">
       {/* Header */}
-      <div className="flex items-start justify-between mb-8">
+      <div className="flex items-start justify-between mb-8 gap-3">
         <div>
           <Link
             href="/dashboard"
@@ -451,7 +479,7 @@ export default function ProjectDetailPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
           style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
@@ -509,7 +537,7 @@ export default function ProjectDetailPage() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <div style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', marginBottom: '0' }}>
-          <div className="flex px-0 gap-0 flex-wrap">
+          <div className="flex px-0 gap-0 overflow-x-auto scrollbar-none" style={{ whiteSpace: 'nowrap' }}>
             {[
               { value: "permits", label: "Permits" },
               { value: "compliance", label: `Compliance (${project.complianceItems.length})` },
@@ -528,7 +556,7 @@ export default function ProjectDetailPage() {
                 <Link
                   key={tab.value}
                   href={tab.href}
-                  className="px-4 py-3 text-sm font-medium transition-all border-b-2 -mb-px"
+                  className="px-4 py-3 text-sm font-medium transition-all border-b-2 -mb-px shrink-0 whitespace-nowrap"
                   style={{
                     color: '#475569',
                     borderBottomColor: 'transparent',
@@ -543,7 +571,7 @@ export default function ProjectDetailPage() {
                 <button
                   key={tab.value}
                   onClick={() => setActiveTab(tab.value)}
-                  className="px-4 py-3 text-sm font-medium transition-all border-b-2 -mb-px"
+                  className="px-4 py-3 text-sm font-medium transition-all border-b-2 -mb-px shrink-0 whitespace-nowrap"
                   style={{
                     color: activeTab === tab.value ? '#14B8A6' : '#475569',
                     borderBottomColor: activeTab === tab.value ? '#14B8A6' : 'transparent',

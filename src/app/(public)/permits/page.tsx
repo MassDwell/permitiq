@@ -97,8 +97,32 @@ const badgeStyles: Record<string, { background: string; color: string }> = {
   orange: { background: 'rgba(245,158,11,0.12)', color: '#FCD34D' },
 };
 
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://meritlayer.ai",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Permit Guides",
+      item: "https://meritlayer.ai/permits",
+    },
+  ],
+};
+
 export default function PermitsIndexPage() {
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
     <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16" style={{ background: '#080D1A', minHeight: '100vh' }}>
       <div className="mb-12">
         <p className="text-sm font-medium mb-2" style={{ color: '#14B8A6' }}>Free Permit Guides</p>
@@ -430,5 +454,6 @@ export default function PermitsIndexPage() {
         </Link>
       </div>
     </main>
+    </>
   );
 }

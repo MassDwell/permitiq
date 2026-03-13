@@ -97,7 +97,7 @@ export default function AuditTrailPage() {
       </div>
 
       {/* AUDIT TRAIL DOCUMENT */}
-      <div className="max-w-4xl mx-auto p-8 space-y-8">
+      <div className="max-w-4xl mx-auto p-4 sm:p-8 space-y-8">
 
         {/* COVER PAGE */}
         <div className="print-page print-card rounded-2xl p-10 space-y-8"
@@ -153,8 +153,8 @@ export default function AuditTrailPage() {
               style={{ background: 'rgba(20,184,166,0.2)', color: '#14B8A6' }}>1</span>
             Project Summary
           </h2>
-          <div className="print-card rounded-xl overflow-hidden" style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.1)' }}>
-            <table className="w-full">
+          <div className="print-card rounded-xl overflow-x-auto" style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <table className="w-full min-w-[480px]">
               <tbody>
                 {[
                   ["Created", format(new Date(project.createdAt), "MMMM d, yyyy")],

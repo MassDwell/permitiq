@@ -67,7 +67,7 @@ export default function PortfolioPage() {
   const scoreColor = data ? complianceColor(data.avgComplianceScore) : "#F1F5F9";
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight text-[#F1F5F9]">Portfolio Intelligence</h1>
@@ -75,7 +75,7 @@ export default function PortfolioPage() {
       </div>
 
       {/* A. Portfolio Health Header */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {/* Total Projects */}
         <div
           className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
@@ -327,10 +327,10 @@ export default function PortfolioPage() {
                 <span className="ml-2 text-sm font-normal text-[#475569]">next 60 days</span>
               </h2>
               <div
-                className="rounded-xl overflow-hidden"
+                className="rounded-xl overflow-x-auto"
                 style={{ background: "#0D1526", border: "1px solid rgba(255,255,255,0.1)" }}
               >
-                <div className="px-5 py-3 grid grid-cols-4 gap-4 text-xs font-semibold uppercase tracking-wider text-[#475569]"
+                <div className="px-5 py-3 grid grid-cols-4 gap-4 text-xs font-semibold uppercase tracking-wider text-[#475569] min-w-[480px]"
                   style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
                 >
                   <span>Date</span>
@@ -347,7 +347,7 @@ export default function PortfolioPage() {
                         ? "#F59E0B"
                         : "#10B981";
                     return (
-                      <div key={i} className="px-5 py-3.5 grid grid-cols-4 gap-4 items-center hover:bg-white/[0.02] transition-colors">
+                      <div key={i} className="px-5 py-3.5 grid grid-cols-4 gap-4 items-center hover:bg-white/[0.02] transition-colors min-w-[480px]">
                         <span className="text-sm text-[#94A3B8]">
                           {dl.dueDate ? format(new Date(dl.dueDate), "MMM d, yyyy") : "—"}
                         </span>
