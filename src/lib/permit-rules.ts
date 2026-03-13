@@ -101,12 +101,32 @@ export const PERMIT_GUIDE_ROUTES: Array<{ jurisdiction: string; permitType: stri
   { jurisdiction: "boston", permitType: "demolition-permit" },
   { jurisdiction: "boston", permitType: "building-permit" },
   { jurisdiction: "cambridge", permitType: "building-permit" },
+  { jurisdiction: "somerville", permitType: "building-permit" },
+  { jurisdiction: "quincy", permitType: "building-permit" },
+  { jurisdiction: "newton", permitType: "building-permit" },
+  { jurisdiction: "waltham", permitType: "building-permit" },
   { jurisdiction: "brookline", permitType: "building-permit" },
   { jurisdiction: "salem", permitType: "building-permit" },
   { jurisdiction: "lowell", permitType: "building-permit" },
   { jurisdiction: "springfield", permitType: "building-permit" },
   { jurisdiction: "massachusetts", permitType: "building-permit" },
+  { jurisdiction: "dedham", permitType: "building-permit" },
+  { jurisdiction: "westwood", permitType: "building-permit" },
+  { jurisdiction: "needham", permitType: "building-permit" },
+  { jurisdiction: "norwood", permitType: "building-permit" },
+  { jurisdiction: "canton", permitType: "building-permit" },
 ];
+
+// Jurisdiction code registry — maps city slug to DB jurisdiction codes
+export const JURISDICTION_CODE_MAP: Record<string, string[]> = {
+  boston: ["BOSTON_ISD", "BOSTON_BPDA", "BOSTON_ZBA"],
+  cambridge: ["CAMBRIDGE_ISD", "CAMBRIDGE_CDD", "CAMBRIDGE_ZBA"],
+  somerville: ["SOMERVILLE_ISD", "SOMERVILLE_ZBA", "SOMERVILLE_PLANNING"],
+  quincy: ["QUINCY_ISD", "QUINCY_ZBA", "QUINCY_COASTAL"],
+  newton: ["NEWTON_ISD", "NEWTON_ZBA", "NEWTON_PLANNING"],
+  waltham: ["WALTHAM_ISD", "WALTHAM_ZBA", "WALTHAM_PLANNING"],
+  massachusetts: ["MA_GENERIC"],
+};
 
 // Fee calculation
 export type FeeBreakdownItem = {
@@ -352,10 +372,67 @@ export function calculatePermitFee(
       break;
 
     case "cambridge":
+    case "CAMBRIDGE_ISD":
       if (permitTypeSlug === "building-permit") {
         const buildFee = Math.max(50, (projectCost / 1000) * 20);
         items.push({ label: "Building Permit Fee", amount: buildFee, note: "$20 per $1,000 (min $50)" });
         items.push({ label: "Plan Review Fee", amount: 100, note: "Flat fee" });
+      }
+      break;
+
+    case "somerville":
+    case "SOMERVILLE_ISD":
+      if (permitTypeSlug === "building-permit") {
+        const rate = projectType === "residential" ? 10 : 12;
+        const fee = Math.max(50, (projectCost / 1000) * rate);
+        items.push({
+          label: "Building Permit Fee",
+          amount: fee,
+          note: `$${rate} per $1,000 of construction cost (min $50)`,
+          timeline: projectType === "residential" ? "2–4 weeks" : "4–8 weeks",
+        });
+      }
+      break;
+
+    case "quincy":
+    case "QUINCY_ISD":
+      if (permitTypeSlug === "building-permit") {
+        const rate = projectType === "residential" ? 12 : 15;
+        const fee = Math.max(50, (projectCost / 1000) * rate);
+        items.push({
+          label: "Building Permit Fee",
+          amount: fee,
+          note: `$${rate} per $1,000 of construction cost (min $50)`,
+          timeline: projectType === "residential" ? "2–3 weeks" : "4–6 weeks",
+        });
+      }
+      break;
+
+    case "newton":
+    case "NEWTON_ISD":
+      if (permitTypeSlug === "building-permit") {
+        const rate = projectType === "residential" ? 12 : 15;
+        const fee = Math.max(60, (projectCost / 1000) * rate);
+        items.push({
+          label: "Building Permit Fee",
+          amount: fee,
+          note: `$${rate} per $1,000 of construction cost (min $60)`,
+          timeline: projectType === "residential" ? "3–4 weeks" : "6–8 weeks",
+        });
+      }
+      break;
+
+    case "waltham":
+    case "WALTHAM_ISD":
+      if (permitTypeSlug === "building-permit") {
+        const rate = projectType === "residential" ? 10 : 12;
+        const fee = Math.max(50, (projectCost / 1000) * rate);
+        items.push({
+          label: "Building Permit Fee",
+          amount: fee,
+          note: `$${rate} per $1,000 of construction cost (min $50)`,
+          timeline: projectType === "residential" ? "2–4 weeks" : "4–6 weeks",
+        });
       }
       break;
 

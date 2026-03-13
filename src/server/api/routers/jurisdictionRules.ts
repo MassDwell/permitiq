@@ -4,6 +4,43 @@ import { projects, jurisdictionRules } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { seedBostonRules } from "@/db/seeds/boston-rules";
+import { seedCambridgeRules } from "@/db/seeds/cambridge-rules";
+import { seedSomervilleRules } from "@/db/seeds/somerville-rules";
+import { seedQuincyRules } from "@/db/seeds/quincy-rules";
+import { seedNewtonRules } from "@/db/seeds/newton-rules";
+import { seedWalthamRules } from "@/db/seeds/waltham-rules";
+
+// Supported MA jurisdiction codes
+export const SUPPORTED_JURISDICTION_CODES = [
+  // Boston
+  "BOSTON_ISD",
+  "BOSTON_BPDA",
+  "BOSTON_ZBA",
+  // Cambridge
+  "CAMBRIDGE_ISD",
+  "CAMBRIDGE_CDD",
+  "CAMBRIDGE_ZBA",
+  // Somerville
+  "SOMERVILLE_ISD",
+  "SOMERVILLE_ZBA",
+  "SOMERVILLE_PLANNING",
+  // Quincy
+  "QUINCY_ISD",
+  "QUINCY_ZBA",
+  "QUINCY_COASTAL",
+  // Newton
+  "NEWTON_ISD",
+  "NEWTON_ZBA",
+  "NEWTON_PLANNING",
+  // Waltham
+  "WALTHAM_ISD",
+  "WALTHAM_ZBA",
+  "WALTHAM_PLANNING",
+  // State-level
+  "MA_GENERIC",
+] as const;
+
+export type SupportedJurisdictionCode = (typeof SUPPORTED_JURISDICTION_CODES)[number];
 
 // ─── Required documents per permit category ────────────────────────────────────
 
@@ -255,5 +292,45 @@ export const jurisdictionRulesRouter = createTRPCRouter({
   // Admin: seed Boston rules into the DB
   seedBostonRules: protectedProcedure.mutation(async () => {
     return seedBostonRules();
+  }),
+
+  // Admin: seed Cambridge rules into the DB
+  seedCambridgeRules: protectedProcedure.mutation(async () => {
+    return seedCambridgeRules();
+  }),
+
+  // Admin: seed Somerville rules into the DB
+  seedSomervilleRules: protectedProcedure.mutation(async () => {
+    return seedSomervilleRules();
+  }),
+
+  // Admin: seed Quincy rules into the DB
+  seedQuincyRules: protectedProcedure.mutation(async () => {
+    return seedQuincyRules();
+  }),
+
+  // Admin: seed Newton rules into the DB
+  seedNewtonRules: protectedProcedure.mutation(async () => {
+    return seedNewtonRules();
+  }),
+
+  // Admin: seed Waltham rules into the DB
+  seedWalthamRules: protectedProcedure.mutation(async () => {
+    return seedWalthamRules();
+  }),
+
+  // Admin: seed all jurisdictions at once
+  seedAllRules: protectedProcedure.mutation(async () => {
+    const results = await Promise.all([
+      seedBostonRules(),
+      seedCambridgeRules(),
+      seedSomervilleRules(),
+      seedQuincyRules(),
+      seedNewtonRules(),
+      seedWalthamRules(),
+    ]);
+    const totalSeeded = results.reduce((sum, r) => sum + r.seededCount, 0);
+    const allJurisdictions = results.flatMap((r) => r.jurisdictions);
+    return { seededCount: totalSeeded, jurisdictions: allJurisdictions };
   }),
 });

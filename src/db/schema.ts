@@ -376,6 +376,7 @@ export interface JurisdictionRule {
   typicalTimelineDays?: number;
   isRequired: boolean;
   notes?: string;
+  feeStructure?: string;
 }
 
 // Project Members (Collaborators) table
