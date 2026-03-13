@@ -32,7 +32,7 @@ import {
 import { CreateProjectDialog } from "@/components/create-project-dialog";
 import { WelcomeBanner } from "@/components/welcome-banner";
 import { ActivityFeed } from "@/components/activity-feed";
-import { OnboardingModal } from "@/components/onboarding-modal";
+import { OnboardingFlow } from "@/components/onboarding-flow";
 import { EmptyState } from "@/components/empty-state";
 import { ProjectTable } from "@/components/project-table";
 import { useState, useEffect, Suspense } from "react";
@@ -652,9 +652,9 @@ function DashboardPageContent() {
         onOpenChange={setCreateProjectOpen}
       />
 
-      {/* Onboarding modal — triggered on ?welcome=true or auto for new users (localStorage gated) */}
+      {/* Onboarding flow — triggered on ?welcome=true or when user.onboardingCompleted === false */}
       {!projectsLoading && (
-        <OnboardingModal
+        <OnboardingFlow
           userName={profile?.name}
           forceOpen={showOnboarding}
           onClose={() => setShowOnboarding(false)}
