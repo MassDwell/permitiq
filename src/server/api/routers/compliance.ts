@@ -228,7 +228,7 @@ export const complianceRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string().uuid(),
-        status: z.enum(["pending", "met", "overdue", "not_applicable"]).optional(),
+        status: z.enum(["pending", "in_progress", "met", "overdue", "not_applicable"]).optional(),
         description: z.string().optional(),
         deadline: z.date().nullable().optional(),
         notes: z.string().optional(),

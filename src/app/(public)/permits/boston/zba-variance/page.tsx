@@ -156,40 +156,40 @@ export default function ZbaVariancePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
       />
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#080D1A', minHeight: '100vh' }}>
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-8">
-          <Link href="/permits" className="hover:text-blue-600 transition-colors">Permit Guides</Link>
+        <nav className="flex items-center gap-1.5 text-sm text-[#64748B] mb-8">
+          <Link href="/permits" className="hover:text-[#14B8A6] transition-colors">Permit Guides</Link>
           <ChevronRight className="h-3.5 w-3.5" />
           <span>Boston</span>
           <ChevronRight className="h-3.5 w-3.5" />
-          <span className="text-gray-900">ZBA Variance</span>
+          <span className="text-white">ZBA Variance</span>
         </nav>
 
         {/* Header */}
         <div className="mb-10">
           <div className="flex items-center gap-2 mb-3">
-            <Scale className="h-5 w-5 text-blue-600" />
-            <span className="text-sm font-medium text-blue-600">Boston Developer Guide</span>
+            <Scale className="h-5 w-5 text-[#14B8A6]" />
+            <span className="text-sm font-medium text-[#14B8A6]">Boston Developer Guide</span>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-white mb-4">
             Boston ZBA Variance Guide
           </h1>
-          <p className="text-lg text-gray-600 max-w-3xl">
+          <p className="text-lg text-[#94A3B8] max-w-3xl">
             The Zoning Board of Appeal (ZBA) hears cases where a project doesn&apos;t meet Boston&apos;s
             zoning code — including variances, special permits, and appeals of ISD decisions. This
             guide covers the 2026 hearing schedule, fee breakdown, and the full 5-step process.
           </p>
           <div className="flex flex-wrap gap-3 mt-5">
-            <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full">
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-[rgba(20,184,166,0.08)] text-[#14B8A6] px-3 py-1.5 rounded-full">
               <DollarSign className="h-3.5 w-3.5" />
               $150 flat (≤3 units) or $150/violation
             </span>
-            <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full">
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-[#111827] text-[#94A3B8] px-3 py-1.5 rounded-full">
               <Calendar className="h-3.5 w-3.5" />
               Every other Tuesday 9:30 AM
             </span>
-            <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full">
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-amber-900/20 text-amber-400 px-3 py-1.5 rounded-full">
               <Clock className="h-3.5 w-3.5" />
               File within 45 days of denial
             </span>
@@ -198,28 +198,28 @@ export default function ZbaVariancePage() {
 
         {/* What is the ZBA */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">What Is the ZBA?</h2>
-          <div className="bg-gray-50 rounded-2xl p-6 text-gray-700 space-y-3">
+          <h2 className="text-2xl font-bold text-white mb-4">What Is the ZBA?</h2>
+          <div className="bg-[#111827] rounded-2xl p-6 text-[#94A3B8] space-y-3">
             <p>
               The Boston Zoning Board of Appeal is a seven-member board appointed by the Mayor, each
               serving 3-year terms. It reviews appeals when ISD denies a permit because a project
               doesn&apos;t comply with the zoning code.
             </p>
             <p>
-              <strong className="text-gray-900">You need the ZBA when:</strong> your project requires
+              <strong className="text-white">You need the ZBA when:</strong> your project requires
               a variance (e.g., setback, height, FAR, parking), a special permit (e.g., certain use
               changes), or when you want to challenge an ISD decision.
             </p>
             <div className="grid sm:grid-cols-2 gap-4 pt-2">
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Hearings</p>
-                <p className="font-semibold text-gray-900">1 City Hall Square, Room 801</p>
-                <p className="text-sm text-gray-600">Every other Tuesday, 9:30 AM</p>
+              <div className="bg-[#0D1525] border border-white/10 rounded-xl p-4">
+                <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1">Hearings</p>
+                <p className="font-semibold text-white">1 City Hall Square, Room 801</p>
+                <p className="text-sm text-[#94A3B8]">Every other Tuesday, 9:30 AM</p>
               </div>
-              <div className="bg-white border border-gray-200 rounded-xl p-4">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">File Appeal</p>
-                <p className="font-semibold text-gray-900">1010 Mass Ave, 5th Floor</p>
-                <p className="text-sm text-gray-600">617-635-5300 / 617-635-5399</p>
+              <div className="bg-[#0D1525] border border-white/10 rounded-xl p-4">
+                <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1">File Appeal</p>
+                <p className="font-semibold text-white">1010 Mass Ave, 5th Floor</p>
+                <p className="text-sm text-[#94A3B8]">617-635-5300 / 617-635-5399</p>
               </div>
             </div>
           </div>
@@ -227,29 +227,29 @@ export default function ZbaVariancePage() {
 
         {/* Key Rules */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Critical Rules for Developers</h2>
+          <h2 className="text-2xl font-bold text-white mb-4">Critical Rules for Developers</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {KEY_RULES.map((rule) => {
               const Icon = rule.icon;
               const bgClass =
                 rule.severity === "critical"
-                  ? "bg-red-50 border-red-200"
+                  ? "bg-red-900/20 border-red-700/30"
                   : rule.severity === "warning"
-                  ? "bg-orange-50 border-orange-200"
-                  : "bg-blue-50 border-blue-200";
+                  ? "bg-amber-900/20 border-amber-700/30"
+                  : "bg-[rgba(20,184,166,0.08)] border-[rgba(20,184,166,0.25)]";
               const iconClass =
                 rule.severity === "critical"
                   ? "text-red-500"
                   : rule.severity === "warning"
-                  ? "text-orange-500"
-                  : "text-blue-500";
+                  ? "text-amber-400"
+                  : "text-[#14B8A6]";
               return (
                 <div key={rule.title} className={`border rounded-xl p-5 ${bgClass}`}>
                   <div className="flex items-start gap-3">
                     <Icon className={`h-5 w-5 mt-0.5 flex-shrink-0 ${iconClass}`} />
                     <div>
-                      <p className="font-semibold text-gray-900 mb-1">{rule.title}</p>
-                      <p className="text-sm text-gray-700">{rule.detail}</p>
+                      <p className="font-semibold text-white mb-1">{rule.title}</p>
+                      <p className="text-sm text-[#94A3B8]">{rule.detail}</p>
                     </div>
                   </div>
                 </div>
@@ -260,51 +260,51 @@ export default function ZbaVariancePage() {
 
         {/* Fees */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Fee Schedule</h2>
-          <div className="border border-gray-200 rounded-2xl overflow-hidden">
+          <h2 className="text-2xl font-bold text-white mb-4">Fee Schedule</h2>
+          <div className="border border-white/10 rounded-2xl overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-6 py-3">Project Type</th>
-                  <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-6 py-3">Fee</th>
-                  <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-6 py-3">Example</th>
+                <tr className="bg-[#111827] border-b border-white/10">
+                  <th className="text-left text-xs font-semibold text-[#64748B] uppercase tracking-wide px-6 py-3">Project Type</th>
+                  <th className="text-left text-xs font-semibold text-[#64748B] uppercase tracking-wide px-6 py-3">Fee</th>
+                  <th className="text-left text-xs font-semibold text-[#64748B] uppercase tracking-wide px-6 py-3">Example</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-white/6">
                 <tr>
                   <td className="px-6 py-4">
-                    <p className="font-medium text-gray-900">Residential, ≤3 units</p>
-                    <p className="text-sm text-gray-500">1–3 family homes</p>
+                    <p className="font-medium text-white">Residential, ≤3 units</p>
+                    <p className="text-sm text-[#64748B]">1–3 family homes</p>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="font-bold text-gray-900">$150 flat</span>
-                    <p className="text-xs text-gray-500">Regardless of # of violations</p>
+                    <span className="font-bold text-white">$150 flat</span>
+                    <p className="text-xs text-[#64748B]">Regardless of # of violations</p>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="px-6 py-4 text-sm text-[#94A3B8]">
                     A 2-family requesting a setback variance → $150
                   </td>
                 </tr>
-                <tr className="bg-gray-50">
+                <tr className="bg-[#111827]">
                   <td className="px-6 py-4">
-                    <p className="font-medium text-gray-900">All other buildings</p>
-                    <p className="text-sm text-gray-500">Residential &gt;3 units, commercial, mixed-use</p>
+                    <p className="font-medium text-white">All other buildings</p>
+                    <p className="text-sm text-[#64748B]">Residential &gt;3 units, commercial, mixed-use</p>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="font-bold text-gray-900">$150 per violation</span>
-                    <p className="text-xs text-gray-500">Each City or state code violation cited</p>
+                    <span className="font-bold text-white">$150 per violation</span>
+                    <p className="text-xs text-[#64748B]">Each City or state code violation cited</p>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+                  <td className="px-6 py-4 text-sm text-[#94A3B8]">
                     10-unit with 3 violations → $450
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <p className="text-sm text-gray-500 mt-3">
+          <p className="text-sm text-[#64748B] mt-3">
             Source:{" "}
             <a
               href="https://www.boston.gov/departments/inspectional-services/how-file-appeal-zoning-board"
-              className="text-blue-600 hover:underline"
+              className="text-[#14B8A6] hover:underline"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -315,31 +315,31 @@ export default function ZbaVariancePage() {
 
         {/* 5-Step Process */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">5-Step ZBA Process</h2>
+          <h2 className="text-2xl font-bold text-white mb-6">5-Step ZBA Process</h2>
           <div className="space-y-4">
             {PROCESS_STEPS.map((step) => (
               <div key={step.step} className="flex gap-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#14B8A6] text-white flex items-center justify-center text-sm font-bold">
                   {step.step}
                 </div>
-                <div className="flex-1 pb-6 border-b border-gray-100 last:border-0">
+                <div className="flex-1 pb-6 border-b border-white/6 last:border-0">
                   <div className="flex items-start justify-between gap-4 flex-wrap">
-                    <p className="font-semibold text-gray-900">{step.name}</p>
-                    <span className="text-xs font-medium bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full flex-shrink-0">
+                    <p className="font-semibold text-white">{step.name}</p>
+                    <span className="text-xs font-medium bg-[#111827] text-[#94A3B8] px-2.5 py-1 rounded-full flex-shrink-0">
                       {step.timeline}
                     </span>
                   </div>
-                  <p className="text-gray-600 mt-1">{step.detail}</p>
+                  <p className="text-[#94A3B8] mt-1">{step.detail}</p>
                 </div>
               </div>
             ))}
           </div>
-          <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl p-4">
+          <div className="mt-4 bg-[rgba(20,184,166,0.08)] border border-[rgba(20,184,166,0.25)] rounded-xl p-4">
             <div className="flex items-start gap-3">
-              <Clock className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <Clock className="h-5 w-5 text-[#14B8A6] mt-0.5 flex-shrink-0" />
               <div>
-                <p className="font-semibold text-gray-900">Typical Total Timeline</p>
-                <p className="text-sm text-gray-700 mt-1">
+                <p className="font-semibold text-white">Typical Total Timeline</p>
+                <p className="text-sm text-[#94A3B8] mt-1">
                   From filing to decision: <strong>8–16 weeks</strong>, depending on when the next
                   available hearing date falls. Plan for 2–4 months of review time in your project
                   schedule before banking on ZBA approval.
@@ -351,33 +351,33 @@ export default function ZbaVariancePage() {
 
         {/* 2026 Hearing Schedule */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">2026 ZBA Hearing Schedule</h2>
-          <p className="text-gray-600 mb-6">
+          <h2 className="text-2xl font-bold text-white mb-2">2026 ZBA Hearing Schedule</h2>
+          <p className="text-[#94A3B8] mb-6">
             Full hearing schedule — every other Tuesday at 9:30 AM, City Hall Room 801. Advisory
             subcommittee meets every other Thursday.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {Object.entries(quarterGroups).map(([quarter, hearings]) => (
-              <div key={quarter} className="border border-gray-200 rounded-xl overflow-hidden">
-                <div className="bg-gray-50 px-4 py-2.5 border-b border-gray-200">
-                  <p className="font-semibold text-gray-700 text-sm">{quarter} 2026</p>
+              <div key={quarter} className="border border-white/10 rounded-xl overflow-hidden">
+                <div className="bg-[#111827] px-4 py-2.5 border-b border-white/10">
+                  <p className="font-semibold text-[#94A3B8] text-sm">{quarter} 2026</p>
                 </div>
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-white/6">
                   {hearings.map((h) => (
                     <div key={h.date} className="px-4 py-2.5 flex items-center gap-2">
                       <CheckCircle className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />
-                      <span className="text-sm text-gray-700">{h.date}</span>
+                      <span className="text-sm text-[#94A3B8]">{h.date}</span>
                     </div>
                   ))}
                 </div>
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-400 mt-3">
+          <p className="text-xs text-[#64748B] mt-3">
             Schedule based on Boston ZBA&apos;s standard every-other-Tuesday pattern. Confirm dates at{" "}
             <a
               href="https://www.boston.gov/departments/inspectional-services"
-              className="text-blue-600 hover:underline"
+              className="text-[#14B8A6] hover:underline"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -388,25 +388,25 @@ export default function ZbaVariancePage() {
         </section>
 
         {/* CTA */}
-        <section className="bg-blue-600 rounded-2xl p-8">
+        <section className="rounded-2xl p-8" style={{ background: "linear-gradient(135deg, rgba(20,184,166,0.15) 0%, rgba(20,184,166,0.08) 100%)", border: "1px solid rgba(20,184,166,0.25)" }}>
           <div className="max-w-2xl">
             <h2 className="text-2xl font-bold text-white mb-2">
               Track Your ZBA Application in MeritLayer
             </h2>
-            <p className="text-blue-100 mb-6">
+            <p className="text-[#94A3B8] mb-6">
               Upload your denial letter, track the 45-day filing deadline, monitor your hearing date,
               and get automated alerts before each ZBA milestone — all in one compliance dashboard.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/sign-up"
-                className="inline-flex items-center gap-2 bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors"
+                className="inline-flex items-center gap-2 bg-[#0D1525] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
               >
                 Start Free Trial <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/permits"
-                className="inline-flex items-center gap-2 bg-blue-500 text-white font-medium px-6 py-3 rounded-xl hover:bg-blue-400 transition-colors"
+                className="inline-flex items-center gap-2 bg-[rgba(20,184,166,0.12)] text-white font-medium px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.15)] transition-colors"
               >
                 More Permit Guides
               </Link>

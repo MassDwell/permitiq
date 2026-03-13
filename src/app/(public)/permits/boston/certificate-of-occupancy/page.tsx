@@ -117,40 +117,40 @@ const TCO_INFO = [
 
 export default function CertificateOfOccupancyPage() {
   return (
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#080D1A', minHeight: '100vh' }}>
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-8">
-        <Link href="/permits" className="hover:text-blue-600 transition-colors">Permit Guides</Link>
+      <nav className="flex items-center gap-1.5 text-sm text-[#64748B] mb-8">
+        <Link href="/permits" className="hover:text-[#14B8A6] transition-colors">Permit Guides</Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <span>Boston</span>
         <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-gray-900">Certificate of Occupancy</span>
+        <span className="text-white">Certificate of Occupancy</span>
       </nav>
 
       {/* Header */}
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-3">
-          <Building2 className="h-5 w-5 text-blue-600" />
-          <span className="text-sm font-medium text-blue-600">Boston ISD — Developer Guide</span>
+          <Building2 className="h-5 w-5 text-[#14B8A6]" />
+          <span className="text-sm font-medium text-[#14B8A6]">Boston ISD — Developer Guide</span>
         </div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-4xl font-bold text-white mb-4">
           Certificate of Occupancy Guide
         </h1>
-        <p className="text-lg text-gray-600 max-w-3xl">
+        <p className="text-lg text-[#94A3B8] max-w-3xl">
           The Certificate of Occupancy (CO) is the final milestone in every Boston construction
           project — and the last step before the building can legally be occupied. Here's the exact
           inspection sequence, what to watch out for, and how to close out your project cleanly.
         </p>
         <div className="flex flex-wrap gap-3 mt-5">
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-[rgba(20,184,166,0.08)] text-[#14B8A6] px-3 py-1.5 rounded-full">
             <KeyRound className="h-3.5 w-3.5" />
             Required before legal occupancy
           </span>
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-amber-900/20 text-amber-400 px-3 py-1.5 rounded-full">
             <Clock className="h-3.5 w-3.5" />
             Allow 2–4 weeks for all sign-offs
           </span>
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-green-50 text-green-700 px-3 py-1.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-green-900/20 text-green-400 px-3 py-1.5 rounded-full">
             <CheckCircle className="h-3.5 w-3.5" />
             Temporary CO available
           </span>
@@ -159,8 +159,8 @@ export default function CertificateOfOccupancyPage() {
 
       {/* What is a CO */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">What Is a Certificate of Occupancy?</h2>
-        <div className="bg-gray-50 rounded-2xl p-6 text-gray-700 space-y-3">
+        <h2 className="text-2xl font-bold text-white mb-4">What Is a Certificate of Occupancy?</h2>
+        <div className="bg-[#111827] rounded-2xl p-6 text-[#94A3B8] space-y-3">
           <p>
             A Certificate of Occupancy is an official document issued by Boston ISD certifying that a
             completed building or structure complies with the Massachusetts State Building Code and is
@@ -168,20 +168,20 @@ export default function CertificateOfOccupancyPage() {
             change of use or increased occupancy, and additions.
           </p>
           <p>
-            <strong className="text-gray-900">You cannot legally occupy</strong> a newly constructed
+            <strong className="text-white">You cannot legally occupy</strong> a newly constructed
             or substantially renovated building without a CO. Violating this carries significant
             liability for owners and developers.
           </p>
           <div className="grid sm:grid-cols-2 gap-4 pt-2">
-            <div className="bg-white border border-gray-200 rounded-xl p-4">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Request CO / Finals</p>
-              <p className="font-semibold text-gray-900">1010 Massachusetts Ave</p>
-              <p className="text-sm text-gray-600">Boston ISD, 4th Floor · 617-635-5300</p>
+            <div className="bg-[#0D1525] border border-white/10 rounded-xl p-4">
+              <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1">Request CO / Finals</p>
+              <p className="font-semibold text-white">1010 Massachusetts Ave</p>
+              <p className="text-sm text-[#94A3B8]">Boston ISD, 4th Floor · 617-635-5300</p>
             </div>
-            <div className="bg-white border border-gray-200 rounded-xl p-4">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Fire Inspection</p>
-              <p className="font-semibold text-gray-900">Boston Fire Prevention</p>
-              <p className="text-sm text-gray-600">115 Southampton St · 617-343-3628</p>
+            <div className="bg-[#0D1525] border border-white/10 rounded-xl p-4">
+              <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1">Fire Inspection</p>
+              <p className="font-semibold text-white">Boston Fire Prevention</p>
+              <p className="text-sm text-[#94A3B8]">115 Southampton St · 617-343-3628</p>
             </div>
           </div>
         </div>
@@ -189,26 +189,26 @@ export default function CertificateOfOccupancyPage() {
 
       {/* Final Inspection Sequence */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Final Inspection Sequence</h2>
+        <h2 className="text-2xl font-bold text-white mb-6">Final Inspection Sequence</h2>
         <div className="space-y-3">
           {INSPECTION_SEQUENCE.map((item) => (
             <div
               key={item.step}
-              className={`border rounded-xl p-5 ${item.required ? "border-blue-200 bg-blue-50" : "border-gray-200 bg-white"}`}
+              className={`border rounded-xl p-5 ${item.required ? "border-[rgba(20,184,166,0.25)] bg-[rgba(20,184,166,0.08)]" : "border-white/10 bg-[#0D1525]"}`}
             >
               <div className="flex items-start gap-4">
-                <div className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${item.required ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"}`}>
+                <div className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${item.required ? "bg-[#14B8A6] text-white" : "bg-white/10 text-[#94A3B8]"}`}>
                   {item.step}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-semibold text-gray-900">{item.name}</p>
-                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${item.required ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>
+                    <p className="font-semibold text-white">{item.name}</p>
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${item.required ? "bg-[rgba(20,184,166,0.1)] text-[#14B8A6]" : "bg-[#111827] text-[#94A3B8]"}`}>
                       {item.required ? "Always Required" : "If Applicable"}
                     </span>
                   </div>
-                  <p className="text-xs font-medium text-gray-500 mt-0.5">{item.dept}</p>
-                  <p className="text-sm text-gray-700 mt-1.5">{item.detail}</p>
+                  <p className="text-xs font-medium text-[#64748B] mt-0.5">{item.dept}</p>
+                  <p className="text-sm text-[#94A3B8] mt-1.5">{item.detail}</p>
                 </div>
               </div>
             </div>
@@ -218,15 +218,15 @@ export default function CertificateOfOccupancyPage() {
 
       {/* Temporary CO */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Temporary CO vs. Permanent CO</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">Temporary CO vs. Permanent CO</h2>
         <div className="grid sm:grid-cols-2 gap-4">
           {TCO_INFO.map((item) => (
-            <div key={item.title} className="border border-gray-200 bg-white rounded-xl p-5">
+            <div key={item.title} className="border border-white/10 bg-[#0D1525] rounded-xl p-5">
               <div className="flex items-start gap-3">
-                <FileText className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                <FileText className="h-5 w-5 text-[#14B8A6] mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold text-gray-900 mb-1">{item.title}</p>
-                  <p className="text-sm text-gray-700">{item.detail}</p>
+                  <p className="font-semibold text-white mb-1">{item.title}</p>
+                  <p className="text-sm text-[#94A3B8]">{item.detail}</p>
                 </div>
               </div>
             </div>
@@ -236,15 +236,15 @@ export default function CertificateOfOccupancyPage() {
 
       {/* Common Delays */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Common CO Delays &amp; How to Avoid Them</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">Common CO Delays &amp; How to Avoid Them</h2>
         <div className="space-y-3">
           {COMMON_DELAYS.map((d) => (
-            <div key={d.issue} className="border border-orange-200 bg-orange-50 rounded-xl p-5">
+            <div key={d.issue} className="border border-amber-700/30 bg-amber-900/20 rounded-xl p-5">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
+                <AlertTriangle className="h-5 w-5 text-amber-400 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold text-gray-900">{d.issue}</p>
-                  <p className="text-sm text-gray-700 mt-1">{d.detail}</p>
+                  <p className="font-semibold text-white">{d.issue}</p>
+                  <p className="text-sm text-[#94A3B8] mt-1">{d.detail}</p>
                 </div>
               </div>
             </div>
@@ -254,8 +254,8 @@ export default function CertificateOfOccupancyPage() {
 
       {/* CO Closeout Checklist */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">CO Closeout Checklist</h2>
-        <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 space-y-3">
+        <h2 className="text-2xl font-bold text-white mb-4">CO Closeout Checklist</h2>
+        <div className="bg-[#111827] border border-white/10 rounded-2xl p-6 space-y-3">
           {[
             "All trade permits (electrical, plumbing, HVAC, gas) are fully inspected and signed off",
             "As-built drawings submitted to ISD reflecting any field changes",
@@ -271,7 +271,7 @@ export default function CertificateOfOccupancyPage() {
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-gray-700">{item}</p>
+              <p className="text-sm text-[#94A3B8]">{item}</p>
             </div>
           ))}
         </div>
@@ -279,7 +279,7 @@ export default function CertificateOfOccupancyPage() {
 
       {/* Related Guides */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Related Guides</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">Related Guides</h2>
         <div className="grid sm:grid-cols-2 gap-3">
           {[
             { href: "/permits/boston/building-permit", label: "Boston Building Permit", desc: "ISD requirements, fees, and plan review" },
@@ -290,38 +290,38 @@ export default function CertificateOfOccupancyPage() {
             <Link
               key={g.href}
               href={g.href}
-              className="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-all group"
+              className="flex items-center justify-between p-4 border border-white/10 rounded-xl hover:border-[#14B8A6]/40 hover:bg-[rgba(20,184,166,0.08)] transition-all group"
             >
               <div>
-                <p className="font-medium text-gray-900 group-hover:text-blue-700 transition-colors text-sm">{g.label}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{g.desc}</p>
+                <p className="font-medium text-white group-hover:text-[#14B8A6] transition-colors text-sm">{g.label}</p>
+                <p className="text-xs text-[#64748B] mt-0.5">{g.desc}</p>
               </div>
-              <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-blue-500 flex-shrink-0 ml-3" />
+              <ChevronRight className="h-4 w-4 text-[#64748B] group-hover:text-[#14B8A6] flex-shrink-0 ml-3" />
             </Link>
           ))}
         </div>
       </section>
 
       {/* CTA */}
-      <section className="bg-blue-600 rounded-2xl p-8">
+      <section className="rounded-2xl p-8" style={{ background: "linear-gradient(135deg, rgba(20,184,166,0.15) 0%, rgba(20,184,166,0.08) 100%)", border: "1px solid rgba(20,184,166,0.25)" }}>
         <div className="max-w-2xl">
           <h2 className="text-2xl font-bold text-white mb-2">
             Track Your CO Milestone in MeritLayer
           </h2>
-          <p className="text-blue-100 mb-6">
+          <p className="text-[#94A3B8] mb-6">
             Upload your inspection sign-offs, track outstanding items, monitor your TCO expiration,
             and get automated alerts before your Certificate of Occupancy deadline.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
               href="/sign-up"
-              className="inline-flex items-center gap-2 bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors"
+              className="inline-flex items-center gap-2 bg-[#0D1525] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
             >
               Start Free Trial <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/permits"
-              className="inline-flex items-center gap-2 bg-blue-500 text-white font-medium px-6 py-3 rounded-xl hover:bg-blue-400 transition-colors"
+              className="inline-flex items-center gap-2 bg-[rgba(20,184,166,0.12)] text-white font-medium px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.15)] transition-colors"
             >
               More Permit Guides
             </Link>

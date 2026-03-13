@@ -136,44 +136,44 @@ const PRO_TIPS = [
 
 export default function CambridgeSpecialPermitPage() {
   return (
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#080D1A', minHeight: '100vh' }}>
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-8">
-        <Link href="/permits" className="hover:text-blue-600 transition-colors">Permit Guides</Link>
+      <nav className="flex items-center gap-1.5 text-sm text-[#64748B] mb-8">
+        <Link href="/permits" className="hover:text-[#14B8A6] transition-colors">Permit Guides</Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <span>Cambridge</span>
         <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-gray-900">Special Permit / BZA</span>
+        <span className="text-white">Special Permit / BZA</span>
       </nav>
 
       {/* Header */}
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-3">
-          <Scale className="h-5 w-5 text-blue-600" />
-          <span className="text-sm font-medium text-blue-600">Cambridge BZA — Developer Guide</span>
+          <Scale className="h-5 w-5 text-[#14B8A6]" />
+          <span className="text-sm font-medium text-[#14B8A6]">Cambridge BZA — Developer Guide</span>
         </div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-4xl font-bold text-white mb-4">
           Cambridge Special Permit Guide
         </h1>
-        <p className="text-lg text-gray-600 max-w-3xl">
+        <p className="text-lg text-[#94A3B8] max-w-3xl">
           The Cambridge Board of Zoning Appeals (BZA) reviews special permits for projects that
           require relief from the Cambridge Zoning Ordinance. The process is community-driven and
           design-focused — here&apos;s how to navigate it successfully.
         </p>
         <div className="flex flex-wrap gap-3 mt-5">
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-[rgba(20,184,166,0.08)] text-[#14B8A6] px-3 py-1.5 rounded-full">
             <Clock className="h-3.5 w-3.5" />
             60–90 days typical
           </span>
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-[#111827] text-[#94A3B8] px-3 py-1.5 rounded-full">
             <MapPin className="h-3.5 w-3.5" />
             344 Broadway, Cambridge
           </span>
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-amber-50 text-amber-700 px-3 py-1.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-amber-900/20 text-amber-400 px-3 py-1.5 rounded-full">
             <Users className="h-3.5 w-3.5" />
             Community meeting required
           </span>
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-purple-50 text-purple-700 px-3 py-1.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-purple-900/20 text-purple-400 px-3 py-1.5 rounded-full">
             <FileText className="h-3.5 w-3.5" />
             Traffic study for 10+ units
           </span>
@@ -182,7 +182,7 @@ export default function CambridgeSpecialPermitPage() {
 
       {/* Key Contacts */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Cambridge BZA — Key Contacts</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">Cambridge BZA — Key Contacts</h2>
         <div className="grid sm:grid-cols-3 gap-4">
           {[
             {
@@ -204,12 +204,12 @@ export default function CambridgeSpecialPermitPage() {
               phone: null,
             },
           ].map((c) => (
-            <div key={c.label} className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{c.label}</p>
-              <p className="font-semibold text-gray-900 text-sm">{c.address}</p>
-              <p className="text-sm text-gray-600 mt-0.5">{c.detail}</p>
+            <div key={c.label} className="bg-[#111827] border border-white/10 rounded-xl p-4">
+              <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1">{c.label}</p>
+              <p className="font-semibold text-white text-sm">{c.address}</p>
+              <p className="text-sm text-[#94A3B8] mt-0.5">{c.detail}</p>
               {c.phone && (
-                <p className="flex items-center gap-1 text-sm text-gray-600 mt-1">
+                <p className="flex items-center gap-1 text-sm text-[#94A3B8] mt-1">
                   <Phone className="h-3.5 w-3.5" />
                   {c.phone}
                 </p>
@@ -221,23 +221,23 @@ export default function CambridgeSpecialPermitPage() {
 
       {/* Required Documents */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Required Documents</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">Required Documents</h2>
         <div className="space-y-3">
           {REQUIRED_DOCS.map((doc) => (
             <div
               key={doc.name}
-              className={`border rounded-xl p-5 ${doc.critical ? "border-blue-200 bg-blue-50" : "border-gray-200 bg-white"}`}
+              className={`border rounded-xl p-5 ${doc.critical ? "border-[rgba(20,184,166,0.25)] bg-[rgba(20,184,166,0.08)]" : "border-white/10 bg-[#0D1525]"}`}
             >
               <div className="flex items-start gap-3">
-                <FileText className={`h-5 w-5 mt-0.5 flex-shrink-0 ${doc.critical ? "text-blue-600" : "text-gray-400"}`} />
+                <FileText className={`h-5 w-5 mt-0.5 flex-shrink-0 ${doc.critical ? "text-[#14B8A6]" : "text-[#64748B]"}`} />
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-semibold text-gray-900">{doc.name}</p>
+                    <p className="font-semibold text-white">{doc.name}</p>
                     {doc.critical && (
-                      <span className="text-xs font-medium bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Required</span>
+                      <span className="text-xs font-medium bg-[rgba(20,184,166,0.1)] text-[#14B8A6] px-2 py-0.5 rounded-full">Required</span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-700 mt-1">{doc.detail}</p>
+                  <p className="text-sm text-[#94A3B8] mt-1">{doc.detail}</p>
                 </div>
               </div>
             </div>
@@ -247,21 +247,21 @@ export default function CambridgeSpecialPermitPage() {
 
       {/* Process Steps */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Step-by-Step Process</h2>
+        <h2 className="text-2xl font-bold text-white mb-6">Step-by-Step Process</h2>
         <div className="space-y-4">
           {PROCESS_STEPS.map((step) => (
             <div key={step.step} className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#14B8A6] text-white flex items-center justify-center text-sm font-bold">
                 {step.step}
               </div>
-              <div className="flex-1 pb-6 border-b border-gray-100 last:border-0">
+              <div className="flex-1 pb-6 border-b border-white/6 last:border-0">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
-                  <p className="font-semibold text-gray-900">{step.name}</p>
-                  <span className="text-xs font-medium bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full flex-shrink-0">
+                  <p className="font-semibold text-white">{step.name}</p>
+                  <span className="text-xs font-medium bg-[#111827] text-[#94A3B8] px-2.5 py-1 rounded-full flex-shrink-0">
                     {step.timeline}
                   </span>
                 </div>
-                <p className="text-gray-600 mt-1 text-sm">{step.detail}</p>
+                <p className="text-[#94A3B8] mt-1 text-sm">{step.detail}</p>
               </div>
             </div>
           ))}
@@ -270,16 +270,16 @@ export default function CambridgeSpecialPermitPage() {
 
       {/* Common Issues */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Common Issues &amp; How to Avoid Them</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">Common Issues &amp; How to Avoid Them</h2>
         <div className="space-y-3">
           {COMMON_REJECTIONS.map((r) => (
-            <div key={r.issue} className="border border-orange-200 bg-orange-50 rounded-xl p-5">
+            <div key={r.issue} className="border border-amber-700/30 bg-amber-900/20 rounded-xl p-5">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
+                <AlertTriangle className="h-5 w-5 text-amber-400 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold text-gray-900">{r.issue}</p>
-                  <p className="text-sm text-gray-700 mt-1">
-                    <strong className="text-green-700">Fix: </strong>{r.fix}
+                  <p className="font-semibold text-white">{r.issue}</p>
+                  <p className="text-sm text-[#94A3B8] mt-1">
+                    <strong className="text-green-400">Fix: </strong>{r.fix}
                   </p>
                 </div>
               </div>
@@ -290,12 +290,12 @@ export default function CambridgeSpecialPermitPage() {
 
       {/* Pro Tips */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Pro Tips for Cambridge Special Permits</h2>
-        <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 space-y-3">
+        <h2 className="text-2xl font-bold text-white mb-4">Pro Tips for Cambridge Special Permits</h2>
+        <div className="bg-[#111827] border border-white/10 rounded-2xl p-6 space-y-3">
           {PRO_TIPS.map((tip, i) => (
             <div key={i} className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-gray-700">{tip}</p>
+              <p className="text-sm text-[#94A3B8]">{tip}</p>
             </div>
           ))}
         </div>
@@ -303,7 +303,7 @@ export default function CambridgeSpecialPermitPage() {
 
       {/* Related Guides */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Related Guides</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">Related Guides</h2>
         <div className="grid sm:grid-cols-2 gap-3">
           {[
             { href: "/permits/cambridge/building-permit", label: "Cambridge Building Permit", desc: "ISD requirements, green building, 3–6 week timeline" },
@@ -314,38 +314,38 @@ export default function CambridgeSpecialPermitPage() {
             <Link
               key={g.href}
               href={g.href}
-              className="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-all group"
+              className="flex items-center justify-between p-4 border border-white/10 rounded-xl hover:border-[#14B8A6]/40 hover:bg-[rgba(20,184,166,0.08)] transition-all group"
             >
               <div>
-                <p className="font-medium text-gray-900 group-hover:text-blue-700 transition-colors text-sm">{g.label}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{g.desc}</p>
+                <p className="font-medium text-white group-hover:text-[#14B8A6] transition-colors text-sm">{g.label}</p>
+                <p className="text-xs text-[#64748B] mt-0.5">{g.desc}</p>
               </div>
-              <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-blue-500 flex-shrink-0 ml-3" />
+              <ChevronRight className="h-4 w-4 text-[#64748B] group-hover:text-[#14B8A6] flex-shrink-0 ml-3" />
             </Link>
           ))}
         </div>
       </section>
 
       {/* CTA */}
-      <section className="bg-blue-600 rounded-2xl p-8">
+      <section className="rounded-2xl p-8" style={{ background: "linear-gradient(135deg, rgba(20,184,166,0.15) 0%, rgba(20,184,166,0.08) 100%)", border: "1px solid rgba(20,184,166,0.25)" }}>
         <div className="max-w-2xl">
           <h2 className="text-2xl font-bold text-white mb-2">
             Track Your Cambridge Permit in MeritLayer
           </h2>
-          <p className="text-blue-100 mb-6">
+          <p className="text-[#94A3B8] mb-6">
             Upload your BZA application, track hearing dates, monitor community meeting requirements,
             and get automated alerts at every milestone.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
               href="/sign-up"
-              className="inline-flex items-center gap-2 bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors"
+              className="inline-flex items-center gap-2 bg-[#0D1525] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
             >
               Start Free Trial <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/permits"
-              className="inline-flex items-center gap-2 bg-blue-500 text-white font-medium px-6 py-3 rounded-xl hover:bg-blue-400 transition-colors"
+              className="inline-flex items-center gap-2 bg-[rgba(20,184,166,0.12)] text-white font-medium px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.15)] transition-colors"
             >
               More Permit Guides
             </Link>

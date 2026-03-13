@@ -98,40 +98,40 @@ const NEGOTIATION_TIPS = [
 
 export default function Article85DemolitionPage() {
   return (
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#080D1A', minHeight: '100vh' }}>
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-8">
-        <Link href="/permits" className="hover:text-blue-600 transition-colors">Permit Guides</Link>
+      <nav className="flex items-center gap-1.5 text-sm text-[#64748B] mb-8">
+        <Link href="/permits" className="hover:text-[#14B8A6] transition-colors">Permit Guides</Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <span>Boston</span>
         <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-gray-900">Article 85 Demolition Delay</span>
+        <span className="text-white">Article 85 Demolition Delay</span>
       </nav>
 
       {/* Header */}
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-3">
-          <Building2 className="h-5 w-5 text-blue-600" />
-          <span className="text-sm font-medium text-blue-600">Boston Developer Guide</span>
+          <Building2 className="h-5 w-5 text-[#14B8A6]" />
+          <span className="text-sm font-medium text-[#14B8A6]">Boston Developer Guide</span>
         </div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-4xl font-bold text-white mb-4">
           Article 85 Demolition Delay Guide
         </h1>
-        <p className="text-lg text-gray-600 max-w-3xl">
+        <p className="text-lg text-[#94A3B8] max-w-3xl">
           Boston's Article 85 Demolition Delay Ordinance imposes an 18-month delay on demolishing
           structures 50 years or older. Understanding how it works — and how to navigate it — is
           critical for any Boston developer with a teardown or major renovation project.
         </p>
         <div className="flex flex-wrap gap-3 mt-5">
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-red-50 text-red-700 px-3 py-1.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-red-900/20 text-red-400 px-3 py-1.5 rounded-full">
             <Clock className="h-3.5 w-3.5" />
             18-month delay clock
           </span>
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-amber-900/20 text-amber-400 px-3 py-1.5 rounded-full">
             <AlertTriangle className="h-3.5 w-3.5" />
             Triggered for structures 50+ years old
           </span>
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full">
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-[rgba(20,184,166,0.08)] text-[#14B8A6] px-3 py-1.5 rounded-full">
             <Shield className="h-3.5 w-3.5" />
             BPDA + BLC review
           </span>
@@ -140,8 +140,8 @@ export default function Article85DemolitionPage() {
 
       {/* What is Article 85 */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">What Is Article 85?</h2>
-        <div className="bg-gray-50 rounded-2xl p-6 text-gray-700 space-y-3">
+        <h2 className="text-2xl font-bold text-white mb-4">What Is Article 85?</h2>
+        <div className="bg-[#111827] rounded-2xl p-6 text-[#94A3B8] space-y-3">
           <p>
             Article 85 of the Boston Zoning Code is the city's demolition delay ordinance. Its purpose
             is to preserve historically and architecturally significant buildings by requiring a review
@@ -149,26 +149,26 @@ export default function Article85DemolitionPage() {
           </p>
           <p>
             When you file a demolition permit for a structure that is 50 or more years old, Article 85
-            automatically triggers an <strong className="text-gray-900">18-month delay</strong>. During
+            automatically triggers an <strong className="text-white">18-month delay</strong>. During
             this time, the Boston Landmarks Commission (BLC) and the Boston Planning &amp; Development
             Agency (BPDA) review the structure and work with you on alternatives.
           </p>
           <p>
-            Critically: the delay does <strong className="text-gray-900">not</strong> mean you
+            Critically: the delay does <strong className="text-white">not</strong> mean you
             can never demolish. It means you must go through a process first. Most projects proceed
             to demolition — either after the full delay expires or by reaching agreement with BPDA
             on mitigation.
           </p>
           <div className="grid sm:grid-cols-2 gap-4 pt-2">
-            <div className="bg-white border border-gray-200 rounded-xl p-4">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">BPDA / Article 85 Review</p>
-              <p className="font-semibold text-gray-900">1 City Hall Square</p>
-              <p className="text-sm text-gray-600">Boston Planning &amp; Development Agency</p>
+            <div className="bg-[#0D1525] border border-white/10 rounded-xl p-4">
+              <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1">BPDA / Article 85 Review</p>
+              <p className="font-semibold text-white">1 City Hall Square</p>
+              <p className="text-sm text-[#94A3B8]">Boston Planning &amp; Development Agency</p>
             </div>
-            <div className="bg-white border border-gray-200 rounded-xl p-4">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Boston Landmarks Commission</p>
-              <p className="font-semibold text-gray-900">1 City Hall Square, Room 805</p>
-              <p className="text-sm text-gray-600">617-635-3850</p>
+            <div className="bg-[#0D1525] border border-white/10 rounded-xl p-4">
+              <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1">Boston Landmarks Commission</p>
+              <p className="font-semibold text-white">1 City Hall Square, Room 805</p>
+              <p className="text-sm text-[#94A3B8]">617-635-3850</p>
             </div>
           </div>
         </div>
@@ -176,15 +176,15 @@ export default function Article85DemolitionPage() {
 
       {/* What Triggers Article 85 */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">What Triggers the Delay</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">What Triggers the Delay</h2>
         <div className="space-y-3">
           {TRIGGERS.map((t) => (
-            <div key={t.trigger} className="border border-red-200 bg-red-50 rounded-xl p-5">
+            <div key={t.trigger} className="border border-red-700/30 bg-red-900/20 rounded-xl p-5">
               <div className="flex items-start gap-3">
                 <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold text-gray-900">{t.trigger}</p>
-                  <p className="text-sm text-gray-700 mt-1">{t.detail}</p>
+                  <p className="font-semibold text-white">{t.trigger}</p>
+                  <p className="text-sm text-[#94A3B8] mt-1">{t.detail}</p>
                 </div>
               </div>
             </div>
@@ -194,15 +194,15 @@ export default function Article85DemolitionPage() {
 
       {/* Exemptions */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Exemptions</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">Exemptions</h2>
         <div className="space-y-3">
           {EXEMPTIONS.map((e) => (
-            <div key={e.name} className="border border-green-200 bg-green-50 rounded-xl p-5">
+            <div key={e.name} className="border border-green-700/30 bg-green-900/20 rounded-xl p-5">
               <div className="flex items-start gap-3">
                 <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold text-gray-900">{e.name}</p>
-                  <p className="text-sm text-gray-700 mt-1">{e.detail}</p>
+                  <p className="font-semibold text-white">{e.name}</p>
+                  <p className="text-sm text-[#94A3B8] mt-1">{e.detail}</p>
                 </div>
               </div>
             </div>
@@ -212,21 +212,21 @@ export default function Article85DemolitionPage() {
 
       {/* The 18-Month Process */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">The 18-Month Process</h2>
+        <h2 className="text-2xl font-bold text-white mb-6">The 18-Month Process</h2>
         <div className="space-y-4">
           {PROCESS_STEPS.map((step) => (
             <div key={step.step} className="flex gap-4">
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#14B8A6] text-white flex items-center justify-center text-sm font-bold">
                 {step.step}
               </div>
-              <div className="flex-1 pb-6 border-b border-gray-100 last:border-0">
+              <div className="flex-1 pb-6 border-b border-white/6 last:border-0">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
-                  <p className="font-semibold text-gray-900">{step.name}</p>
-                  <span className="text-xs font-medium bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full flex-shrink-0">
+                  <p className="font-semibold text-white">{step.name}</p>
+                  <span className="text-xs font-medium bg-[#111827] text-[#94A3B8] px-2.5 py-1 rounded-full flex-shrink-0">
                     {step.timeline}
                   </span>
                 </div>
-                <p className="text-gray-600 mt-1 text-sm">{step.detail}</p>
+                <p className="text-[#94A3B8] mt-1 text-sm">{step.detail}</p>
               </div>
             </div>
           ))}
@@ -235,8 +235,8 @@ export default function Article85DemolitionPage() {
           <div className="flex items-start gap-3">
             <Calendar className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
             <div>
-              <p className="font-semibold text-gray-900">Plan Your Project Timeline Accordingly</p>
-              <p className="text-sm text-gray-700 mt-1">
+              <p className="font-semibold text-white">Plan Your Project Timeline Accordingly</p>
+              <p className="text-sm text-[#94A3B8] mt-1">
                 If your project involves demolishing a 50+ year old structure, start the Article 85
                 process <strong>18+ months before</strong> your target start date. Factor this delay
                 into financing commitments, permitting budgets, and construction schedules.
@@ -248,12 +248,12 @@ export default function Article85DemolitionPage() {
 
       {/* Negotiation Tips */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Navigating the Delay Effectively</h2>
-        <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 space-y-3">
+        <h2 className="text-2xl font-bold text-white mb-4">Navigating the Delay Effectively</h2>
+        <div className="bg-[#111827] border border-white/10 rounded-2xl p-6 space-y-3">
           {NEGOTIATION_TIPS.map((tip, i) => (
             <div key={i} className="flex items-start gap-3">
               <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-gray-700">{tip}</p>
+              <p className="text-sm text-[#94A3B8]">{tip}</p>
             </div>
           ))}
         </div>
@@ -261,7 +261,7 @@ export default function Article85DemolitionPage() {
 
       {/* Related Guides */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Related Guides</h2>
+        <h2 className="text-2xl font-bold text-white mb-4">Related Guides</h2>
         <div className="grid sm:grid-cols-2 gap-3">
           {[
             { href: "/permits/boston/building-permit", label: "Boston Building Permit", desc: "Full ISD requirements and fee schedule" },
@@ -272,38 +272,38 @@ export default function Article85DemolitionPage() {
             <Link
               key={g.href}
               href={g.href}
-              className="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-all group"
+              className="flex items-center justify-between p-4 border border-white/10 rounded-xl hover:border-[#14B8A6]/40 hover:bg-[rgba(20,184,166,0.08)] transition-all group"
             >
               <div>
-                <p className="font-medium text-gray-900 group-hover:text-blue-700 transition-colors text-sm">{g.label}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{g.desc}</p>
+                <p className="font-medium text-white group-hover:text-[#14B8A6] transition-colors text-sm">{g.label}</p>
+                <p className="text-xs text-[#64748B] mt-0.5">{g.desc}</p>
               </div>
-              <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-blue-500 flex-shrink-0 ml-3" />
+              <ChevronRight className="h-4 w-4 text-[#64748B] group-hover:text-[#14B8A6] flex-shrink-0 ml-3" />
             </Link>
           ))}
         </div>
       </section>
 
       {/* CTA */}
-      <section className="bg-blue-600 rounded-2xl p-8">
+      <section className="rounded-2xl p-8" style={{ background: "linear-gradient(135deg, rgba(20,184,166,0.15) 0%, rgba(20,184,166,0.08) 100%)", border: "1px solid rgba(20,184,166,0.25)" }}>
         <div className="max-w-2xl">
           <h2 className="text-2xl font-bold text-white mb-2">
             Track Your Article 85 Clock in MeritLayer
           </h2>
-          <p className="text-blue-100 mb-6">
+          <p className="text-[#94A3B8] mb-6">
             Upload your demolition permit filing, set the 18-month deadline, track BPDA correspondence,
             and get automated alerts before critical milestones — so you never miss a window.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
               href="/sign-up"
-              className="inline-flex items-center gap-2 bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors"
+              className="inline-flex items-center gap-2 bg-[#0D1525] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
             >
               Start Free Trial <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/permits"
-              className="inline-flex items-center gap-2 bg-blue-500 text-white font-medium px-6 py-3 rounded-xl hover:bg-blue-400 transition-colors"
+              className="inline-flex items-center gap-2 bg-[rgba(20,184,166,0.12)] text-white font-medium px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.15)] transition-colors"
             >
               More Permit Guides
             </Link>

@@ -125,6 +125,8 @@ function getStatusBadge(status: string) {
       return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/20 text-amber-400 border border-amber-500/30">Pending</span>;
     case "overdue":
       return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">Overdue</span>;
+    case "in_progress":
+      return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400 border border-blue-500/30">In Progress</span>;
     case "not_applicable":
       return <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-white/10 text-muted-foreground border border-white/10">N/A</span>;
     default:
@@ -152,6 +154,8 @@ export default function ProjectDetailPage() {
   const router = useRouter();
   const projectId = params.id as string;
 
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+  const [noteText, setNoteText] = useState<string>("");
   const [addItemOpen, setAddItemOpen] = useState(false);
   const [addPermitOpen, setAddPermitOpen] = useState(false);
   const [researchOpen, setResearchOpen] = useState(false);
@@ -288,8 +292,10 @@ export default function ProjectDetailPage() {
     setTimeout(() => setCopiedShareUrl(false), 2000);
   };
 
-  const handleStatusChange = (itemId: string, newStatus: "met" | "pending") => {
-    updateComplianceItem.mutate({ id: itemId, status: newStatus });
+  const updateItem = updateComplianceItem;
+
+  const handleStatusChange = (itemId: string, newStatus: string) => {
+    updateComplianceItem.mutate({ id: itemId, status: newStatus as "pending" | "in_progress" | "met" | "overdue" | "not_applicable" });
   };
 
   const handleSettingsSave = () => {
@@ -631,7 +637,26 @@ export default function ProjectDetailPage() {
                             >
                               {item.description}
                             </p>
-                            {getStatusBadge(item.status)}
+                            <select
+                              value={item.status}
+                              onChange={(e) => handleStatusChange(item.id, e.target.value)}
+                              className="text-xs rounded px-2 py-0.5 font-medium border cursor-pointer"
+                              style={{
+                                background: '#0D1525',
+                                borderColor: 'rgba(255,255,255,0.1)',
+                                color: item.status === 'met' ? '#4ade80'
+                                  : item.status === 'in_progress' ? '#60a5fa'
+                                  : item.status === 'overdue' ? '#f87171'
+                                  : item.status === 'not_applicable' ? '#6b7280'
+                                  : '#fbbf24',
+                              }}
+                            >
+                              <option value="pending">Pending</option>
+                              <option value="in_progress">In Progress</option>
+                              <option value="met">Met</option>
+                              <option value="overdue">Overdue</option>
+                              <option value="not_applicable">N/A</option>
+                            </select>
                             {item.sourceUrl && (
                               <Popover>
                                 <PopoverTrigger asChild>
@@ -696,10 +721,69 @@ export default function ProjectDetailPage() {
                               </span>
                             )}
                           </div>
-                          {item.notes && (
-                            <p className="text-sm text-muted-foreground mt-2">
-                              {item.notes}
-                            </p>
+                          {editingNoteId === item.id ? (
+                            <div className="mt-2 flex gap-2">
+                              <textarea
+                                autoFocus
+                                rows={2}
+                                value={noteText}
+                                onChange={(e) => setNoteText(e.target.value)}
+                                placeholder="Add a note... e.g. Submitted water cut and cap application to BWSC on 3/12"
+                                className="flex-1 text-sm px-3 py-2 rounded-lg resize-none"
+                                style={{
+                                  background: '#111827',
+                                  border: '1px solid rgba(255,255,255,0.15)',
+                                  color: '#F1F5F9',
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Escape') {
+                                    setEditingNoteId(null);
+                                  }
+                                }}
+                              />
+                              <div className="flex flex-col gap-1">
+                                <button
+                                  onClick={() => {
+                                    updateItem.mutate({ id: item.id, notes: noteText });
+                                    setEditingNoteId(null);
+                                  }}
+                                  className="text-xs px-3 py-1.5 rounded font-medium bg-[#14B8A6] text-white hover:bg-[#0D9488]"
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  onClick={() => setEditingNoteId(null)}
+                                  className="text-xs px-3 py-1.5 rounded font-medium text-[#64748B] hover:text-white"
+                                  style={{ background: 'rgba(255,255,255,0.05)' }}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="mt-2">
+                              {item.notes ? (
+                                <div className="flex items-start gap-2">
+                                  <p className="text-sm flex-1 px-3 py-2 rounded-lg"
+                                    style={{ background: 'rgba(20,184,166,0.06)', border: '1px solid rgba(20,184,166,0.15)', color: '#94A3B8' }}>
+                                    📝 {item.notes}
+                                  </p>
+                                  <button
+                                    onClick={() => { setEditingNoteId(item.id); setNoteText(item.notes ?? ''); }}
+                                    className="text-xs text-[#64748B] hover:text-[#14B8A6] shrink-0 mt-1"
+                                  >
+                                    Edit
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => { setEditingNoteId(item.id); setNoteText(''); }}
+                                  className="text-xs text-[#475569] hover:text-[#14B8A6] transition-colors flex items-center gap-1"
+                                >
+                                  + Add note
+                                </button>
+                              )}
+                            </div>
                           )}
                         </div>
                       </div>

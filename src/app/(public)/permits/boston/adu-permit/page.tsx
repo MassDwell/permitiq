@@ -163,63 +163,63 @@ const PRO_TIPS = [
 
 export default function BostonADUPermitPage() {
   return (
-    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16" style={{ background: '#080D1A', minHeight: '100vh' }}>
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-xs text-gray-400 mb-8">
-        <Link href="/permits" className="hover:text-gray-600 transition-colors">Permit Guides</Link>
+      <nav className="flex items-center gap-1.5 text-xs text-[#64748B] mb-8">
+        <Link href="/permits" className="hover:text-[#94A3B8] transition-colors">Permit Guides</Link>
         <ChevronRight className="h-3 w-3" />
-        <Link href="/permits" className="hover:text-gray-600 transition-colors">Boston</Link>
+        <Link href="/permits" className="hover:text-[#94A3B8] transition-colors">Boston</Link>
         <ChevronRight className="h-3 w-3" />
-        <span className="text-gray-600">ADU Permit</span>
+        <span className="text-[#94A3B8]">ADU Permit</span>
       </nav>
 
       {/* Hero */}
       <div className="mb-10">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-[rgba(20,184,166,0.08)] flex items-center justify-center">
             <Home className="h-5 w-5 text-teal-600" />
           </div>
           <div>
             <p className="text-xs font-semibold text-teal-600 uppercase tracking-wide">Boston ISD</p>
           </div>
         </div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-3">
+        <h1 className="text-4xl font-bold text-white mb-3">
           Boston ADU Permit Guide
         </h1>
-        <p className="text-lg text-gray-600 max-w-2xl">
+        <p className="text-lg text-[#94A3B8] max-w-2xl">
           Complete checklist and step-by-step guide for obtaining a Boston building permit for an
           Accessory Dwelling Unit under the 2024 MA ADU Law (Chapter 150 of the Acts of 2024).
         </p>
         <div className="flex flex-wrap gap-3 mt-5">
-          <div className="flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1.5 text-sm text-gray-600">
-            <Clock className="h-4 w-4 text-gray-400" />
+          <div className="flex items-center gap-2 bg-[#111827] rounded-full px-3 py-1.5 text-sm text-[#94A3B8]">
+            <Clock className="h-4 w-4 text-[#64748B]" />
             4–8 weeks review
           </div>
-          <div className="flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1.5 text-sm text-gray-600">
-            <DollarSign className="h-4 w-4 text-gray-400" />
+          <div className="flex items-center gap-2 bg-[#111827] rounded-full px-3 py-1.5 text-sm text-[#94A3B8]">
+            <DollarSign className="h-4 w-4 text-[#64748B]" />
             $1,200–$2,400 typical fees
           </div>
-          <div className="flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1.5 text-sm text-gray-600">
-            <Building2 className="h-4 w-4 text-gray-400" />
+          <div className="flex items-center gap-2 bg-[#111827] rounded-full px-3 py-1.5 text-sm text-[#94A3B8]">
+            <Building2 className="h-4 w-4 text-[#64748B]" />
             Boston ISD — 1010 Mass Ave
           </div>
         </div>
       </div>
 
       {/* 2024 Law callout */}
-      <div className="mb-10 rounded-2xl p-5 bg-teal-50 border border-teal-200">
+      <div className="mb-10 rounded-2xl p-5 bg-[rgba(20,184,166,0.08)] border border-[rgba(20,184,166,0.25)]">
         <div className="flex items-start gap-3">
           <CheckCircle className="h-5 w-5 text-teal-600 mt-0.5 shrink-0" />
           <div>
-            <p className="font-semibold text-teal-900 text-sm">By-Right Under the 2024 MA ADU Law</p>
-            <p className="text-sm text-teal-700 mt-1">
+            <p className="font-semibold text-white text-sm">By-Right Under the 2024 MA ADU Law</p>
+            <p className="text-sm text-[#94A3B8] mt-1">
               Single-family and two-family homeowners in residential zoning districts are now entitled
               to build one ADU by-right — no ZBA hearing, no special permit, no design review required.
               You only need a standard building permit from Boston ISD.
             </p>
             <Link
               href="/tools/adu-eligibility"
-              className="inline-flex items-center gap-1 text-sm font-medium text-teal-600 hover:text-teal-800 mt-2 transition-colors"
+              className="inline-flex items-center gap-1 text-sm font-medium text-teal-600 hover:text-[#14B8A6] mt-2 transition-colors"
             >
               Check your eligibility first →
               <ChevronRight className="h-3.5 w-3.5" />
@@ -233,31 +233,31 @@ export default function BostonADUPermitPage() {
         <div className="lg:col-span-2 space-y-10">
           {/* Key Contacts */}
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Key Contacts</h2>
+            <h2 className="text-xl font-bold text-white mb-4">Key Contacts</h2>
             <div className="grid sm:grid-cols-3 gap-4">
-              <div className="p-4 border border-gray-200 rounded-xl">
-                <p className="font-semibold text-gray-900 text-sm mb-1">Permit Counter</p>
-                <p className="text-xs text-gray-500">1010 Massachusetts Ave, 4th Floor</p>
-                <p className="text-xs text-gray-500 mt-0.5">Mon–Fri 8:00am – 4:00pm</p>
+              <div className="p-4 border border-white/10 rounded-xl">
+                <p className="font-semibold text-white text-sm mb-1">Permit Counter</p>
+                <p className="text-xs text-[#64748B]">1010 Massachusetts Ave, 4th Floor</p>
+                <p className="text-xs text-[#64748B] mt-0.5">Mon–Fri 8:00am – 4:00pm</p>
                 <div className="flex items-center gap-1.5 mt-2">
-                  <Phone className="h-3.5 w-3.5 text-gray-400" />
-                  <p className="text-xs text-blue-600">(617) 635-5300</p>
+                  <Phone className="h-3.5 w-3.5 text-[#64748B]" />
+                  <p className="text-xs text-[#14B8A6]">(617) 635-5300</p>
                 </div>
               </div>
-              <div className="p-4 border border-gray-200 rounded-xl">
-                <p className="font-semibold text-gray-900 text-sm mb-1">Online Portal</p>
-                <p className="text-xs text-gray-500">Submit permits and track status online</p>
+              <div className="p-4 border border-white/10 rounded-xl">
+                <p className="font-semibold text-white text-sm mb-1">Online Portal</p>
+                <p className="text-xs text-[#64748B]">Submit permits and track status online</p>
                 <div className="flex items-center gap-1.5 mt-2">
-                  <Globe className="h-3.5 w-3.5 text-gray-400" />
-                  <p className="text-xs text-blue-600">permits.boston.gov</p>
+                  <Globe className="h-3.5 w-3.5 text-[#64748B]" />
+                  <p className="text-xs text-[#14B8A6]">permits.boston.gov</p>
                 </div>
               </div>
-              <div className="p-4 border border-gray-200 rounded-xl">
-                <p className="font-semibold text-gray-900 text-sm mb-1">Zoning Counter</p>
-                <p className="text-xs text-gray-500">Confirm district + setbacks pre-app</p>
+              <div className="p-4 border border-white/10 rounded-xl">
+                <p className="font-semibold text-white text-sm mb-1">Zoning Counter</p>
+                <p className="text-xs text-[#64748B]">Confirm district + setbacks pre-app</p>
                 <div className="flex items-center gap-1.5 mt-2">
-                  <Phone className="h-3.5 w-3.5 text-gray-400" />
-                  <p className="text-xs text-blue-600">(617) 635-5300 ext. 2</p>
+                  <Phone className="h-3.5 w-3.5 text-[#64748B]" />
+                  <p className="text-xs text-[#14B8A6]">(617) 635-5300 ext. 2</p>
                 </div>
               </div>
             </div>
@@ -265,25 +265,25 @@ export default function BostonADUPermitPage() {
 
           {/* Required Documents */}
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-1">Required Documents Checklist</h2>
-            <p className="text-sm text-gray-500 mb-4">All items required unless marked optional</p>
+            <h2 className="text-xl font-bold text-white mb-1">Required Documents Checklist</h2>
+            <p className="text-sm text-[#64748B] mb-4">All items required unless marked optional</p>
             <div className="space-y-2">
               {REQUIRED_DOCS.map((doc) => (
                 <div
                   key={doc.label}
-                  className={`flex items-start gap-3 p-4 rounded-xl border ${doc.critical ? "border-gray-200 bg-white" : "border-gray-100 bg-gray-50"}`}
+                  className={`flex items-start gap-3 p-4 rounded-xl border ${doc.critical ? "border-white/10 bg-[#0D1525]" : "border-white/6 bg-[#111827]"}`}
                 >
                   <div
-                    className={`w-5 h-5 rounded border-2 flex-shrink-0 mt-0.5 flex items-center justify-center ${doc.critical ? "border-gray-400" : "border-gray-300"}`}
+                    className={`w-5 h-5 rounded border-2 flex-shrink-0 mt-0.5 flex items-center justify-center ${doc.critical ? "border-white/20" : "border-white/10"}`}
                   />
                   <div>
-                    <p className={`text-sm font-medium ${doc.critical ? "text-gray-900" : "text-gray-600"}`}>
+                    <p className={`text-sm font-medium ${doc.critical ? "text-white" : "text-[#94A3B8]"}`}>
                       {doc.label}
                       {!doc.critical && (
-                        <span className="ml-2 text-xs font-normal text-gray-400">(may be required)</span>
+                        <span className="ml-2 text-xs font-normal text-[#64748B]">(may be required)</span>
                       )}
                     </p>
-                    <p className="text-xs text-gray-400 mt-0.5">{doc.note}</p>
+                    <p className="text-xs text-[#64748B] mt-0.5">{doc.note}</p>
                   </div>
                 </div>
               ))}
@@ -292,15 +292,15 @@ export default function BostonADUPermitPage() {
 
           {/* NOT Required */}
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-1">
+            <h2 className="text-xl font-bold text-white mb-1">
               What&apos;s NOT Required
             </h2>
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-sm text-[#64748B] mb-4">
               Thanks to the 2024 MA ADU Law — these requirements no longer apply for by-right ADUs.
             </p>
             <div className="space-y-2">
               {NOT_REQUIRED.map((item) => (
-                <div key={item} className="flex items-center gap-3 p-3.5 border border-green-100 bg-green-50 rounded-xl">
+                <div key={item} className="flex items-center gap-3 p-3.5 border border-green-100 bg-green-900/20 rounded-xl">
                   <XCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
                   <p className="text-sm text-green-800">{item}</p>
                 </div>
@@ -310,10 +310,10 @@ export default function BostonADUPermitPage() {
 
           {/* Submission steps */}
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Boston ISD Submission Process</h2>
+            <h2 className="text-xl font-bold text-white mb-4">Boston ISD Submission Process</h2>
             <div className="space-y-4">
               {SUBMISSION_STEPS.map((s) => (
-                <div key={s.step} className="flex gap-4 p-5 border border-gray-200 rounded-xl">
+                <div key={s.step} className="flex gap-4 p-5 border border-white/10 rounded-xl">
                   <div className="flex-shrink-0">
                     <span
                       className="inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold"
@@ -324,13 +324,13 @@ export default function BostonADUPermitPage() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <p className="font-semibold text-gray-900 text-sm">{s.title}</p>
-                      <span className="text-xs font-medium bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <p className="font-semibold text-white text-sm">{s.title}</p>
+                      <span className="text-xs font-medium bg-[#111827] text-[#64748B] px-2 py-0.5 rounded-full flex items-center gap-1">
                         <Clock className="h-3 w-3" />
                         {s.time}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">{s.detail}</p>
+                    <p className="text-sm text-[#94A3B8]">{s.detail}</p>
                   </div>
                 </div>
               ))}
@@ -339,17 +339,17 @@ export default function BostonADUPermitPage() {
 
           {/* Common rejections */}
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-1">Common Rejection Reasons</h2>
-            <p className="text-sm text-gray-500 mb-4">Top 5 reasons permits are rejected — and how to fix them</p>
+            <h2 className="text-xl font-bold text-white mb-1">Common Rejection Reasons</h2>
+            <p className="text-sm text-[#64748B] mb-4">Top 5 reasons permits are rejected — and how to fix them</p>
             <div className="space-y-3">
               {REJECTION_REASONS.map((item, i) => (
-                <div key={i} className="p-5 border border-orange-100 bg-orange-50 rounded-xl">
+                <div key={i} className="p-5 border border-amber-700/30 bg-amber-900/20 rounded-xl">
                   <div className="flex items-start gap-2 mb-2">
-                    <AlertTriangle className="h-4 w-4 text-orange-500 flex-shrink-0 mt-0.5" />
-                    <p className="font-semibold text-gray-900 text-sm">{item.reason}</p>
+                    <AlertTriangle className="h-4 w-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                    <p className="font-semibold text-white text-sm">{item.reason}</p>
                   </div>
-                  <p className="text-sm text-gray-600 pl-6">
-                    <span className="font-medium text-green-700">Fix: </span>{item.fix}
+                  <p className="text-sm text-[#94A3B8] pl-6">
+                    <span className="font-medium text-green-400">Fix: </span>{item.fix}
                   </p>
                 </div>
               ))}
@@ -358,12 +358,12 @@ export default function BostonADUPermitPage() {
 
           {/* Pro tips */}
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Pro Tips</h2>
+            <h2 className="text-xl font-bold text-white mb-4">Pro Tips</h2>
             <div className="space-y-2">
               {PRO_TIPS.map((tip, i) => (
-                <div key={i} className="flex items-start gap-3 p-3.5 border border-gray-200 rounded-xl">
+                <div key={i} className="flex items-start gap-3 p-3.5 border border-white/10 rounded-xl">
                   <CheckCircle className="h-4 w-4 text-teal-500 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-gray-700">{tip}</p>
+                  <p className="text-sm text-[#94A3B8]">{tip}</p>
                 </div>
               ))}
             </div>
@@ -373,16 +373,16 @@ export default function BostonADUPermitPage() {
         {/* Sidebar */}
         <aside className="space-y-5">
           {/* Fee schedule */}
-          <div className="p-5 border border-gray-200 rounded-2xl">
+          <div className="p-5 border border-white/10 rounded-2xl">
             <div className="flex items-center gap-2 mb-3">
-              <DollarSign className="h-4 w-4 text-gray-500" />
-              <h3 className="font-semibold text-gray-900 text-sm">Boston ISD Fee Schedule</h3>
+              <DollarSign className="h-4 w-4 text-[#64748B]" />
+              <h3 className="font-semibold text-white text-sm">Boston ISD Fee Schedule</h3>
             </div>
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left py-1.5 text-gray-500 font-medium">Construction Cost</th>
-                  <th className="text-right py-1.5 text-gray-500 font-medium">Fee</th>
+                <tr className="border-b border-white/6">
+                  <th className="text-left py-1.5 text-[#64748B] font-medium">Construction Cost</th>
+                  <th className="text-right py-1.5 text-[#64748B] font-medium">Fee</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -394,13 +394,13 @@ export default function BostonADUPermitPage() {
                   { range: "Over $500,000", fee: "Formula-based" },
                 ].map((row) => (
                   <tr key={row.range}>
-                    <td className="py-1.5 text-gray-600">{row.range}</td>
-                    <td className="py-1.5 text-right text-gray-900 font-medium">{row.fee}</td>
+                    <td className="py-1.5 text-[#94A3B8]">{row.range}</td>
+                    <td className="py-1.5 text-right text-white font-medium">{row.fee}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <p className="text-xs text-gray-400 mt-3">
+            <p className="text-xs text-[#64748B] mt-3">
               Fees are approximate. Confirm current rates at permits.boston.gov.
             </p>
           </div>
@@ -428,9 +428,9 @@ export default function BostonADUPermitPage() {
           </div>
 
           {/* MassDwell CTA */}
-          <div className="p-5 border border-gray-200 rounded-2xl">
-            <p className="font-semibold text-gray-900 text-sm mb-1">Ready to Build?</p>
-            <p className="text-xs text-gray-500 mb-3">
+          <div className="p-5 border border-white/10 rounded-2xl">
+            <p className="font-semibold text-white text-sm mb-1">Ready to Build?</p>
+            <p className="text-xs text-[#64748B] mb-3">
               MassDwell factory-built ADUs come with stamped plans, turnkey permitting, and start at $141K.
             </p>
             <a
@@ -445,8 +445,8 @@ export default function BostonADUPermitPage() {
           </div>
 
           {/* Related guides */}
-          <div className="p-5 border border-gray-200 rounded-2xl">
-            <p className="font-semibold text-gray-900 text-sm mb-3">Related Guides</p>
+          <div className="p-5 border border-white/10 rounded-2xl">
+            <p className="font-semibold text-white text-sm mb-3">Related Guides</p>
             <div className="space-y-2">
               {[
                 { href: "/permits/boston/building-permit", label: "Boston Building Permit Guide", icon: FileText },
@@ -458,11 +458,11 @@ export default function BostonADUPermitPage() {
                   <Link
                     key={g.href}
                     href={g.href}
-                    className="flex items-center gap-2 p-2.5 rounded-lg hover:bg-gray-50 transition-colors group"
+                    className="flex items-center gap-2 p-2.5 rounded-lg hover:bg-[#111827] transition-colors group"
                   >
-                    <Icon className="h-4 w-4 text-gray-400 group-hover:text-blue-500 flex-shrink-0" />
-                    <p className="text-sm text-gray-700 group-hover:text-blue-600 transition-colors">{g.label}</p>
-                    <ChevronRight className="h-3.5 w-3.5 text-gray-300 group-hover:text-blue-400 ml-auto flex-shrink-0" />
+                    <Icon className="h-4 w-4 text-[#64748B] group-hover:text-[#14B8A6] flex-shrink-0" />
+                    <p className="text-sm text-[#94A3B8] group-hover:text-[#14B8A6] transition-colors">{g.label}</p>
+                    <ChevronRight className="h-3.5 w-3.5 text-gray-300 group-hover:text-[#14B8A6] ml-auto flex-shrink-0" />
                   </Link>
                 );
               })}
@@ -472,15 +472,15 @@ export default function BostonADUPermitPage() {
       </div>
 
       {/* CTA */}
-      <div className="mt-16 bg-blue-600 rounded-2xl p-8 text-center">
+      <div className="mt-16 rounded-2xl p-8 text-center" style={{ background: "linear-gradient(135deg, rgba(20,184,166,0.15) 0%, rgba(20,184,166,0.08) 100%)", border: "1px solid rgba(20,184,166,0.25)" }}>
         <h2 className="text-2xl font-bold text-white mb-2">Track your ADU permit progress</h2>
-        <p className="text-blue-100 mb-6">
+        <p className="text-[#94A3B8] mb-6">
           MeritLayer tracks permit status, deadlines, and compliance across all your Massachusetts
           projects — with AI-powered document processing and proactive alerts.
         </p>
         <Link
           href="/sign-up"
-          className="inline-block bg-white text-blue-600 font-semibold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors"
+          className="inline-block bg-[#0D1525] text-[#14B8A6] font-semibold px-6 py-3 rounded-xl hover:bg-[rgba(20,184,166,0.08)] transition-colors"
         >
           Start Free Trial
         </Link>

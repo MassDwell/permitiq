@@ -16,7 +16,7 @@ export const docTypeEnum = pgEnum("doc_type", [
   "correspondence",
   "other"
 ]);
-export const complianceStatusEnum = pgEnum("compliance_status", ["pending", "met", "overdue", "not_applicable"]);
+export const complianceStatusEnum = pgEnum("compliance_status", ["pending", "in_progress", "met", "overdue", "not_applicable"]);
 export const alertTypeEnum = pgEnum("alert_type", ["deadline_7_days", "deadline_3_days", "deadline_1_day", "overdue", "document_processed", "compliance_update"]);
 
 // Users table

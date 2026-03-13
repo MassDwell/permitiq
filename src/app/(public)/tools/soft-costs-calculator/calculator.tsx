@@ -101,7 +101,7 @@ interface SelectProps {
 function Select({ value, onChange, options, label, id }: SelectProps) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1.5">
+      <label htmlFor={id} className="block text-sm font-medium mb-1.5" style={{ color: '#94A3B8' }}>
         {label}
       </label>
       <div className="relative">
@@ -109,13 +109,14 @@ function Select({ value, onChange, options, label, id }: SelectProps) {
           id={id}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full appearance-none bg-white border border-gray-300 rounded-xl px-4 py-2.5 pr-10 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+          className="w-full appearance-none rounded-xl px-4 py-2.5 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-[#14B8A6] text-sm"
+          style={{ background: '#111827', border: '1px solid rgba(255,255,255,0.10)' }}
         >
           {options.map((o) => (
             <option key={o.value} value={o.value}>{o.label}</option>
           ))}
         </select>
-        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none" style={{ color: '#64748B' }} />
       </div>
     </div>
   );
@@ -135,12 +136,12 @@ interface NumberInputProps {
 function NumberInput({ value, onChange, label, id, prefix, suffix, placeholder, hint }: NumberInputProps) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1.5">
+      <label htmlFor={id} className="block text-sm font-medium mb-1.5" style={{ color: '#94A3B8' }}>
         {label}
       </label>
       <div className="relative flex items-center">
         {prefix && (
-          <span className="absolute left-3 text-gray-500 text-sm font-medium">{prefix}</span>
+          <span className="absolute left-3 text-sm font-medium" style={{ color: '#64748B' }}>{prefix}</span>
         )}
         <input
           id={id}
@@ -148,15 +149,16 @@ function NumberInput({ value, onChange, label, id, prefix, suffix, placeholder, 
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className={`w-full bg-white border border-gray-300 rounded-xl py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm ${
+          className={`w-full rounded-xl py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-[#14B8A6] text-sm placeholder:text-[#64748B] ${
             prefix ? "pl-7" : "pl-4"
           } ${suffix ? "pr-12" : "pr-4"}`}
+          style={{ background: '#111827', border: '1px solid rgba(255,255,255,0.10)' }}
         />
         {suffix && (
-          <span className="absolute right-3 text-gray-500 text-sm">{suffix}</span>
+          <span className="absolute right-3 text-sm" style={{ color: '#64748B' }}>{suffix}</span>
         )}
       </div>
-      {hint && <p className="text-xs text-gray-500 mt-1">{hint}</p>}
+      {hint && <p className="text-xs mt-1" style={{ color: '#64748B' }}>{hint}</p>}
     </div>
   );
 }
@@ -175,17 +177,18 @@ function ResultRow({ label, amount, note, highlight, isTotal }: ResultRowProps) 
     <div
       className={`flex items-start justify-between gap-4 py-3 ${
         isTotal
-          ? "border-t-2 border-gray-200 pt-4 mt-1"
-          : "border-b border-gray-100"
+          ? "pt-4 mt-1"
+          : ""
       }`}
+      style={isTotal ? { borderTop: '2px solid rgba(255,255,255,0.10)' } : { borderBottom: '1px solid rgba(255,255,255,0.06)' }}
     >
       <div className="flex-1 min-w-0">
-        <p className={`text-sm ${isTotal ? "font-bold text-gray-900 text-base" : highlight ? "font-semibold text-gray-900" : "text-gray-700"}`}>
+        <p className={`text-sm ${isTotal ? "font-bold text-base text-white" : highlight ? "font-semibold text-white" : ""}`} style={!isTotal && !highlight ? { color: '#94A3B8' } : {}}>
           {label}
         </p>
-        {note && <p className="text-xs text-gray-500 mt-0.5">{note}</p>}
+        {note && <p className="text-xs mt-0.5" style={{ color: '#64748B' }}>{note}</p>}
       </div>
-      <p className={`font-bold flex-shrink-0 ${isTotal ? "text-xl text-blue-600" : "text-gray-900"}`}>
+      <p className={`font-bold flex-shrink-0 ${isTotal ? "text-xl" : "text-white"}`} style={isTotal ? { color: '#14B8A6' } : {}}>
         {formatCurrency(amount)}
       </p>
     </div>
@@ -255,9 +258,9 @@ export function SoftCostsCalculator() {
     <div className="grid lg:grid-cols-5 gap-8">
       {/* Inputs */}
       <div className="lg:col-span-2 space-y-5">
-        <div className="bg-white border border-gray-200 rounded-2xl p-6">
-          <h2 className="font-semibold text-gray-900 mb-5 flex items-center gap-2">
-            <Calculator className="h-4 w-4 text-blue-600" />
+        <div className="rounded-2xl p-6" style={{ background: '#0D1525', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <h2 className="font-semibold text-white mb-5 flex items-center gap-2">
+            <Calculator className="h-4 w-4" style={{ color: '#14B8A6' }} />
             Project Details
           </h2>
 
@@ -279,17 +282,17 @@ export function SoftCostsCalculator() {
             />
 
             <div>
-              <p className="block text-sm font-medium text-gray-700 mb-1.5">Project Type</p>
+              <p className="block text-sm font-medium mb-1.5" style={{ color: '#94A3B8' }}>Project Type</p>
               <div className="flex gap-2">
                 {(["residential", "commercial"] as const).map((t) => (
                   <button
                     key={t}
                     onClick={() => setProjectType(t)}
-                    className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-medium transition-colors border ${
-                      projectType === t
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white text-gray-700 border-gray-300 hover:border-gray-400"
-                    }`}
+                    className="flex-1 py-2.5 px-4 rounded-xl text-sm font-medium transition-colors"
+                    style={projectType === t
+                      ? { background: '#14B8A6', color: '#080D1A', border: '1px solid #14B8A6' }
+                      : { background: '#111827', color: '#94A3B8', border: '1px solid rgba(255,255,255,0.10)' }
+                    }
                   >
                     {t.charAt(0).toUpperCase() + t.slice(1)}
                   </button>
@@ -352,32 +355,32 @@ export function SoftCostsCalculator() {
       {/* Results */}
       <div className="lg:col-span-3">
         {!results ? (
-          <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center">
-            <Calculator className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 font-medium">Enter your project details to see an estimate</p>
-            <p className="text-gray-400 text-sm mt-1">Start with construction cost on the left</p>
+          <div className="rounded-2xl p-12 text-center" style={{ background: '#0D1525', border: '2px dashed rgba(255,255,255,0.10)' }}>
+            <Calculator className="h-10 w-10 mx-auto mb-3" style={{ color: '#475569' }} />
+            <p className="font-medium" style={{ color: '#64748B' }}>Enter your project details to see an estimate</p>
+            <p className="text-sm mt-1" style={{ color: '#475569' }}>Start with construction cost on the left</p>
           </div>
         ) : (
           <div className="space-y-4">
             {/* Timeline */}
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5">
+            <div className="rounded-2xl p-5" style={{ background: 'rgba(20,184,166,0.08)', border: '1px solid rgba(20,184,166,0.20)' }}>
               <div className="flex items-center gap-2 mb-3">
-                <Clock className="h-5 w-5 text-blue-600" />
-                <p className="font-semibold text-gray-900">Estimated Permit Timeline</p>
+                <Clock className="h-5 w-5" style={{ color: '#14B8A6' }} />
+                <p className="font-semibold text-white">Estimated Permit Timeline</p>
               </div>
               <div className="flex items-center gap-3">
-                <p className="text-3xl font-bold text-blue-600">
+                <p className="text-3xl font-bold" style={{ color: '#14B8A6' }}>
                   {results.timeline.min}–{results.timeline.max}
                 </p>
                 <div>
-                  <p className="font-medium text-gray-900">weeks</p>
-                  <p className="text-sm text-gray-500">{results.timeline.note}</p>
+                  <p className="font-medium text-white">weeks</p>
+                  <p className="text-sm" style={{ color: '#64748B' }}>{results.timeline.note}</p>
                 </div>
               </div>
               {parseFloat(sqft) >= 50000 && (
-                <div className="mt-3 bg-orange-50 border border-orange-200 rounded-lg px-4 py-2.5 flex items-start gap-2">
-                  <Info className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-orange-800">
+                <div className="mt-3 rounded-lg px-4 py-2.5 flex items-start gap-2" style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.25)' }}>
+                  <Info className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#F59E0B' }} />
+                  <p className="text-sm" style={{ color: '#FCD34D' }}>
                     Projects ≥50,000 sq ft require{" "}
                     <Link href="/permits/boston/article-80-review" className="font-semibold underline">
                       Article 80 Large Project Review
@@ -389,10 +392,10 @@ export function SoftCostsCalculator() {
             </div>
 
             {/* Fee Breakdown */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6">
+            <div className="rounded-2xl p-6" style={{ background: '#0D1525', border: '1px solid rgba(255,255,255,0.06)' }}>
               <div className="flex items-center gap-2 mb-4">
-                <DollarSign className="h-5 w-5 text-gray-600" />
-                <p className="font-semibold text-gray-900">Estimated Soft Costs</p>
+                <DollarSign className="h-5 w-5" style={{ color: '#94A3B8' }} />
+                <p className="font-semibold text-white">Estimated Soft Costs</p>
               </div>
 
               <div className="space-y-0">
@@ -446,9 +449,9 @@ export function SoftCostsCalculator() {
                 />
               </div>
 
-              <div className="mt-5 bg-gray-50 border border-gray-200 rounded-xl p-4 flex items-start gap-2">
-                <Info className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                <p className="text-xs text-gray-500">
+              <div className="mt-5 rounded-xl p-4 flex items-start gap-2" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <Info className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#475569' }} />
+                <p className="text-xs" style={{ color: '#64748B' }}>
                   This is an estimate only. Actual fees depend on project specifics and must be
                   confirmed with the local building department. Trade permit fees vary by scope.
                   Carrying cost calculation uses the midpoint of the estimated permit timeline.
@@ -457,64 +460,69 @@ export function SoftCostsCalculator() {
             </div>
 
             {/* Related guides */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-5">
-              <p className="font-semibold text-gray-900 mb-3 text-sm">Related Permit Guides</p>
+            <div className="rounded-2xl p-5" style={{ background: '#0D1525', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <p className="font-semibold text-white mb-3 text-sm">Related Permit Guides</p>
               <div className="space-y-2">
                 {permitType === "zba-appeal" && (
                   <Link
                     href="/permits/boston/zba-variance"
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all group"
+                    className="flex items-center justify-between p-3 rounded-xl transition-all group"
+                    style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
                   >
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-blue-700">
+                    <span className="text-sm font-medium group-hover:text-[#14B8A6] transition-colors" style={{ color: '#94A3B8' }}>
                       Boston ZBA Variance Guide — 2026 Schedule &amp; Process
                     </span>
-                    <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-blue-500" />
+                    <ArrowRight className="h-4 w-4 group-hover:text-[#14B8A6] transition-colors" style={{ color: '#64748B' }} />
                   </Link>
                 )}
                 {(permitType === "building-permit" && parseFloat(sqft) >= 20000) && (
                   <Link
                     href="/permits/boston/article-80-review"
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all group"
+                    className="flex items-center justify-between p-3 rounded-xl transition-all group"
+                    style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
                   >
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-blue-700">
+                    <span className="text-sm font-medium group-hover:text-[#14B8A6] transition-colors" style={{ color: '#94A3B8' }}>
                       Boston Article 80 Development Review Guide
                     </span>
-                    <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-blue-500" />
+                    <ArrowRight className="h-4 w-4 group-hover:text-[#14B8A6] transition-colors" style={{ color: '#64748B' }} />
                   </Link>
                 )}
                 {permitType === "adu" && (
                   <Link
                     href="/permits/massachusetts/adu-permit"
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all group"
+                    className="flex items-center justify-between p-3 rounded-xl transition-all group"
+                    style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
                   >
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-blue-700">
+                    <span className="text-sm font-medium group-hover:text-[#14B8A6] transition-colors" style={{ color: '#94A3B8' }}>
                       Massachusetts ADU Permit Guide
                     </span>
-                    <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-blue-500" />
+                    <ArrowRight className="h-4 w-4 group-hover:text-[#14B8A6] transition-colors" style={{ color: '#64748B' }} />
                   </Link>
                 )}
                 <Link
                   href="/permits"
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-blue-50 hover:border-blue-200 border border-transparent transition-all group"
+                  className="flex items-center justify-between p-3 rounded-xl transition-all group"
+                  style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
                 >
-                  <span className="text-sm font-medium text-gray-700 group-hover:text-blue-700">
+                  <span className="text-sm font-medium group-hover:text-[#14B8A6] transition-colors" style={{ color: '#94A3B8' }}>
                     All Massachusetts Permit Guides
                   </span>
-                  <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-blue-500" />
+                  <ArrowRight className="h-4 w-4 group-hover:text-[#14B8A6] transition-colors" style={{ color: '#64748B' }} />
                 </Link>
               </div>
             </div>
 
             {/* MeritLayer CTA */}
-            <div className="bg-blue-600 rounded-2xl p-6">
+            <div className="rounded-2xl p-6" style={{ background: 'linear-gradient(135deg, rgba(20,184,166,0.15) 0%, rgba(20,184,166,0.08) 100%)', border: '1px solid rgba(20,184,166,0.25)' }}>
               <p className="font-bold text-white text-lg mb-1">Track These Soft Costs in MeritLayer</p>
-              <p className="text-blue-100 text-sm mb-4">
+              <p className="text-sm mb-4" style={{ color: '#94A3B8' }}>
                 Import your projects, upload permit documents, and track every deadline and fee across
                 your Boston development portfolio.
               </p>
               <Link
                 href="/sign-up"
-                className="inline-flex items-center gap-2 bg-white text-blue-600 font-semibold px-5 py-2.5 rounded-xl hover:bg-blue-50 transition-colors text-sm"
+                className="inline-flex items-center gap-2 font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm"
+                style={{ background: '#14B8A6', color: '#080D1A' }}
               >
                 Start Free Trial <ArrowRight className="h-4 w-4" />
               </Link>
