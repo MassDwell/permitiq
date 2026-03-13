@@ -65,6 +65,7 @@ import { DeadlineForecast } from "@/components/deadline-forecast";
 import { HoldCostCalculator } from "@/components/hold-cost-calculator";
 import { PermitFeeEstimator } from "@/components/permit-fee-estimator";
 import { SoftCostsTab } from "@/components/soft-costs-tab";
+import { UpgradeModal } from "@/components/upgrade-modal";
 import {
   Dialog,
   DialogContent,
@@ -165,6 +166,11 @@ export default function ProjectDetailPage() {
   const [shareLabel, setShareLabel] = useState("");
   const [generatedShareUrl, setGeneratedShareUrl] = useState("");
   const [copiedShareUrl, setCopiedShareUrl] = useState(false);
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [upgradeModalConfig, setUpgradeModalConfig] = useState<{ title: string; description: string }>({
+    title: "Upgrade to Professional",
+    description: "Upgrade to access this feature.",
+  });
 
   // Settings form state
   const [settingsName, setSettingsName] = useState("");
@@ -184,6 +190,13 @@ export default function ProjectDetailPage() {
   const { data: project, isLoading, error } = trpc.projects.get.useQuery({
     id: projectId,
   });
+  const { data: profile } = trpc.settings.getProfile.useQuery();
+  const isStarterPlan = !profile?.plan || profile.plan === "starter";
+
+  const showUpgradeModal = (title: string, description: string) => {
+    setUpgradeModalConfig({ title, description });
+    setUpgradeModalOpen(true);
+  };
 
   // Initialize settings form when project data loads
   if (project && !settingsInitialized) {
@@ -919,7 +932,33 @@ export default function ProjectDetailPage() {
 
         {/* TEAM TAB */}
         <TabsContent value="team" className="mt-6">
-          <CollaboratorsTab projectId={projectId} />
+          {isStarterPlan ? (
+            <div
+              className="rounded-xl p-10 text-center"
+              style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)' }}
+            >
+              <div className="h-12 w-12 rounded-full flex items-center justify-center mx-auto mb-4"
+                style={{ background: 'rgba(20,184,166,0.12)' }}>
+                <MessageSquare className="h-6 w-6 text-[#14B8A6]" />
+              </div>
+              <h3 className="text-lg font-semibold text-[#F1F5F9] mb-2">Team Collaboration</h3>
+              <p className="text-[#64748B] mb-6 max-w-sm mx-auto text-sm">
+                Invite teammates, assign roles, and collaborate on compliance — available on Professional and above.
+              </p>
+              <button
+                onClick={() => showUpgradeModal(
+                  "Unlock Team Collaboration",
+                  "Invite teammates, assign roles, and share compliance reports with your team. Available on Professional plan."
+                )}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm transition-all"
+                style={{ background: '#14B8A6', color: '#080D1A' }}
+              >
+                Upgrade to Collaborate
+              </button>
+            </div>
+          ) : (
+            <CollaboratorsTab projectId={projectId} />
+          )}
         </TabsContent>
 
         {/* FINANCIALS TAB */}
@@ -1061,7 +1100,33 @@ export default function ProjectDetailPage() {
 
         {/* ASK AI TAB */}
         <TabsContent value="ask-ai" className="mt-6">
-          <DocumentChat projectId={projectId} />
+          {isStarterPlan ? (
+            <div
+              className="rounded-xl p-10 text-center"
+              style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)' }}
+            >
+              <div className="h-12 w-12 rounded-full flex items-center justify-center mx-auto mb-4"
+                style={{ background: 'rgba(20,184,166,0.12)' }}>
+                <MessageSquare className="h-6 w-6 text-[#14B8A6]" />
+              </div>
+              <h3 className="text-lg font-semibold text-[#F1F5F9] mb-2">AI Document Chat</h3>
+              <p className="text-[#64748B] mb-6 max-w-sm mx-auto text-sm">
+                Ask questions about your permit documents and get instant answers powered by AI — available on Professional and above.
+              </p>
+              <button
+                onClick={() => showUpgradeModal(
+                  "Unlock AI Document Chat",
+                  "Ask questions about your permits and compliance documents and get instant AI-powered answers. Available on Professional plan."
+                )}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm transition-all"
+                style={{ background: '#14B8A6', color: '#080D1A' }}
+              >
+                Upgrade to Use AI Chat
+              </button>
+            </div>
+          ) : (
+            <DocumentChat projectId={projectId} />
+          )}
         </TabsContent>
       </Tabs>
 
@@ -1218,6 +1283,13 @@ export default function ProjectDetailPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <UpgradeModal
+        open={upgradeModalOpen}
+        onOpenChange={setUpgradeModalOpen}
+        title={upgradeModalConfig.title}
+        description={upgradeModalConfig.description}
+      />
       </div> {/* end p-8 */}
     </div>
   );

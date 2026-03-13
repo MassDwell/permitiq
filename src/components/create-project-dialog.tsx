@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { UpgradeModal } from "@/components/upgrade-modal";
 
 interface CreateProjectDialogProps {
   open: boolean;
@@ -65,6 +66,7 @@ export function CreateProjectDialog({
     "residential" | "commercial" | "adu" | "mixed_use" | "renovation"
   >("residential");
   const [description, setDescription] = useState("");
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
 
   const { data: jurisdictions } = trpc.compliance.getJurisdictions.useQuery();
 
@@ -82,7 +84,13 @@ export function CreateProjectDialog({
       setDescription("");
     },
     onError: (error) => {
-      toast.error(error.message);
+      // Show upgrade modal for plan limit errors
+      if (error.data?.code === "FORBIDDEN" || error.message.includes("plan allows")) {
+        onOpenChange(false);
+        setUpgradeModalOpen(true);
+      } else {
+        toast.error(error.message);
+      }
     },
   });
 
@@ -102,6 +110,13 @@ export function CreateProjectDialog({
   };
 
   return (
+    <>
+    <UpgradeModal
+      open={upgradeModalOpen}
+      onOpenChange={setUpgradeModalOpen}
+      title="You've reached your project limit"
+      description="Your current plan allows a limited number of active projects. Upgrade to Professional for unlimited projects."
+    />
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <form onSubmit={handleSubmit}>
@@ -208,5 +223,6 @@ export function CreateProjectDialog({
         </form>
       </DialogContent>
     </Dialog>
+    </>
   );
 }
