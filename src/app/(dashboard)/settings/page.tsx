@@ -3,16 +3,8 @@
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -28,8 +20,45 @@ import {
   CreditCard,
   ExternalLink,
   Building2,
-  Mail,
+  Zap,
+  ArrowRight,
 } from "lucide-react";
+
+const CARD_STYLE = {
+  background: '#0E1525',
+  border: '1px solid rgba(255,255,255,0.07)',
+  borderRadius: 16,
+};
+
+const SECTION_HEADER_STYLE = {
+  borderBottom: '1px solid rgba(255,255,255,0.06)',
+};
+
+function PlanBadge({ plan }: { plan: string }) {
+  switch (plan) {
+    case "professional":
+      return (
+        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+          style={{ background: 'rgba(99,102,241,0.15)', color: '#818CF8', border: '1px solid rgba(99,102,241,0.3)' }}>
+          Professional
+        </span>
+      );
+    case "enterprise":
+      return (
+        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+          style={{ background: 'rgba(168,85,247,0.15)', color: '#C084FC', border: '1px solid rgba(168,85,247,0.3)' }}>
+          Enterprise
+        </span>
+      );
+    default:
+      return (
+        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+          style={{ background: 'rgba(20,184,166,0.12)', color: '#14B8A6', border: '1px solid rgba(20,184,166,0.3)' }}>
+          Starter
+        </span>
+      );
+  }
+}
 
 export default function SettingsPage() {
   const utils = trpc.useUtils();
@@ -62,42 +91,29 @@ export default function SettingsPage() {
     },
   });
 
-  const getPlanBadge = (plan: string) => {
-    switch (plan) {
-      case "starter":
-        return <Badge variant="secondary">Starter</Badge>;
-      case "professional":
-        return <Badge className="bg-blue-100 text-blue-800">Professional</Badge>;
-      case "enterprise":
-        return <Badge className="bg-purple-100 text-purple-800">Enterprise</Badge>;
-      default:
-        return <Badge variant="outline">{plan}</Badge>;
-    }
-  };
-
   const isLoading = profileLoading || settingsLoading;
 
   return (
     <div className="p-8 max-w-4xl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-500 mt-1">
+        <h1 className="text-3xl font-bold text-[#F1F5F9]">Settings</h1>
+        <p className="text-[#64748B] mt-1">
           Manage your account and notification preferences
         </p>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-6">
         {/* Account Info */}
-        <Card>
-          <CardHeader>
+        <div style={CARD_STYLE}>
+          <div className="px-6 py-5" style={SECTION_HEADER_STYLE}>
             <div className="flex items-center gap-2">
-              <User className="h-5 w-5 text-gray-500" />
-              <CardTitle>Account</CardTitle>
+              <User className="h-4 w-4 text-[#14B8A6]" />
+              <h2 className="text-base font-semibold text-[#F1F5F9]">Account</h2>
             </div>
-            <CardDescription>Your account information</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            <p className="text-sm text-[#475569] mt-0.5">Your account information</p>
+          </div>
+          <div className="px-6 py-5 space-y-4">
             {isLoading ? (
               <>
                 <Skeleton className="h-6 w-48" />
@@ -107,51 +123,119 @@ export default function SettingsPage() {
               <>
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-gray-500">Name</Label>
-                    <p className="font-medium">{profile?.name || "Not set"}</p>
+                    <Label className="text-[#475569] text-xs uppercase tracking-wide">Name</Label>
+                    <p className="font-medium text-[#F1F5F9] mt-0.5">{profile?.name || "Not set"}</p>
                   </div>
                 </div>
-                <Separator />
+                <Separator style={{ background: 'rgba(255,255,255,0.06)' }} />
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-gray-500">Email</Label>
-                    <p className="font-medium">{profile?.email}</p>
+                    <Label className="text-[#475569] text-xs uppercase tracking-wide">Email</Label>
+                    <p className="font-medium text-[#F1F5F9] mt-0.5">{profile?.email}</p>
                   </div>
                 </div>
-                <Separator />
+                <Separator style={{ background: 'rgba(255,255,255,0.06)' }} />
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-gray-500">Plan</Label>
+                    <Label className="text-[#475569] text-xs uppercase tracking-wide">Plan</Label>
                     <div className="flex items-center gap-2 mt-1">
-                      {getPlanBadge(profile?.plan || "starter")}
+                      <PlanBadge plan={profile?.plan ?? "starter"} />
                     </div>
                   </div>
                   <Button
                     variant="outline"
                     onClick={() => createPortalSession.mutate()}
                     disabled={createPortalSession.isPending}
+                    style={{ borderColor: 'rgba(255,255,255,0.15)', color: '#94A3B8' }}
+                    className="hover:bg-white/5"
                   >
-                    Manage Subscription
+                    {createPortalSession.isPending ? "Loading..." : "Manage Subscription"}
                     <ExternalLink className="h-4 w-4 ml-2" />
                   </Button>
                 </div>
               </>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+
+        {/* Billing */}
+        <div style={CARD_STYLE}>
+          <div className="px-6 py-5" style={SECTION_HEADER_STYLE}>
+            <div className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4 text-[#14B8A6]" />
+              <h2 className="text-base font-semibold text-[#F1F5F9]">Billing</h2>
+            </div>
+            <p className="text-sm text-[#475569] mt-0.5">Manage your subscription and billing</p>
+          </div>
+          <div className="px-6 py-5">
+            {subscriptionLoading ? (
+              <Skeleton className="h-24 w-full" />
+            ) : subscription ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-[#475569] text-xs uppercase tracking-wide">Status</Label>
+                    <p className="font-medium text-[#F1F5F9] mt-0.5 capitalize">{subscription.status}</p>
+                  </div>
+                  <div>
+                    <Label className="text-[#475569] text-xs uppercase tracking-wide">Renews</Label>
+                    <p className="font-medium text-[#F1F5F9] mt-0.5">
+                      {subscription.currentPeriodEnd.toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+                {subscription.cancelAtPeriodEnd && (
+                  <div className="p-4 rounded-lg" style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)' }}>
+                    <p className="text-sm text-amber-400">
+                      Your subscription will cancel at the end of the current billing period.
+                    </p>
+                  </div>
+                )}
+                <Button
+                  variant="outline"
+                  onClick={() => createPortalSession.mutate()}
+                  disabled={createPortalSession.isPending}
+                  style={{ borderColor: 'rgba(255,255,255,0.15)', color: '#94A3B8' }}
+                  className="hover:bg-white/5"
+                >
+                  {createPortalSession.isPending ? "Loading..." : "Manage Billing"}
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[#94A3B8] font-medium">Starter Plan</p>
+                  <p className="text-sm text-[#475569] mt-0.5">
+                    You&apos;re on the free Starter plan. Upgrade for more projects, AI chat, and team collaboration.
+                  </p>
+                </div>
+                <Button
+                  asChild
+                  style={{ background: '#14B8A6', color: '#080D1A' }}
+                  className="hover:bg-[#0D9488] shrink-0 ml-4"
+                >
+                  <a href="/pricing">
+                    <Zap className="h-4 w-4 mr-2" />
+                    Upgrade
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </a>
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* Notification Settings */}
-        <Card>
-          <CardHeader>
+        <div style={CARD_STYLE}>
+          <div className="px-6 py-5" style={SECTION_HEADER_STYLE}>
             <div className="flex items-center gap-2">
-              <Bell className="h-5 w-5 text-gray-500" />
-              <CardTitle>Notifications</CardTitle>
+              <Bell className="h-4 w-4 text-[#14B8A6]" />
+              <h2 className="text-base font-semibold text-[#F1F5F9]">Notifications</h2>
             </div>
-            <CardDescription>
-              Configure how you receive deadline alerts
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+            <p className="text-sm text-[#475569] mt-0.5">Configure how you receive deadline alerts</p>
+          </div>
+          <div className="px-6 py-5 space-y-6">
             {settingsLoading ? (
               <>
                 <Skeleton className="h-12 w-full" />
@@ -161,8 +245,8 @@ export default function SettingsPage() {
               <>
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Email Alerts</Label>
-                    <p className="text-sm text-gray-500">
+                    <Label className="text-[#F1F5F9]">Email Alerts</Label>
+                    <p className="text-sm text-[#475569]">
                       Receive email notifications for upcoming deadlines
                     </p>
                   </div>
@@ -174,12 +258,12 @@ export default function SettingsPage() {
                   />
                 </div>
 
-                <Separator />
+                <Separator style={{ background: 'rgba(255,255,255,0.06)' }} />
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Alert Lead Time</Label>
-                    <p className="text-sm text-gray-500">
+                    <Label className="text-[#F1F5F9]">Alert Lead Time</Label>
+                    <p className="text-sm text-[#475569]">
                       How many days before a deadline to start alerting
                     </p>
                   </div>
@@ -189,7 +273,10 @@ export default function SettingsPage() {
                       updateSettings.mutate({ alertLeadDays: parseInt(value) })
                     }
                   >
-                    <SelectTrigger className="w-32">
+                    <SelectTrigger
+                      className="w-32"
+                      style={{ background: '#141C2E', border: '1px solid rgba(255,255,255,0.1)', color: '#F1F5F9' }}
+                    >
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -202,12 +289,12 @@ export default function SettingsPage() {
                   </Select>
                 </div>
 
-                <Separator />
+                <Separator style={{ background: 'rgba(255,255,255,0.06)' }} />
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label>Daily Digest</Label>
-                    <p className="text-sm text-gray-500">
+                    <Label className="text-[#F1F5F9]">Daily Digest</Label>
+                    <p className="text-sm text-[#475569]">
                       Receive a daily summary of all upcoming deadlines
                     </p>
                   </div>
@@ -220,86 +307,25 @@ export default function SettingsPage() {
                 </div>
               </>
             )}
-          </CardContent>
-        </Card>
-
-        {/* Billing */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-gray-500" />
-              <CardTitle>Billing</CardTitle>
-            </div>
-            <CardDescription>Manage your subscription and billing</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {subscriptionLoading ? (
-              <Skeleton className="h-24 w-full" />
-            ) : subscription ? (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-gray-500">Status</Label>
-                    <p className="font-medium capitalize">{subscription.status}</p>
-                  </div>
-                  <div>
-                    <Label className="text-gray-500">Renews</Label>
-                    <p className="font-medium">
-                      {subscription.currentPeriodEnd.toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-                {subscription.cancelAtPeriodEnd && (
-                  <div className="p-4 bg-yellow-50 rounded-lg">
-                    <p className="text-sm text-yellow-800">
-                      Your subscription will cancel at the end of the current
-                      billing period.
-                    </p>
-                  </div>
-                )}
-                <Button
-                  variant="outline"
-                  onClick={() => createPortalSession.mutate()}
-                  disabled={createPortalSession.isPending}
-                >
-                  Manage Billing
-                  <ExternalLink className="h-4 w-4 ml-2" />
-                </Button>
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <CreditCard className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500 mb-4">
-                  You're on the free Starter plan. Upgrade for more features.
-                </p>
-                <Button asChild>
-                  <a href="/pricing">View Plans</a>
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Integrations Placeholder */}
-        <Card>
-          <CardHeader>
+        <div style={CARD_STYLE}>
+          <div className="px-6 py-5" style={SECTION_HEADER_STYLE}>
             <div className="flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-gray-500" />
-              <CardTitle>Integrations</CardTitle>
+              <Building2 className="h-4 w-4 text-[#14B8A6]" />
+              <h2 className="text-base font-semibold text-[#F1F5F9]">Integrations</h2>
             </div>
-            <CardDescription>Connect with other tools</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-8">
-              <p className="text-gray-500 mb-2">
-                Integrations coming soon
-              </p>
-              <p className="text-sm text-gray-400">
-                Connect MeritLayer with Procore, Buildertrend, and more
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+            <p className="text-sm text-[#475569] mt-0.5">Connect with other tools</p>
+          </div>
+          <div className="px-6 py-10 text-center">
+            <p className="text-[#475569]">Integrations coming soon</p>
+            <p className="text-sm text-[#334155] mt-1">
+              Connect MeritLayer with Procore, Buildertrend, and more
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
