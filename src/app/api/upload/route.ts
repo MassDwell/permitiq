@@ -1,6 +1,7 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const maxDuration = 60;
 
@@ -8,6 +9,15 @@ export async function POST(request: Request): Promise<NextResponse> {
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Rate limit: 50 uploads per user per day
+  const rl = checkRateLimit(`upload:${userId}`, 50, 24 * 60 * 60 * 1000);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded. Try again later." },
+      { status: 429, headers: { "X-RateLimit-Reset": String(rl.resetAt) } }
+    );
   }
 
   const body = (await request.json()) as HandleUploadBody;

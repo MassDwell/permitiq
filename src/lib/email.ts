@@ -193,6 +193,58 @@ export async function sendDeadlineAlertEmail({
 }
 
 /**
+ * Send a team invite email with the invite link.
+ */
+export async function sendTeamInviteEmail({
+  to,
+  inviterName,
+  projectName,
+  role,
+  token,
+}: {
+  to: string;
+  inviterName: string;
+  projectName: string;
+  role: "editor" | "viewer";
+  token: string;
+}): Promise<void> {
+  if (!process.env.RESEND_API_KEY) return;
+
+  const inviteUrl = `https://meritlayer.ai/invite/${token}`;
+  const roleLabel = role === "editor" ? "Editor" : "Viewer";
+  const roleDesc =
+    role === "editor"
+      ? "You can upload documents and update compliance records."
+      : "You have read-only access to the project.";
+
+  const html = baseLayout(`
+    <h2 style="color: #111827; font-size: 22px; font-weight: 700; margin: 0 0 8px;">You've been invited to collaborate</h2>
+    <p style="color: #4b5563; font-size: 15px; line-height: 1.6; margin: 0 0 16px;">
+      <strong>${inviterName}</strong> has invited you to collaborate on <strong>${projectName}</strong> on MeritLayer.
+    </p>
+    <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 16px; margin: 16px 0;">
+      <p style="margin: 0; color: #0f766e; font-weight: 600;">Your role: ${roleLabel}</p>
+      <p style="margin: 6px 0 0; color: #4b5563; font-size: 14px;">${roleDesc}</p>
+    </div>
+    ${ctaButton("Accept Invitation", inviteUrl)}
+    <p style="color: #9ca3af; font-size: 12px; margin-top: 16px;">
+      Or copy this link: <a href="${inviteUrl}" style="color: #14B8A6;">${inviteUrl}</a>
+    </p>
+  `);
+
+  try {
+    await getResend().emails.send({
+      from: FROM_ADDRESS,
+      to,
+      subject: `You have been invited to collaborate on ${projectName} - MeritLayer`,
+      html,
+    });
+  } catch (err) {
+    console.error("[email] Failed to send team invite email:", err);
+  }
+}
+
+/**
  * Send an overdue compliance item email.
  */
 export async function sendOverdueAlertEmail({

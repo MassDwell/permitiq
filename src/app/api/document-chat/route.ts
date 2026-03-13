@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { users, projects, complianceItems, documents, permitWorkflows } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { format } from "date-fns";
@@ -19,6 +20,15 @@ export async function POST(req: Request) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // Rate limit: 20 requests per user per hour
+  const rl = checkRateLimit(`document-chat:${clerkUserId}`, 20, 60 * 60 * 1000);
+  if (!rl.allowed) {
+    return new Response(JSON.stringify({ error: "Rate limit exceeded. Try again later." }), {
+      status: 429,
+      headers: { "Content-Type": "application/json", "X-RateLimit-Reset": String(rl.resetAt) },
     });
   }
 

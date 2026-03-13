@@ -29,17 +29,19 @@ export default function InvitePage() {
   const { data, isLoading, error } = trpc.collaborators.getByToken.useQuery({ token });
 
   const acceptMutation = trpc.collaborators.acceptInvite.useMutation({
-    onSuccess: ({ projectId, alreadyAccepted }) => {
-      if (alreadyAccepted) {
+    onSuccess: (result) => {
+      if (result.requiresAuth) {
+        // Not signed in — store token in cookie then redirect to sign-up
+        document.cookie = `meritlayer_invite_token=${result.token}; path=/; max-age=3600`;
+        router.push(`/sign-up?redirect_url=/dashboard`);
+        return;
+      }
+      if (result.alreadyAccepted) {
         toast.info("Invite already accepted");
       } else {
         toast.success("Invite accepted! Welcome to the team.");
       }
-      if (isSignedIn) {
-        router.push(`/projects/${projectId}`);
-      } else {
-        router.push(`/sign-up?redirect_url=/projects/${projectId}`);
-      }
+      router.push(`/projects/${result.projectId}`);
     },
     onError: (err) => toast.error(err.message),
   });

@@ -31,8 +31,9 @@ import { CreateProjectDialog } from "@/components/create-project-dialog";
 import { WelcomeBanner } from "@/components/welcome-banner";
 import { ActivityFeed } from "@/components/activity-feed";
 import { OnboardingModal } from "@/components/onboarding-modal";
+import { EmptyState } from "@/components/empty-state";
 import { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 function getHealthDot(status: "green" | "yellow" | "red") {
   switch (status) {
@@ -47,6 +48,25 @@ function DashboardPageContent() {
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const claimPendingInvite = trpc.collaborators.claimPendingInvite.useMutation({
+    onSuccess: ({ projectId }) => {
+      document.cookie = "meritlayer_invite_token=; path=/; max-age=0";
+      router.push(`/projects/${projectId}`);
+    },
+  });
+
+  // On mount, claim any pending invite stored in cookie after sign-up redirect
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const match = document.cookie.match(/(?:^|;\s*)meritlayer_invite_token=([^;]+)/);
+    const pendingToken = match?.[1];
+    if (pendingToken) {
+      claimPendingInvite.mutate({ token: pendingToken });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { data: projects, isLoading: projectsLoading } =
     trpc.projects.list.useQuery(undefined, { staleTime: 30_000 });
@@ -252,15 +272,12 @@ function DashboardPageContent() {
                   })}
                 </div>
               ) : (
-                <div className="text-center py-12">
-                  <FolderOpen className="h-12 w-12 mx-auto mb-4" style={{ color: 'rgba(100,116,139,0.4)' }} />
-                  <h3 className="text-lg font-medium text-[#F1F5F9] mb-2">No projects yet</h3>
-                  <p className="text-[#475569] mb-4">Create your first project to start tracking compliance</p>
-                  <Button onClick={() => setCreateProjectOpen(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create Project
-                  </Button>
-                </div>
+                <EmptyState
+                  icon={<FolderOpen />}
+                  title="No projects yet"
+                  description="Create your first project to start tracking compliance deadlines."
+                  action={{ label: "Create Project", onClick: () => setCreateProjectOpen(true) }}
+                />
               )}
             </div>
           </div>

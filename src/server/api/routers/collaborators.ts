@@ -3,6 +3,7 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { projectMembers, projects } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { sendTeamInviteEmail } from "@/lib/email";
 
 export const collaboratorsRouter = createTRPCRouter({
   getByProject: protectedProcedure
@@ -52,6 +53,16 @@ export const collaboratorsRouter = createTRPCRouter({
           invitedBy: ctx.dbUser.clerkId,
         })
         .returning();
+
+      // Send invite email
+      const inviterName = ctx.dbUser.name || ctx.dbUser.email;
+      await sendTeamInviteEmail({
+        to: input.email,
+        inviterName,
+        projectName: project.name,
+        role: input.role,
+        token,
+      });
 
       return member;
     }),
@@ -142,7 +153,18 @@ export const collaboratorsRouter = createTRPCRouter({
       }
 
       if (member.inviteStatus === "accepted") {
-        return { member, projectId: member.projectId, alreadyAccepted: true };
+        return { member, projectId: member.projectId, alreadyAccepted: true, requiresAuth: false };
+      }
+
+      // Unauthenticated user — do not mark as accepted yet; tell frontend to auth first
+      if (!ctx.userId) {
+        return {
+          member: null,
+          projectId: member.projectId,
+          alreadyAccepted: false,
+          requiresAuth: true,
+          token: input.token,
+        };
       }
 
       const [updated] = await ctx.db
@@ -150,12 +172,40 @@ export const collaboratorsRouter = createTRPCRouter({
         .set({
           inviteStatus: "accepted",
           acceptedAt: new Date(),
-          userId: ctx.userId ?? null,
+          userId: ctx.userId,
           updatedAt: new Date(),
         })
         .where(eq(projectMembers.id, member.id))
         .returning();
 
-      return { member: updated, projectId: member.projectId, alreadyAccepted: false };
+      return { member: updated, projectId: member.projectId, alreadyAccepted: false, requiresAuth: false };
+    }),
+
+  claimPendingInvite: protectedProcedure
+    .input(z.object({ token: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const member = await ctx.db.query.projectMembers.findFirst({
+        where: eq(projectMembers.inviteToken, input.token),
+      });
+
+      if (!member) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Invalid invite token" });
+      }
+
+      if (member.inviteStatus === "accepted") {
+        return { projectId: member.projectId, alreadyAccepted: true };
+      }
+
+      await ctx.db
+        .update(projectMembers)
+        .set({
+          inviteStatus: "accepted",
+          acceptedAt: new Date(),
+          userId: ctx.userId,
+          updatedAt: new Date(),
+        })
+        .where(eq(projectMembers.id, member.id));
+
+      return { projectId: member.projectId, alreadyAccepted: false };
     }),
 });

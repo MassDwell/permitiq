@@ -17,6 +17,7 @@ import {
   FileText,
 } from "lucide-react";
 import { CreateProjectDialog } from "@/components/create-project-dialog";
+import { EmptyState } from "@/components/empty-state";
 
 type FilterTab = "all" | "active" | "needs_attention" | "completed";
 
@@ -213,23 +214,12 @@ export default function PortfolioPage() {
           <Skeleton className="h-48 w-full rounded-xl" />
         </div>
       ) : !data || data.totalProjects === 0 ? (
-        /* Empty state */
-        <div
-          className="rounded-xl flex flex-col items-center justify-center py-24 text-center"
-          style={{ background: "#0D1526", border: "1px solid rgba(255,255,255,0.1)" }}
-        >
-          <BarChart2 className="h-16 w-16 mb-4" style={{ color: "rgba(100,116,139,0.4)" }} />
-          <h3 className="text-xl font-semibold text-[#F1F5F9] mb-2">No projects yet</h3>
-          <p className="text-[#475569] mb-6">Add your first project to see portfolio insights</p>
-          <Button
-            onClick={() => setCreateOpen(true)}
-            style={{ background: "#14B8A6", color: "#080D1A" }}
-            className="hover:bg-[#0D9488] font-semibold gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Create New Project
-          </Button>
-        </div>
+        <EmptyState
+          icon={<BarChart2 />}
+          title="No projects in your portfolio"
+          description="Add your first project to see portfolio analytics."
+          action={{ label: "New Project", onClick: () => setCreateOpen(true) }}
+        />
       ) : (
         <div className="space-y-8">
           {/* Filter Tabs */}

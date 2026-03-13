@@ -16,6 +16,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
+import { EmptyState } from "@/components/empty-state";
 
 function getAlertIcon(type: string) {
   switch (type) {
@@ -219,20 +220,11 @@ export default function AlertsPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16">
-              <div
-                className="h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4"
-                style={{ background: 'rgba(20,184,166,0.1)' }}
-              >
-                <ShieldCheck className="h-8 w-8 text-[#14B8A6]" />
-              </div>
-              <h3 className="text-lg font-semibold text-[#F1F5F9] mb-2">
-                You&apos;re all clear
-              </h3>
-              <p className="text-[#475569] text-sm max-w-xs mx-auto">
-                No upcoming deadlines or alerts. You&apos;ll be notified when deadlines approach or documents are processed.
-              </p>
-            </div>
+            <EmptyState
+              icon={<Bell />}
+              title="No alerts"
+              description="You are all caught up. Alerts will appear here when compliance deadlines are approaching."
+            />
           )}
         </div>
       </div>

@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { auth } from "@clerk/nextjs/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -10,6 +11,15 @@ export async function POST(req: Request) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // Rate limit: 10 requests per user per hour
+  const rl = checkRateLimit(`response-draft:${userId}`, 10, 60 * 60 * 1000);
+  if (!rl.allowed) {
+    return new Response(JSON.stringify({ error: "Rate limit exceeded. Try again later." }), {
+      status: 429,
+      headers: { "Content-Type": "application/json", "X-RateLimit-Reset": String(rl.resetAt) },
     });
   }
 
