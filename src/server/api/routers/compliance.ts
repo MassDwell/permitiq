@@ -5,6 +5,7 @@ import { eq, and, desc, sql, isNull, lt } from "drizzle-orm";
 import { assertProjectAccess } from "../project-access";
 import { TRPCError } from "@trpc/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { dispatchWebhook, createRequirementStatusPayload } from "@/lib/webhooks";
 import {
   BOSTON_BUILDING_REQUIREMENTS,
   BOSTON_DEMOLITION_REQUIREMENTS,
@@ -225,6 +226,23 @@ export const complianceRouter = createTRPCRouter({
         })
         .where(eq(complianceItems.id, id))
         .returning();
+
+      // Dispatch webhook if status changed
+      if (input.status && input.status !== existing.status) {
+        dispatchWebhook(
+          ctx.dbUser.id,
+          "requirement.status_changed",
+          createRequirementStatusPayload({
+            projectId: existing.projectId,
+            projectName: existing.project.name,
+            requirementId: existing.id,
+            requirementType: existing.requirementType,
+            description: existing.description,
+            oldStatus: existing.status,
+            newStatus: input.status,
+          })
+        );
+      }
 
       // Auto-snapshot: record health score after status change
       const allItems = await ctx.db.query.complianceItems.findMany({

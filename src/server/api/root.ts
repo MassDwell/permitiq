@@ -15,6 +15,7 @@ import { sharesRouter } from "./routers/shares";
 import { softCostsRouter } from "./routers/soft-costs";
 import { referralsRouter } from "./routers/referrals";
 import { apiKeysRouter } from "./routers/apiKeys";
+import { webhooksRouter } from "./routers/webhooks";
 
 export const appRouter = createTRPCRouter({
   admin: adminRouter,
@@ -33,6 +34,7 @@ export const appRouter = createTRPCRouter({
   softCosts: softCostsRouter,
   referrals: referralsRouter,
   apiKeys: apiKeysRouter,
+  webhooks: webhooksRouter,
 });
 
 export type AppRouter = typeof appRouter;
