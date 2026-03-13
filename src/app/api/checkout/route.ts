@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 
 const getStripe = () =>
   new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
-    apiVersion: "2026-02-25.clover",
+    apiVersion: "2024-12-18.acacia",
   });
 
 // Map Stripe price IDs to plan names
