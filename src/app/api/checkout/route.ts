@@ -12,15 +12,12 @@ const getStripe = () =>
 
 // Map Stripe price IDs to plan names
 const PRICE_TO_PLAN: Record<string, "starter" | "professional" | "enterprise"> = {
-  // Solo → Starter
-  [process.env.STRIPE_FOUNDER_SOLO_PRICE_ID || ""]: "starter",
-  [process.env.STRIPE_SOLO_PRICE_ID || ""]: "starter",
-  // Developer → Professional
-  [process.env.STRIPE_FOUNDER_DEVELOPER_PRICE_ID || ""]: "professional",
-  [process.env.STRIPE_DEVELOPER_PRICE_ID || ""]: "professional",
-  // Portfolio → Enterprise
-  [process.env.STRIPE_FOUNDER_PORTFOLIO_PRICE_ID || ""]: "enterprise",
-  [process.env.STRIPE_PORTFOLIO_PRICE_ID || ""]: "enterprise",
+  // Solo / Starter
+  [process.env.STRIPE_STARTER_PRICE_ID || ""]: "starter",
+  // Developer / Professional
+  [process.env.STRIPE_PROFESSIONAL_PRICE_ID || ""]: "professional",
+  // Portfolio / Enterprise
+  [process.env.STRIPE_ENTERPRISE_PRICE_ID || ""]: "enterprise",
 };
 
 export async function POST(req: NextRequest) {
