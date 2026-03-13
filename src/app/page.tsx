@@ -100,7 +100,8 @@ const features = [
 const pricingPlans = [
   {
     name: "Solo",
-    price: 149,
+    founderPrice: 49,
+    regularPrice: 149,
     description: "Perfect for independent developers.",
     features: [
       "Up to 3 active projects",
@@ -114,7 +115,8 @@ const pricingPlans = [
   },
   {
     name: "Developer",
-    price: 349,
+    founderPrice: 99,
+    regularPrice: 349,
     description: "For development teams managing multiple projects.",
     features: [
       "Everything in Solo",
@@ -130,7 +132,8 @@ const pricingPlans = [
   },
   {
     name: "Portfolio",
-    price: 749,
+    founderPrice: 199,
+    regularPrice: 749,
     description: "For firms managing large project portfolios.",
     features: [
       "Everything in Developer",
@@ -985,10 +988,10 @@ export default function LandingPage() {
               Pricing
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Simple, transparent pricing.
+              Lock in your rate before prices go up.
             </h2>
             <p className="text-lg max-w-xl mx-auto" style={{ color: "#94A3B8" }}>
-              Start with a 14-day free trial. No credit card required.
+              Founding Member pricing is available for a limited time. Your rate locks in permanently — even as we add features and raise prices.
             </p>
           </div>
 
@@ -1017,22 +1020,40 @@ export default function LandingPage() {
                 <h3 className="text-xl font-bold text-white mb-1">{plan.name}</h3>
                 <p className="text-sm mb-6" style={{ color: "#475569" }}>{plan.description}</p>
 
-                <div className="mb-7">
-                  <span
-                    className="text-5xl font-extrabold"
-                    style={
-                      plan.popular
-                        ? {
-                            background: "linear-gradient(135deg, #60A5FA, #22D3EE)",
-                            WebkitBackgroundClip: "text",
-                            WebkitTextFillColor: "transparent",
-                          }
-                        : { color: "#F1F5F9" }
-                    }
+                <div className="mb-2">
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <span
+                      className="text-5xl font-extrabold"
+                      style={
+                        plan.popular
+                          ? {
+                              background: "linear-gradient(135deg, #60A5FA, #22D3EE)",
+                              WebkitBackgroundClip: "text",
+                              WebkitTextFillColor: "transparent",
+                            }
+                          : { color: "#F1F5F9" }
+                      }
+                    >
+                      ${plan.founderPrice}
+                    </span>
+                    <span className="text-sm" style={{ color: "#475569" }}>/month</span>
+                    <span
+                      className="text-lg font-medium line-through"
+                      style={{ color: "#334155" }}
+                    >
+                      ${plan.regularPrice}
+                    </span>
+                  </div>
+                  <div
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold mb-5"
+                    style={{
+                      background: "rgba(251,191,36,0.1)",
+                      border: "1px solid rgba(251,191,36,0.25)",
+                      color: "#FCD34D",
+                    }}
                   >
-                    ${plan.price.toLocaleString()}
-                  </span>
-                  <span className="text-sm ml-1.5" style={{ color: "#475569" }}>/month</span>
+                    🔒 Founding Member Price — locks in forever
+                  </div>
                 </div>
 
                 <ul className="space-y-3 mb-8">
@@ -1064,7 +1085,7 @@ export default function LandingPage() {
                           }
                     }
                   >
-                    Get Started Free
+                    Claim Founding Price
                   </button>
                 </Link>
               </div>
