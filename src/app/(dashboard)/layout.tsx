@@ -6,7 +6,7 @@ import { UserButton, SignOutButton } from "@clerk/nextjs";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
-import { LayoutDashboard, Bell, Settings, Zap, BarChart2, MapPin, Home, LogOut } from "lucide-react";
+import { LayoutDashboard, Bell, Settings, Zap, BarChart2, MapPin, Home, LogOut, KeyRound } from "lucide-react";
 import { MobileNav } from "@/components/mobile-nav";
 import { OnboardingModal } from "@/components/onboarding-modal";
 
@@ -17,6 +17,7 @@ const navigation = [
   { name: "ADU Tools", href: "/tools/adu-eligibility", icon: Home },
   { name: "Alerts", href: "/alerts", icon: Bell },
   { name: "Settings", href: "/settings", icon: Settings },
+  { name: "API & Webhooks", href: "/settings/api", icon: KeyRound },
   { name: "Upgrade Plan", href: "/pricing", icon: Zap },
 ];
 
@@ -31,8 +32,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen" style={{ background: '#0F172A' }}>
-      {/* Sidebar — hidden on mobile, visible on md+ */}
-      <div className="hidden md:flex fixed inset-y-0 left-0 z-50 w-64" style={{ background: '#0F172A', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
+      {/* Sidebar — hidden on mobile, visible on lg+ */}
+      <div className="hidden lg:flex fixed inset-y-0 left-0 z-50 w-64" style={{ background: '#0F172A', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center px-5 h-16" style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
@@ -96,7 +97,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
 
       {/* Main content */}
-      <div className="md:pl-64 pb-16 md:pb-0 min-h-screen" style={{ background: '#0F172A' }}>
+      <div className="lg:pl-64 pb-16 lg:pb-0 min-h-screen" style={{ background: '#0F172A' }}>
         <main className="min-h-screen">{children}</main>
       </div>
 
