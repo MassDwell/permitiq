@@ -269,7 +269,7 @@ export const adminRouter = createTRPCRouter({
       let hasMore = true;
       let startingAfter: string | undefined = undefined;
       while (hasMore) {
-        const txns = await stripe.balanceTransactions.list({
+        const txns: Awaited<ReturnType<typeof stripe.balanceTransactions.list>> = await stripe.balanceTransactions.list({
           type: "charge",
           created: { gte: startOfYear },
           limit: 100,
