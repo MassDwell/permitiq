@@ -239,7 +239,7 @@ function PricingCard({
                 }
           }
         >
-          {loading ? "Redirecting..." : "Get Founding Member Access"}
+          {loading ? "Redirecting..." : "Claim Founding Price — instant access, no sales call"}
         </button>
 
         {/* Features */}

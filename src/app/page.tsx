@@ -22,6 +22,9 @@ import {
   MapPin,
   ChevronRight,
   Play,
+  Lock,
+  BadgeCheck,
+  Database,
 } from "lucide-react";
 
 const CSS_ANIMATIONS = `
@@ -75,7 +78,7 @@ const features = [
     icon: FileSearch,
     title: "AI Document Intelligence",
     description:
-      "Upload permits, inspection reports, and compliance docs. Our AI extracts deadlines, requirements, and conditions automatically — even from 84-page PDFs.",
+      "Upload permits, inspection reports, and compliance docs. Our AI extracts deadlines, requirements, and conditions automatically — even from 84-page PDFs. AI analysis powered by Claude (Anthropic). Documents processed securely and deleted after analysis.",
   },
   {
     icon: Calendar,
@@ -324,7 +327,7 @@ export default function LandingPage() {
           {/* Headline block */}
           <div className="text-center max-w-4xl mx-auto mb-14">
             <h1 className="text-5xl md:text-[4.5rem] lg:text-[5.25rem] font-extrabold tracking-tight leading-[1.04] text-white mb-6">
-              Every deadline tracked.
+              Permit compliance for
               <br />
               <span
                 style={{
@@ -333,12 +336,12 @@ export default function LandingPage() {
                   WebkitTextFillColor: "transparent",
                 }}
               >
-                Every project protected.
+                Boston developers — automated.
               </span>
             </h1>
 
             <p className="text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed" style={{ color: "#94A3B8" }}>
-              MeritLayer reads your compliance documents, maps every deadline, and alerts your team before anything falls through the cracks. Built for Massachusetts developers and GCs.
+              MeritLayer knows what Boston ISD, BPDA, and BLC require for your project. Upload your address, get your permit checklist in seconds.
             </p>
 
             {/* CTA buttons */}
@@ -352,7 +355,7 @@ export default function LandingPage() {
                     animation: "pulseRing 3s ease-in-out infinite",
                   }}
                 >
-                  Start Free Trial
+                  Get my permit checklist — free
                   <ArrowRight className="h-5 w-5" />
                 </button>
               </Link>
@@ -929,6 +932,28 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── FEATURE CALLOUT ── */}
+      <section className="py-16" style={{ background: "#060D1A" }}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div
+            className="rounded-2xl p-8 md:p-10 text-center"
+            style={{
+              background: "linear-gradient(135deg, rgba(20,184,166,0.08) 0%, rgba(6,182,212,0.06) 100%)",
+              border: "1px solid rgba(20,184,166,0.2)",
+              boxShadow: "0 0 60px rgba(20,184,166,0.08)",
+            }}
+          >
+            <Upload className="h-10 w-10 mx-auto mb-4" style={{ color: "#14B8A6" }} />
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
+              Upload your permit application.
+            </h3>
+            <p className="text-lg" style={{ color: "#94A3B8" }}>
+              Our AI tells you what&apos;s missing in seconds.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ── STATS ── */}
       <section className="py-20" style={{ background: "#060D1A" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -976,6 +1001,48 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── DATA PROVENANCE ── */}
+      <section className="py-20" style={{ background: "#080F1E" }}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-5"
+              style={{ border: "1px solid rgba(20,184,166,0.25)", background: "rgba(20,184,166,0.06)", color: "#5EEAD4" }}
+            >
+              <BadgeCheck className="h-3 w-3" />
+              Data Provenance
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Rules you can trust
+            </h2>
+            <p className="text-lg max-w-2xl mx-auto" style={{ color: "#94A3B8" }}>
+              Our team curates permit requirements directly from Boston.gov, BPDA.org, the Boston Landmarks Commission, and Mass.gov — updated quarterly.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { value: "8", label: "jurisdictions covered", icon: MapPin },
+              { value: "Quarterly", label: "rules verified", icon: BadgeCheck },
+              { value: "100%", label: "sources cited on every step", icon: Database },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="rounded-xl p-6 text-center"
+                style={{
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                }}
+              >
+                <item.icon className="h-6 w-6 mx-auto mb-3" style={{ color: "#14B8A6" }} />
+                <div className="text-2xl font-bold text-white mb-1">{item.value}</div>
+                <div className="text-sm" style={{ color: "#64748B" }}>{item.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── PRICING ── */}
       <section id="pricing" className="py-24" style={{ background: "#080F1E" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -989,9 +1056,20 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Lock in your rate before prices go up.
             </h2>
-            <p className="text-lg max-w-xl mx-auto" style={{ color: "#94A3B8" }}>
+            <p className="text-lg max-w-xl mx-auto mb-4" style={{ color: "#94A3B8" }}>
               Founding Member pricing is available for a limited time. Your rate locks in permanently — even as we add features and raise prices.
             </p>
+            <div
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold"
+              style={{
+                background: "rgba(20,184,166,0.08)",
+                border: "1px solid rgba(20,184,166,0.25)",
+                color: "#5EEAD4",
+              }}
+            >
+              <MapPin className="h-4 w-4" />
+              Built specifically for Greater Boston developers
+            </div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -1236,6 +1314,17 @@ export default function LandingPage() {
                 </Link>
               </div>
             </div>
+          </div>
+
+          {/* Security Statement */}
+          <div
+            className="flex items-center justify-center gap-2 py-4 mb-6 rounded-xl"
+            style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}
+          >
+            <Lock className="h-4 w-4" style={{ color: "#14B8A6" }} />
+            <p className="text-sm" style={{ color: "#64748B" }}>
+              Documents encrypted at rest. Never shared with third parties. Built on SOC2-compliant infrastructure.
+            </p>
           </div>
 
           <div
