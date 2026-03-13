@@ -67,7 +67,17 @@ export function CreateProjectDialog({
   >("residential");
   const [description, setDescription] = useState("");
   const [unitCount, setUnitCount] = useState("");
+  const [grossFloorArea, setGrossFloorArea] = useState("");
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+
+  // Compute Article 80 track from GFA + jurisdiction for live badge
+  const gfa = grossFloorArea ? parseInt(grossFloorArea, 10) : null;
+  const isBoston = jurisdiction.toUpperCase().includes("BOSTON");
+  const article80Badge = isBoston && gfa
+    ? gfa >= 50000 ? { label: "LPR Required", color: "#EF4444" }
+    : gfa >= 20000 ? { label: "SPR Required", color: "#F59E0B" }
+    : { label: "Below threshold", color: "#22C55E" }
+    : null;
 
   const { data: jurisdictions } = trpc.compliance.getJurisdictions.useQuery();
 
@@ -84,6 +94,7 @@ export function CreateProjectDialog({
       setProjectType("residential");
       setDescription("");
       setUnitCount("");
+      setGrossFloorArea("");
     },
     onError: (error) => {
       // Show upgrade modal for plan limit errors
@@ -109,6 +120,10 @@ export function CreateProjectDialog({
       projectType,
       description: description.trim() || undefined,
       unitCount: unitCount ? parseInt(unitCount, 10) : undefined,
+      grossFloorArea: grossFloorArea ? parseInt(grossFloorArea, 10) : undefined,
+      articleEightyTrack: isBoston && gfa
+        ? gfa >= 50000 ? "lpr" : gfa >= 20000 ? "spr" : "none"
+        : undefined,
     });
   };
 
@@ -201,7 +216,7 @@ export function CreateProjectDialog({
 
             {(projectType === "residential" || projectType === "mixed_use") && (
               <div className="space-y-2">
-                <Label htmlFor="unitCount">Number of Units <span style={{ color: "#64748B", fontWeight: 400 }}>(optional — used for Article 80 detection)</span></Label>
+                <Label htmlFor="unitCount">Number of Units <span style={{ color: "#64748B", fontWeight: 400 }}>(optional)</span></Label>
                 <Input
                   id="unitCount"
                   type="number"
@@ -212,6 +227,38 @@ export function CreateProjectDialog({
                 />
               </div>
             )}
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="grossFloorArea">
+                  Gross Floor Area (sq ft){" "}
+                  <span style={{ color: "#64748B", fontWeight: 400 }}>(optional)</span>
+                </Label>
+                {article80Badge && (
+                  <span
+                    className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                    style={{
+                      background: `${article80Badge.color}20`,
+                      color: article80Badge.color,
+                      border: `1px solid ${article80Badge.color}40`,
+                    }}
+                  >
+                    Article 80: {article80Badge.label}
+                  </span>
+                )}
+              </div>
+              <Input
+                id="grossFloorArea"
+                type="number"
+                min="1"
+                placeholder="e.g. 25000"
+                value={grossFloorArea}
+                onChange={(e) => setGrossFloorArea(e.target.value)}
+              />
+              <p className="text-xs" style={{ color: "#64748B" }}>
+                Used to determine Article 80 BPDA review — required for 20,000+ sq ft Boston projects (SPR ≥20K, LPR ≥50K)
+              </p>
+            </div>
 
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>

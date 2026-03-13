@@ -56,6 +56,7 @@ import { PermitWorkflowTab } from "@/components/permit-workflow/permit-workflow-
 import { ComplianceReadinessScore } from "@/components/compliance-readiness-score";
 import { SubmissionPrepChecklist } from "@/components/submission-prep-checklist";
 import { PermitRequirementsPanel } from "@/components/permit-requirements-panel";
+import { Article80Tracker } from "@/components/article80-tracker";
 import { AHJContactDirectory } from "@/components/ahj-contact-directory";
 import { PermitFeeCalculator } from "@/components/permit-fee-calculator";
 import { QuickActionsPanel } from "@/components/quick-actions-panel";
@@ -183,6 +184,7 @@ export default function ProjectDetailPage() {
     "active" | "completed" | "on_hold" | "archived"
   >("active");
   const [settingsDescription, setSettingsDescription] = useState("");
+  const [settingsGrossFloorArea, setSettingsGrossFloorArea] = useState("");
   const [settingsInitialized, setSettingsInitialized] = useState(false);
 
   const utils = trpc.useUtils();
@@ -210,6 +212,7 @@ export default function ProjectDetailPage() {
     setSettingsProjectType(project.projectType);
     setSettingsStatus(project.status);
     setSettingsDescription(project.description ?? "");
+    setSettingsGrossFloorArea(project.grossFloorArea ? String(project.grossFloorArea) : "");
     setSettingsInitialized(true);
   }
 
@@ -316,6 +319,12 @@ export default function ProjectDetailPage() {
   };
 
   const handleSettingsSave = () => {
+    const gfaValue = settingsGrossFloorArea ? parseInt(settingsGrossFloorArea, 10) : null;
+    const isBoston = (settingsJurisdiction || "").toUpperCase().includes("BOSTON");
+    const articleEightyTrack = isBoston && gfaValue
+      ? gfaValue >= 50000 ? "lpr" as const : gfaValue >= 20000 ? "spr" as const : "none" as const
+      : null;
+
     updateProject.mutate({
       id: projectId,
       name: settingsName.trim() || project!.name,
@@ -324,6 +333,8 @@ export default function ProjectDetailPage() {
       projectType: settingsProjectType,
       status: settingsStatus,
       description: settingsDescription.trim() || undefined,
+      grossFloorArea: gfaValue ?? undefined,
+      articleEightyTrack: articleEightyTrack ?? undefined,
     });
   };
 
@@ -940,6 +951,19 @@ export default function ProjectDetailPage() {
         {/* REQUIREMENTS TAB */}
         <TabsContent value="requirements" className="mt-6">
           <div className="space-y-6">
+            {/* Article 80 tracker — show when Boston project with GFA set */}
+            {project.articleEightyTrack && project.articleEightyTrack !== "none" &&
+              (project.jurisdiction ?? "").toUpperCase().includes("BOSTON") && (
+              <Article80Tracker
+                reviewType={project.articleEightyTrack === "lpr" ? "large" : "small"}
+                completedStepIds={project.complianceItems
+                  .filter((i) => i.status === "met")
+                  .map((i) => i.requirementType)}
+                activeStepIds={project.complianceItems
+                  .filter((i) => i.status === "in_progress")
+                  .map((i) => i.requirementType)}
+              />
+            )}
             <PermitRequirementsPanel
               projectId={projectId}
               jurisdiction={project.jurisdiction}
@@ -1091,6 +1115,53 @@ export default function ProjectDetailPage() {
                 <p className="text-xs text-muted-foreground">
                   Setting a jurisdiction enables permit rules lookups and requirements research.
                 </p>
+              </div>
+
+              <div className="space-y-2">
+                {(() => {
+                  const gfa = settingsGrossFloorArea ? parseInt(settingsGrossFloorArea, 10) : null;
+                  const isBostonJx = (settingsJurisdiction || "").toUpperCase().includes("BOSTON");
+                  const badge = isBostonJx && gfa
+                    ? gfa >= 50000
+                      ? { label: "LPR Required (≥50K sq ft)", color: "#EF4444" }
+                      : gfa >= 20000
+                      ? { label: "SPR Required (20K–49K sq ft)", color: "#F59E0B" }
+                      : { label: "Below threshold (<20K sq ft)", color: "#22C55E" }
+                    : null;
+                  return (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="settings-gfa">
+                          Gross Floor Area (sq ft){" "}
+                          <span className="text-muted-foreground font-normal">(optional)</span>
+                        </Label>
+                        {badge && (
+                          <span
+                            className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                            style={{
+                              background: `${badge.color}20`,
+                              color: badge.color,
+                              border: `1px solid ${badge.color}40`,
+                            }}
+                          >
+                            Article 80: {badge.label}
+                          </span>
+                        )}
+                      </div>
+                      <Input
+                        id="settings-gfa"
+                        type="number"
+                        min="1"
+                        placeholder="e.g. 25000"
+                        value={settingsGrossFloorArea}
+                        onChange={(e) => setSettingsGrossFloorArea(e.target.value)}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Used to determine Article 80 BPDA review — SPR ≥20,000 sq ft, LPR ≥50,000 sq ft (Boston only)
+                      </p>
+                    </>
+                  );
+                })()}
               </div>
 
               <div className="space-y-2">
