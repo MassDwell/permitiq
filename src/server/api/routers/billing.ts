@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 import Stripe from "stripe";
 import { TRPCError } from "@trpc/server";
 
-const getStripe = () => new Stripe(process.env.STRIPE_SECRET_KEY ?? "");
+const getStripe = () => new Stripe((process.env.STRIPE_SECRET_KEY ?? "").trim());
 
 const PRICE_IDS = {
   starter: process.env.STRIPE_STARTER_PRICE_ID!,

@@ -6,7 +6,7 @@ import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 const getStripe = () =>
-  new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
+  new Stripe((process.env.STRIPE_SECRET_KEY ?? "").trim(), {
     apiVersion: "2026-02-25.clover",
   });
 
