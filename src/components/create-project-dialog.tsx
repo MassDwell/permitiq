@@ -70,13 +70,14 @@ export function CreateProjectDialog({
   const [grossFloorArea, setGrossFloorArea] = useState("");
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
 
-  // Compute Article 80 track from GFA + jurisdiction for live badge
-  const gfa = grossFloorArea ? parseInt(grossFloorArea, 10) : null;
+  // Compute Article 80 track from GFA + unit count + jurisdiction for live badge
+  const gfa = grossFloorArea ? parseInt(grossFloorArea, 10) : 0;
+  const units = unitCount ? parseInt(unitCount, 10) : 0;
   const isBoston = jurisdiction.toUpperCase().includes("BOSTON");
-  const article80Badge = isBoston && gfa
+  const article80Badge = isBoston && (gfa > 0 || units > 0)
     ? gfa >= 50000 ? { label: "LPR Required", color: "#EF4444" }
-    : gfa >= 20000 ? { label: "SPR Required", color: "#F59E0B" }
-    : { label: "Below threshold", color: "#22C55E" }
+    : (gfa >= 20000 || units >= 15) ? { label: "SPR Required", color: "#F59E0B" }
+    : { label: "No Article 80", color: "#22C55E" }
     : null;
 
   const { data: jurisdictions } = trpc.compliance.getJurisdictions.useQuery();
@@ -121,8 +122,8 @@ export function CreateProjectDialog({
       description: description.trim() || undefined,
       unitCount: unitCount ? parseInt(unitCount, 10) : undefined,
       grossFloorArea: grossFloorArea ? parseInt(grossFloorArea, 10) : undefined,
-      articleEightyTrack: isBoston && gfa
-        ? gfa >= 50000 ? "lpr" : gfa >= 20000 ? "spr" : "none"
+      articleEightyTrack: isBoston && (gfa > 0 || units > 0)
+        ? gfa >= 50000 ? "lpr" : (gfa >= 20000 || units >= 15) ? "spr" : "none"
         : undefined,
     });
   };

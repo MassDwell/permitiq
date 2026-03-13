@@ -184,6 +184,7 @@ export default function ProjectDetailPage() {
     "active" | "completed" | "on_hold" | "archived"
   >("active");
   const [settingsDescription, setSettingsDescription] = useState("");
+  const [settingsUnitCount, setSettingsUnitCount] = useState("");
   const [settingsGrossFloorArea, setSettingsGrossFloorArea] = useState("");
   const [settingsInitialized, setSettingsInitialized] = useState(false);
 
@@ -212,6 +213,7 @@ export default function ProjectDetailPage() {
     setSettingsProjectType(project.projectType);
     setSettingsStatus(project.status);
     setSettingsDescription(project.description ?? "");
+    setSettingsUnitCount(project.unitCount ? String(project.unitCount) : "");
     setSettingsGrossFloorArea(project.grossFloorArea ? String(project.grossFloorArea) : "");
     setSettingsInitialized(true);
   }
@@ -320,9 +322,12 @@ export default function ProjectDetailPage() {
 
   const handleSettingsSave = () => {
     const gfaValue = settingsGrossFloorArea ? parseInt(settingsGrossFloorArea, 10) : null;
+    const unitCountValue = settingsUnitCount ? parseInt(settingsUnitCount, 10) : null;
     const isBoston = (settingsJurisdiction || "").toUpperCase().includes("BOSTON");
-    const articleEightyTrack = isBoston && gfaValue
-      ? gfaValue >= 50000 ? "lpr" as const : gfaValue >= 20000 ? "spr" as const : "none" as const
+    const gfa = gfaValue ?? 0;
+    const units = unitCountValue ?? 0;
+    const articleEightyTrack = isBoston && (gfa > 0 || units > 0)
+      ? gfa >= 50000 ? "lpr" as const : (gfa >= 20000 || units >= 15) ? "spr" as const : "none" as const
       : null;
 
     updateProject.mutate({
@@ -333,8 +338,9 @@ export default function ProjectDetailPage() {
       projectType: settingsProjectType,
       status: settingsStatus,
       description: settingsDescription.trim() || undefined,
-      grossFloorArea: gfaValue ?? undefined,
-      articleEightyTrack: articleEightyTrack ?? undefined,
+      unitCount: unitCountValue,
+      grossFloorArea: gfaValue,
+      articleEightyTrack: articleEightyTrack,
     });
   };
 
@@ -614,6 +620,18 @@ export default function ProjectDetailPage() {
               complianceItems={project.complianceItems}
               projectCreatedAt={project.createdAt}
             />
+            {/* Article 80 Tracker — show when project has an Article 80 track set */}
+            {(project.articleEightyTrack === "spr" || project.articleEightyTrack === "lpr") && (
+              <Article80Tracker
+                reviewType={project.articleEightyTrack}
+                completedStepIds={project.complianceItems
+                  .filter((i) => i.status === "met")
+                  .map((i) => i.requirementType)}
+                activeStepIds={project.complianceItems
+                  .filter((i) => i.status === "in_progress")
+                  .map((i) => i.requirementType)}
+              />
+            )}
             <PermitWorkflowTab
               projectId={projectId}
               projectJurisdiction={project.jurisdiction}
@@ -1117,52 +1135,70 @@ export default function ProjectDetailPage() {
                 </p>
               </div>
 
-              <div className="space-y-2">
-                {(() => {
-                  const gfa = settingsGrossFloorArea ? parseInt(settingsGrossFloorArea, 10) : null;
-                  const isBostonJx = (settingsJurisdiction || "").toUpperCase().includes("BOSTON");
-                  const badge = isBostonJx && gfa
-                    ? gfa >= 50000
-                      ? { label: "LPR Required (≥50K sq ft)", color: "#EF4444" }
-                      : gfa >= 20000
-                      ? { label: "SPR Required (20K–49K sq ft)", color: "#F59E0B" }
-                      : { label: "Below threshold (<20K sq ft)", color: "#22C55E" }
-                    : null;
-                  return (
-                    <>
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="settings-gfa">
-                          Gross Floor Area (sq ft){" "}
-                          <span className="text-muted-foreground font-normal">(optional)</span>
-                        </Label>
-                        {badge && (
-                          <span
-                            className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                            style={{
-                              background: `${badge.color}20`,
-                              color: badge.color,
-                              border: `1px solid ${badge.color}40`,
-                            }}
-                          >
-                            Article 80: {badge.label}
-                          </span>
-                        )}
-                      </div>
-                      <Input
-                        id="settings-gfa"
-                        type="number"
-                        min="1"
-                        placeholder="e.g. 25000"
-                        value={settingsGrossFloorArea}
-                        onChange={(e) => setSettingsGrossFloorArea(e.target.value)}
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        Used to determine Article 80 BPDA review — SPR ≥20,000 sq ft, LPR ≥50,000 sq ft (Boston only)
-                      </p>
-                    </>
-                  );
-                })()}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="settings-unit-count">
+                    Number of Units{" "}
+                    <span className="text-muted-foreground font-normal">(optional)</span>
+                  </Label>
+                  <Input
+                    id="settings-unit-count"
+                    type="number"
+                    min="1"
+                    placeholder="e.g. 12"
+                    value={settingsUnitCount}
+                    onChange={(e) => setSettingsUnitCount(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  {(() => {
+                    const gfa = settingsGrossFloorArea ? parseInt(settingsGrossFloorArea, 10) : 0;
+                    const units = settingsUnitCount ? parseInt(settingsUnitCount, 10) : 0;
+                    const isBostonJx = (settingsJurisdiction || "").toUpperCase().includes("BOSTON");
+                    const badge = isBostonJx && (gfa > 0 || units > 0)
+                      ? gfa >= 50000
+                        ? { label: "LPR Required", color: "#EF4444" }
+                        : (gfa >= 20000 || units >= 15)
+                        ? { label: "SPR Required", color: "#F59E0B" }
+                        : { label: "No Article 80", color: "#22C55E" }
+                      : null;
+                    return (
+                      <>
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="settings-gfa">
+                            Gross Floor Area (sq ft){" "}
+                            <span className="text-muted-foreground font-normal">(optional)</span>
+                          </Label>
+                          {badge && (
+                            <span
+                              className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                              style={{
+                                background: `${badge.color}20`,
+                                color: badge.color,
+                                border: `1px solid ${badge.color}40`,
+                              }}
+                            >
+                              {badge.label}
+                            </span>
+                          )}
+                        </div>
+                        <Input
+                          id="settings-gfa"
+                          type="number"
+                          min="1"
+                          placeholder="e.g. 25000"
+                          value={settingsGrossFloorArea}
+                          onChange={(e) => setSettingsGrossFloorArea(e.target.value)}
+                        />
+                      </>
+                    );
+                  })()}
+                </div>
               </div>
+              <p className="text-xs text-muted-foreground -mt-3">
+                Boston projects: 15+ units or 20,000+ sq ft require Article 80 BPDA review (SPR); 50,000+ sq ft triggers LPR.
+              </p>
 
               <div className="space-y-2">
                 <Label htmlFor="settings-description">Description</Label>
