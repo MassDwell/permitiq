@@ -11,13 +11,22 @@ const getStripe = () =>
   });
 
 // Map Stripe price IDs to plan names
+// Includes both founder (introductory) and regular price IDs
+// These IDs are already public in the client-side pricing page
 const PRICE_TO_PLAN: Record<string, "starter" | "professional" | "enterprise"> = {
-  // Solo / Starter
-  [process.env.STRIPE_STARTER_PRICE_ID || ""]: "starter",
-  // Developer / Professional
-  [process.env.STRIPE_PROFESSIONAL_PRICE_ID || ""]: "professional",
-  // Portfolio / Enterprise
-  [process.env.STRIPE_ENTERPRISE_PRICE_ID || ""]: "enterprise",
+  // Solo / Starter — founder + regular
+  "price_1TAKUV8WeSNkRrKoSn83vPyr": "starter",
+  "price_1TAIiZ94ePmNThnD8A8bjdVn": "starter",
+  // Developer / Professional — founder + regular
+  "price_1TAKUW8WeSNkRrKo864hCugD": "professional",
+  "price_1TAIia94ePmNThnD1mr2KDJT": "professional",
+  // Portfolio / Enterprise — founder + regular
+  "price_1TAKUX8WeSNkRrKoG6rVbNmn": "enterprise",
+  "price_1TAIib94ePmNThnDBfqopr9e": "enterprise",
+  // Also accept env var overrides if configured
+  ...(process.env.STRIPE_STARTER_PRICE_ID ? { [process.env.STRIPE_STARTER_PRICE_ID]: "starter" as const } : {}),
+  ...(process.env.STRIPE_PROFESSIONAL_PRICE_ID ? { [process.env.STRIPE_PROFESSIONAL_PRICE_ID]: "professional" as const } : {}),
+  ...(process.env.STRIPE_ENTERPRISE_PRICE_ID ? { [process.env.STRIPE_ENTERPRISE_PRICE_ID]: "enterprise" as const } : {}),
 };
 
 export async function POST(req: NextRequest) {
