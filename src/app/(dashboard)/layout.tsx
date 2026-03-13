@@ -53,7 +53,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150",
                     isActive
                       ? "text-[#14B8A6] bg-[rgba(20,184,166,0.1)]"
-                      : "text-[#64748B] hover:text-[#94A3B8] hover:bg-[rgba(255,255,255,0.03)]"
+                      : "text-[#CBD5E1] hover:text-[#E2E8F0] hover:bg-[rgba(255,255,255,0.03)]"
                   )}
                   style={isActive ? { boxShadow: 'inset 2px 0 0 #14B8A6' } : {}}
                 >
@@ -82,11 +82,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {/* User */}
             <div className="flex items-center gap-3 px-2 py-2">
               <UserButton />
-              <p className="text-sm font-medium text-[#94A3B8]">Account</p>
+              <p className="text-sm font-medium text-[#E2E8F0]">Account</p>
             </div>
             {/* Sign Out */}
             <SignOutButton>
-              <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 text-[#64748B] hover:text-red-400 hover:bg-[rgba(239,68,68,0.05)]">
+              <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 text-[#CBD5E1] hover:text-red-400 hover:bg-[rgba(239,68,68,0.05)]">
                 <LogOut className="h-4 w-4 shrink-0" />
                 Sign Out
               </button>

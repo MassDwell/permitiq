@@ -146,25 +146,25 @@ export function DeadlineForecast({ complianceItems, projectCreatedAt }: Deadline
           {/* Stats */}
           <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 gap-3">
             <div className="rounded-lg p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <p className="text-xs text-[#64748B] mb-1">Completion</p>
+              <p className="text-xs text-[#CBD5E1] mb-1">Completion</p>
               <p className="text-xl font-bold text-foreground">{completionPct}%</p>
-              <p className="text-xs text-[#64748B]">{met}/{total} items</p>
+              <p className="text-xs text-[#CBD5E1]">{met}/{total} items</p>
             </div>
             <div className="rounded-lg p-3" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <p className="text-xs text-[#64748B] mb-1">Next Deadline</p>
+              <p className="text-xs text-[#CBD5E1] mb-1">Next Deadline</p>
               {daysRemaining !== null ? (
                 <>
                   <p className="text-xl font-bold text-foreground">{daysRemaining}d</p>
-                  <p className="text-xs text-[#64748B]">remaining</p>
+                  <p className="text-xs text-[#CBD5E1]">remaining</p>
                 </>
               ) : (
-                <p className="text-sm text-[#64748B] mt-1">No deadline set</p>
+                <p className="text-sm text-[#CBD5E1] mt-1">No deadline set</p>
               )}
             </div>
             <div className="rounded-lg p-3 col-span-2 sm:col-span-1" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <p className="text-xs text-[#64748B] mb-1">Velocity</p>
+              <p className="text-xs text-[#CBD5E1] mb-1">Velocity</p>
               <p className="text-xl font-bold text-foreground">{velocityPerWeek.toFixed(1)}</p>
-              <p className="text-xs text-[#64748B]">items/week</p>
+              <p className="text-xs text-[#CBD5E1]">items/week</p>
             </div>
           </div>
         </div>
@@ -172,7 +172,7 @@ export function DeadlineForecast({ complianceItems, projectCreatedAt }: Deadline
         {/* Insight text */}
         {remaining > 0 && (
           <div className="mt-4 rounded-lg p-3 flex items-start gap-2" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <Clock className="h-4 w-4 text-[#64748B] flex-shrink-0 mt-0.5" />
+            <Clock className="h-4 w-4 text-[#CBD5E1] flex-shrink-0 mt-0.5" />
             <p className="text-sm text-muted-foreground">
               {remaining} item{remaining !== 1 ? "s" : ""} remaining.
               {velocityPerWeek > 0.1 ? (
@@ -195,7 +195,7 @@ export function DeadlineForecast({ complianceItems, projectCreatedAt }: Deadline
 
         {/* Recommendations */}
         <div className="mt-4 space-y-2">
-          <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide flex items-center gap-1.5">
+          <p className="text-xs font-semibold text-[#CBD5E1] uppercase tracking-wide flex items-center gap-1.5">
             <Zap className="h-3.5 w-3.5" />
             Recommended Actions
           </p>

@@ -108,7 +108,7 @@ export default function SettingsPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[#F1F5F9]">Settings</h1>
-        <p className="text-[#64748B] mt-1">
+        <p className="text-[#CBD5E1] mt-1">
           Manage your account and notification preferences
         </p>
       </div>
@@ -217,7 +217,7 @@ export default function SettingsPage() {
             ) : (
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[#94A3B8] font-medium">Starter Plan</p>
+                  <p className="text-[#E2E8F0] font-medium">Starter Plan</p>
                   <p className="text-sm text-[#475569] mt-0.5">
                     You&apos;re on the free Starter plan. Upgrade for more projects, AI chat, and team collaboration.
                   </p>
@@ -373,7 +373,7 @@ export default function SettingsPage() {
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-lg" style={{ background: 'rgba(20,184,166,0.06)', border: '1px solid rgba(20,184,166,0.15)' }}>
                   <div className="text-2xl font-bold text-[#14B8A6]">{referralData?.referralCount ?? 0}</div>
-                  <p className="text-sm text-[#64748B]">
+                  <p className="text-sm text-[#CBD5E1]">
                     colleague{(referralData?.referralCount ?? 0) !== 1 ? "s" : ""} joined using your link
                   </p>
                 </div>

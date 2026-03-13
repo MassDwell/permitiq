@@ -90,7 +90,7 @@ export default function ApiKeysPage() {
       <div className="p-8 max-w-4xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#F1F5F9]">API Keys</h1>
-          <p className="text-[#64748B] mt-1">Manage API access for programmatic integrations</p>
+          <p className="text-[#CBD5E1] mt-1">Manage API access for programmatic integrations</p>
         </div>
         <div
           className="rounded-2xl p-8 text-center"
@@ -103,13 +103,13 @@ export default function ApiKeysPage() {
             <Lock className="h-7 w-7 text-[#475569]" />
           </div>
           <h3 className="text-lg font-semibold text-[#F1F5F9] mb-2">API access is available to account owners only</h3>
-          <p className="text-sm text-[#64748B] max-w-sm mx-auto">
+          <p className="text-sm text-[#CBD5E1] max-w-sm mx-auto">
             You have collaborator access to this workspace. API key management is restricted to the account owner.
           </p>
           {ownerEmail && (
             <p className="text-sm text-[#475569] mt-4">
               Contact{" "}
-              <span className="text-[#94A3B8] font-medium">{ownerEmail}</span>{" "}
+              <span className="text-[#E2E8F0] font-medium">{ownerEmail}</span>{" "}
               for API access.
             </p>
           )}
@@ -124,7 +124,7 @@ export default function ApiKeysPage() {
     <div className="p-8 max-w-4xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[#F1F5F9]">API Keys</h1>
-        <p className="text-[#64748B] mt-1">Manage API access for programmatic integrations</p>
+        <p className="text-[#CBD5E1] mt-1">Manage API access for programmatic integrations</p>
       </div>
 
       {/* Reveal modal for new key */}
@@ -297,7 +297,7 @@ export default function ApiKeysPage() {
                   {(keys ?? []).map((key) => (
                     <div key={key.id} className="px-6 py-4 grid grid-cols-4 gap-4 items-center">
                       <p className="text-sm font-medium text-[#F1F5F9] truncate">{key.name}</p>
-                      <code className="text-sm font-mono text-[#64748B]">
+                      <code className="text-sm font-mono text-[#CBD5E1]">
                         {key.keyPrefix}...
                       </code>
                       <span className="text-sm text-[#475569]">
@@ -329,13 +329,13 @@ export default function ApiKeysPage() {
             className="rounded-xl p-5"
             style={{ background: "rgba(20,184,166,0.06)", border: "1px solid rgba(20,184,166,0.15)" }}
           >
-            <p className="text-sm text-[#64748B]">
+            <p className="text-sm text-[#CBD5E1]">
               <span className="text-[#14B8A6] font-medium">API Base URL:</span>{" "}
-              <code className="text-[#94A3B8]">https://meritlayer.ai/api/v1</code>
+              <code className="text-[#E2E8F0]">https://meritlayer.ai/api/v1</code>
             </p>
             <p className="text-xs text-[#475569] mt-1">
-              Authenticate with <code className="text-[#64748B]">Authorization: Bearer &lt;key&gt;</code> header.
-              Available endpoints: <code className="text-[#64748B]">GET /api/v1/projects</code>
+              Authenticate with <code className="text-[#CBD5E1]">Authorization: Bearer &lt;key&gt;</code> header.
+              Available endpoints: <code className="text-[#CBD5E1]">GET /api/v1/projects</code>
             </p>
           </div>
         </div>

@@ -97,7 +97,7 @@ export default function PortfolioPage() {
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-[#F1F5F9]">Portfolio Intelligence</h1>
-          <p className="text-[#64748B] mt-1">Aggregate view across all your projects</p>
+          <p className="text-[#CBD5E1] mt-1">Aggregate view across all your projects</p>
         </div>
         <Button
           onClick={() => setCreateOpen(true)}
@@ -119,7 +119,7 @@ export default function PortfolioPage() {
           style={{ background: "#0D1526", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 1px 3px rgba(0,0,0,0.3)" }}
         >
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#64748B]">Total Projects</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Total Projects</p>
             <div
               className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: "rgba(20,184,166,0.12)", boxShadow: "0 0 12px rgba(20,184,166,0.1)" }}
@@ -140,7 +140,7 @@ export default function PortfolioPage() {
           style={{ background: "#0D1526", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 1px 3px rgba(0,0,0,0.3)" }}
         >
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#64748B]">Active Permits</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Active Permits</p>
             <div
               className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: "rgba(245,158,11,0.12)", boxShadow: "0 0 12px rgba(245,158,11,0.1)" }}
@@ -166,7 +166,7 @@ export default function PortfolioPage() {
           style={{ background: "#0D1526", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 1px 3px rgba(0,0,0,0.3)" }}
         >
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#64748B]">Avg Compliance Health</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Avg Compliance Health</p>
             <div
               className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: "rgba(20,184,166,0.12)", boxShadow: "0 0 12px rgba(20,184,166,0.1)" }}
@@ -189,7 +189,7 @@ export default function PortfolioPage() {
           style={{ background: "#0D1526", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 1px 3px rgba(0,0,0,0.3)" }}
         >
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#64748B]">Docs Processed</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Docs Processed</p>
             <div
               className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: "rgba(99,102,241,0.12)", boxShadow: "0 0 12px rgba(99,102,241,0.1)" }}
@@ -289,7 +289,7 @@ export default function PortfolioPage() {
                         {/* Health score progress bar */}
                         <div className="mb-3">
                           <div className="flex items-center justify-between mb-1">
-                            <p className="text-xs text-[#64748B]">Compliance Health</p>
+                            <p className="text-xs text-[#CBD5E1]">Compliance Health</p>
                             <p className="text-xs font-semibold" style={{ color }}>{project.complianceScore}%</p>
                           </div>
                           <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.08)" }}>
@@ -300,7 +300,7 @@ export default function PortfolioPage() {
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between text-xs text-[#64748B]">
+                        <div className="flex items-center justify-between text-xs text-[#CBD5E1]">
                           <span>
                             {project.openItems} open item{project.openItems !== 1 ? "s" : ""}
                           </span>
@@ -418,7 +418,7 @@ export default function PortfolioPage() {
                         : "#10B981";
                     return (
                       <div key={i} className="px-5 py-3.5 grid grid-cols-4 gap-4 items-center hover:bg-white/[0.02] transition-colors min-w-[480px]">
-                        <span className="text-sm text-[#94A3B8]">
+                        <span className="text-sm text-[#E2E8F0]">
                           {dl.dueDate ? format(new Date(dl.dueDate), "MMM d, yyyy") : "—"}
                         </span>
                         <Link
@@ -427,7 +427,7 @@ export default function PortfolioPage() {
                         >
                           {dl.projectName}
                         </Link>
-                        <span className="text-sm text-[#64748B] truncate">{dl.requirement}</span>
+                        <span className="text-sm text-[#CBD5E1] truncate">{dl.requirement}</span>
                         <span
                           className="text-sm font-semibold text-right"
                           style={{ color: urgency }}

@@ -513,7 +513,7 @@ export default function ProjectDetailPage() {
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
           style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#64748B]">Compliance Score</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Compliance Score</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: 'rgba(20,184,166,0.12)', boxShadow: '0 0 12px rgba(20,184,166,0.1)' }}>
               <CheckCircle className="h-4 w-4 text-[#14B8A6]" />
@@ -528,7 +528,7 @@ export default function ProjectDetailPage() {
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
           style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#64748B]">Requirements Met</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Requirements Met</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: 'rgba(16,185,129,0.12)', boxShadow: '0 0 12px rgba(16,185,129,0.1)' }}>
               <CheckCircle className="h-4 w-4 text-[#10B981]" />
@@ -542,7 +542,7 @@ export default function ProjectDetailPage() {
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
           style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#64748B]">Pending</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Pending</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: 'rgba(245,158,11,0.12)', boxShadow: '0 0 12px rgba(245,158,11,0.1)' }}>
               <Clock className="h-4 w-4 text-[#F59E0B]" />
@@ -554,7 +554,7 @@ export default function ProjectDetailPage() {
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
           style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#64748B]">Overdue</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Overdue</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: 'rgba(239,68,68,0.12)', boxShadow: '0 0 12px rgba(239,68,68,0.1)' }}>
               <AlertTriangle className="h-4 w-4 text-[#EF4444]" />
@@ -829,7 +829,7 @@ export default function ProjectDetailPage() {
                                       <button onClick={() => { updateItem.mutate({ id: item.id, notes: noteText }); setEditingNoteId(null); }}
                                         className="text-xs px-3 py-1.5 rounded font-medium bg-[#14B8A6] text-white">Save</button>
                                       <button onClick={() => setEditingNoteId(null)}
-                                        className="text-xs px-3 py-1.5 rounded font-medium text-[#64748B]"
+                                        className="text-xs px-3 py-1.5 rounded font-medium text-[#CBD5E1]"
                                         style={{ background: 'rgba(255,255,255,0.05)' }}>Cancel</button>
                                     </div>
                                   </div>
@@ -841,7 +841,7 @@ export default function ProjectDetailPage() {
                                           📝 {item.notes}
                                         </p>
                                         <button onClick={() => { setEditingNoteId(item.id); setNoteText(item.notes ?? ''); }}
-                                          className="text-xs text-[#64748B] hover:text-[#14B8A6] shrink-0 mt-1">Edit</button>
+                                          className="text-xs text-[#CBD5E1] hover:text-[#14B8A6] shrink-0 mt-1">Edit</button>
                                       </div>
                                     ) : (
                                       <button onClick={() => { setEditingNoteId(item.id); setNoteText(''); }}
@@ -1011,7 +1011,7 @@ export default function ProjectDetailPage() {
                 <MessageSquare className="h-6 w-6 text-[#14B8A6]" />
               </div>
               <h3 className="text-lg font-semibold text-[#F1F5F9] mb-2">Team Collaboration</h3>
-              <p className="text-[#64748B] mb-6 max-w-sm mx-auto text-sm">
+              <p className="text-[#CBD5E1] mb-6 max-w-sm mx-auto text-sm">
                 Invite teammates, assign roles, and collaborate on compliance — available on Professional and above.
               </p>
               <button
@@ -1244,7 +1244,7 @@ export default function ProjectDetailPage() {
                 <MessageSquare className="h-6 w-6 text-[#14B8A6]" />
               </div>
               <h3 className="text-lg font-semibold text-[#F1F5F9] mb-2">AI Document Chat</h3>
-              <p className="text-[#64748B] mb-6 max-w-sm mx-auto text-sm">
+              <p className="text-[#CBD5E1] mb-6 max-w-sm mx-auto text-sm">
                 Ask questions about your permit documents and get instant answers powered by AI — available on Professional and above.
               </p>
               <button

@@ -126,7 +126,7 @@ export default function BillingPage() {
       <div className="p-8 max-w-4xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#F1F5F9]">Billing</h1>
-          <p className="text-[#64748B] mt-1">Manage your subscription and billing details</p>
+          <p className="text-[#CBD5E1] mt-1">Manage your subscription and billing details</p>
         </div>
         <div
           className="rounded-2xl p-8 text-center"
@@ -139,14 +139,14 @@ export default function BillingPage() {
             <Lock className="h-7 w-7 text-[#475569]" />
           </div>
           <h3 className="text-lg font-semibold text-[#F1F5F9] mb-2">Billing is managed by the account owner</h3>
-          <p className="text-sm text-[#64748B] max-w-sm mx-auto">
+          <p className="text-sm text-[#CBD5E1] max-w-sm mx-auto">
             You have collaborator access to this workspace. Subscription and billing details are only visible to the
             account owner.
           </p>
           {ownerEmail && (
             <p className="text-sm text-[#475569] mt-4">
               Contact{" "}
-              <span className="text-[#94A3B8] font-medium">{ownerEmail}</span>{" "}
+              <span className="text-[#E2E8F0] font-medium">{ownerEmail}</span>{" "}
               to make changes.
             </p>
           )}
@@ -160,7 +160,7 @@ export default function BillingPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[#F1F5F9]">Billing</h1>
-        <p className="text-[#64748B] mt-1">Manage your subscription and billing details</p>
+        <p className="text-[#CBD5E1] mt-1">Manage your subscription and billing details</p>
       </div>
 
       <div className="space-y-6">
@@ -193,12 +193,12 @@ export default function BillingPage() {
                   </div>
 
                   {profile?.subscriptionPeriodEnd && (
-                    <p className="text-sm text-[#64748B]">
+                    <p className="text-sm text-[#CBD5E1]">
                       {profile.subscriptionStatus === "canceled"
                         ? "Access ends"
                         : "Renews"}{" "}
                       on{" "}
-                      <span className="text-[#94A3B8] font-medium">
+                      <span className="text-[#E2E8F0] font-medium">
                         {new Date(profile.subscriptionPeriodEnd).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "long",
@@ -210,9 +210,9 @@ export default function BillingPage() {
 
                   {/* Subscription from billing query */}
                   {!profile?.subscriptionPeriodEnd && subscription?.currentPeriodEnd && (
-                    <p className="text-sm text-[#64748B]">
+                    <p className="text-sm text-[#CBD5E1]">
                       {subscription.cancelAtPeriodEnd ? "Cancels" : "Renews"} on{" "}
-                      <span className="text-[#94A3B8] font-medium">
+                      <span className="text-[#E2E8F0] font-medium">
                         {subscription.currentPeriodEnd.toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "long",
@@ -234,7 +234,7 @@ export default function BillingPage() {
                   {/* Features list */}
                   <div className="pt-2 space-y-1.5">
                     {(PLAN_FEATURES[plan] ?? []).map((f) => (
-                      <div key={f} className="flex items-center gap-2 text-sm text-[#64748B]">
+                      <div key={f} className="flex items-center gap-2 text-sm text-[#CBD5E1]">
                         <CheckCircle className="h-3.5 w-3.5 text-[#14B8A6] shrink-0" />
                         {f}
                       </div>
@@ -285,7 +285,7 @@ export default function BillingPage() {
             </div>
             <div className="px-6 py-5 flex items-center justify-between">
               <div>
-                <p className="text-[#94A3B8] text-sm">
+                <p className="text-[#E2E8F0] text-sm">
                   Access your full billing history, update your payment method, or cancel your subscription via the Stripe portal.
                 </p>
               </div>
@@ -312,12 +312,12 @@ export default function BillingPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h3 className="text-lg font-semibold text-[#F1F5F9] mb-1">Ready to unlock more?</h3>
-                <p className="text-sm text-[#64748B] mb-4 max-w-md">
+                <p className="text-sm text-[#CBD5E1] mb-4 max-w-md">
                   Upgrade to Professional for 5 projects, unlimited documents, compliance reports, and team collaboration.
                 </p>
                 <div className="space-y-1.5">
                   {PLAN_FEATURES.professional.map((f) => (
-                    <div key={f} className="flex items-center gap-2 text-sm text-[#64748B]">
+                    <div key={f} className="flex items-center gap-2 text-sm text-[#CBD5E1]">
                       <CheckCircle className="h-3.5 w-3.5 text-[#14B8A6] shrink-0" />
                       {f}
                     </div>

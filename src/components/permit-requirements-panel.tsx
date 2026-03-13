@@ -83,10 +83,10 @@ function RuleCard({ rule }: { rule: ResearchedRequirement }) {
             {rule.isRequired ? (
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/15 text-blue-400 border border-blue-500/25">Required</span>
             ) : (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-white/8 text-[#94A3B8] border border-white/10">Conditional</span>
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-white/8 text-[#E2E8F0] border border-white/10">Conditional</span>
             )}
             {rule.typicalTimelineDays != null && rule.typicalTimelineDays > 0 && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border border-white/10 text-[#94A3B8]">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border border-white/10 text-[#E2E8F0]">
                 <Clock className="h-3 w-3" />
                 ~{rule.typicalTimelineDays}d
               </span>
@@ -105,12 +105,12 @@ function RuleCard({ rule }: { rule: ResearchedRequirement }) {
         >
           {rule.requiredDocuments && rule.requiredDocuments.length > 0 && (
             <div>
-              <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1.5">
+              <p className="text-xs font-semibold text-[#CBD5E1] uppercase tracking-wide mb-1.5">
                 Required Documents
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {rule.requiredDocuments.map((doc) => (
-                  <span key={doc} className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border border-white/10 text-[#94A3B8]">
+                  <span key={doc} className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border border-white/10 text-[#E2E8F0]">
                     <FileText className="h-3 w-3" />
                     {doc.replace(/_/g, " ")}
                   </span>
@@ -120,8 +120,8 @@ function RuleCard({ rule }: { rule: ResearchedRequirement }) {
           )}
           {rule.notes && (
             <div>
-              <p className="text-xs font-semibold text-[#64748B] uppercase tracking-wide mb-1">Notes</p>
-              <p className="text-xs text-[#94A3B8] leading-relaxed">{rule.notes}</p>
+              <p className="text-xs font-semibold text-[#CBD5E1] uppercase tracking-wide mb-1">Notes</p>
+              <p className="text-xs text-[#E2E8F0] leading-relaxed">{rule.notes}</p>
             </div>
           )}
         </div>
@@ -267,7 +267,7 @@ function ActionableItemCard({
                   </button>
                   <button
                     onClick={() => { setNotesText(savedNotes); setEditingNotes(false); }}
-                    className="text-xs px-3 py-1.5 rounded font-medium text-[#64748B] hover:text-[#94A3B8]"
+                    className="text-xs px-3 py-1.5 rounded font-medium text-[#CBD5E1] hover:text-[#E2E8F0]"
                     style={{ background: "rgba(255,255,255,0.05)" }}
                   >
                     Cancel
@@ -531,7 +531,7 @@ export function PermitRequirementsPanel({ projectId, jurisdiction, projectType }
             <h3 className="text-lg font-medium text-[#F1F5F9] mb-2">
               {jurisdiction ? "No saved rules found" : "No jurisdiction set"}
             </h3>
-            <p className="text-[#64748B] text-sm mb-4">
+            <p className="text-[#CBD5E1] text-sm mb-4">
               {jurisdiction
                 ? `Click "Research Requirements" to fetch current requirements for ${jurisdiction}.`
                 : "Set a jurisdiction in the Settings tab, then research requirements here."}

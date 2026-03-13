@@ -137,7 +137,7 @@ export default function TeamSettingsPage() {
     <div className="p-8 max-w-4xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[#F1F5F9]">Team Settings</h1>
-        <p className="text-[#64748B] mt-1">Manage collaborators across your projects</p>
+        <p className="text-[#CBD5E1] mt-1">Manage collaborators across your projects</p>
       </div>
 
       <div className="space-y-6">
@@ -313,7 +313,7 @@ export default function TeamSettingsPage() {
                           <MailCheck className="h-4 w-4" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-[#94A3B8] truncate">{member.email}</p>
+                          <p className="text-sm font-medium text-[#E2E8F0] truncate">{member.email}</p>
                           <p className="text-xs text-[#475569]">Invite pending</p>
                         </div>
                         <RoleBadge role={member.role} />

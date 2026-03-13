@@ -16,7 +16,7 @@ export function PublicNavAuth() {
       <div className="flex items-center gap-3">
         <Link
           href="/dashboard"
-          className="text-sm text-[#94A3B8] hover:text-white transition-colors"
+          className="text-sm text-[#E2E8F0] hover:text-white transition-colors"
         >
           Dashboard
         </Link>
@@ -29,7 +29,7 @@ export function PublicNavAuth() {
     <div className="flex items-center gap-3">
       <Link
         href="/sign-in"
-        className="text-sm text-[#94A3B8] hover:text-white transition-colors"
+        className="text-sm text-[#E2E8F0] hover:text-white transition-colors"
       >
         Sign In
       </Link>

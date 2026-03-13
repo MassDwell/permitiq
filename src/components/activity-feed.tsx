@@ -159,7 +159,7 @@ export function ActivityFeed({ projects, upcomingDeadlines }: ActivityFeedProps)
                       ? "text-red-400"
                       : event.daysUntil <= 7
                       ? "text-amber-400"
-                      : "text-[#64748B]"
+                      : "text-[#CBD5E1]"
                   }`}
                 />
               )}
@@ -169,9 +169,9 @@ export function ActivityFeed({ projects, upcomingDeadlines }: ActivityFeedProps)
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm text-[#E2E8F0] leading-snug">
-                <span className="font-medium text-[#94A3B8]">{event.projectName}</span>
+                <span className="font-medium text-[#E2E8F0]">{event.projectName}</span>
                 {event.type === "completed" && (
-                  <span className="text-[#64748B]"> — Compliance item marked complete</span>
+                  <span className="text-[#CBD5E1]"> — Compliance item marked complete</span>
                 )}
                 {event.type === "overdue" && (
                   <span className="text-red-400"> — Item overdue</span>
@@ -183,7 +183,7 @@ export function ActivityFeed({ projects, upcomingDeadlines }: ActivityFeedProps)
                         ? " text-red-400 font-medium"
                         : event.daysUntil <= 7
                         ? " text-amber-400"
-                        : " text-[#64748B]"
+                        : " text-[#CBD5E1]"
                     }
                   >
                     {" "}

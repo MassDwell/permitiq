@@ -114,7 +114,7 @@ export function PermitFeeEstimator() {
     >
       <div className="mb-5">
         <h3 className="text-base font-semibold text-foreground">Permit Fee Estimator</h3>
-        <p className="text-sm text-[#64748B] mt-0.5">
+        <p className="text-sm text-[#CBD5E1] mt-0.5">
           Pre-calculate Boston ISD permit fees before filing. Based on 2024 fee schedule.
         </p>
       </div>
@@ -123,7 +123,7 @@ export function PermitFeeEstimator() {
         {/* Left: form inputs */}
         <div className="space-y-4">
           <div>
-            <label className="text-xs font-medium text-[#64748B] block mb-1.5">Project Type</label>
+            <label className="text-xs font-medium text-[#CBD5E1] block mb-1.5">Project Type</label>
             <select
               value={projectType}
               onChange={(e) => setProjectType(e.target.value as BuildingType)}
@@ -144,7 +144,7 @@ export function PermitFeeEstimator() {
 
           {isMultifamily ? (
             <div>
-              <label className="text-xs font-medium text-[#64748B] block mb-1.5">
+              <label className="text-xs font-medium text-[#CBD5E1] block mb-1.5">
                 Number of Units
               </label>
               <input
@@ -163,7 +163,7 @@ export function PermitFeeEstimator() {
             </div>
           ) : (
             <div>
-              <label className="text-xs font-medium text-[#64748B] block mb-1.5">
+              <label className="text-xs font-medium text-[#CBD5E1] block mb-1.5">
                 Square Footage
               </label>
               <input
@@ -184,7 +184,7 @@ export function PermitFeeEstimator() {
 
           {/* Trade work */}
           <div>
-            <label className="text-xs font-medium text-[#64748B] block mb-2">Trade Work</label>
+            <label className="text-xs font-medium text-[#CBD5E1] block mb-2">Trade Work</label>
             <div className="grid grid-cols-2 gap-2">
               {(Object.keys(TRADE_FEES) as TradeType[]).map((t) => (
                 <label key={t} className="flex items-center gap-2 cursor-pointer group">
@@ -195,7 +195,7 @@ export function PermitFeeEstimator() {
                     className="rounded"
                     style={{ accentColor: "#14B8A6" }}
                   />
-                  <span className="text-sm text-[#94A3B8] group-hover:text-foreground transition-colors">
+                  <span className="text-sm text-[#E2E8F0] group-hover:text-foreground transition-colors">
                     {TRADE_FEES[t].label}
                   </span>
                 </label>
@@ -205,7 +205,7 @@ export function PermitFeeEstimator() {
 
           {/* Special reviews */}
           <div>
-            <label className="text-xs font-medium text-[#64748B] block mb-2">
+            <label className="text-xs font-medium text-[#CBD5E1] block mb-2">
               Special Reviews
             </label>
             <div className="space-y-1.5">
@@ -217,7 +217,7 @@ export function PermitFeeEstimator() {
                     onChange={() => toggleSpecial(s)}
                     style={{ accentColor: "#14B8A6" }}
                   />
-                  <span className="text-sm text-[#94A3B8] group-hover:text-foreground transition-colors">
+                  <span className="text-sm text-[#E2E8F0] group-hover:text-foreground transition-colors">
                     {SPECIAL_FEES[s].label}
                   </span>
                   <span className="text-xs text-[#475569] ml-auto">
@@ -234,7 +234,7 @@ export function PermitFeeEstimator() {
           className="rounded-lg p-4"
           style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.06)" }}
         >
-          <p className="text-xs font-medium text-[#64748B] mb-3 uppercase tracking-wider">
+          <p className="text-xs font-medium text-[#CBD5E1] mb-3 uppercase tracking-wider">
             Fee Breakdown
           </p>
           {breakdown.items.length === 0 ? (
@@ -245,7 +245,7 @@ export function PermitFeeEstimator() {
             <div className="space-y-2">
               {breakdown.items.map((item, i) => (
                 <div key={i} className="flex justify-between items-center text-sm">
-                  <span className="text-[#94A3B8]">{item.label}</span>
+                  <span className="text-[#E2E8F0]">{item.label}</span>
                   <span className="text-foreground font-medium tabular-nums">
                     {formatDollars(item.amount)}
                   </span>

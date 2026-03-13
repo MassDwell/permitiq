@@ -189,13 +189,13 @@ export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModa
               <h2 className="text-2xl font-bold text-[#F1F5F9] mb-2">
                 Let&apos;s get you set up
               </h2>
-              <p className="text-[#64748B] mb-6">
+              <p className="text-[#CBD5E1] mb-6">
                 MeritLayer tracks permit compliance so you never miss a deadline. This takes 2 minutes.
               </p>
 
               <div className="space-y-4 mb-6">
                 <div className="space-y-2">
-                  <Label htmlFor="ob-name" className="text-[#94A3B8]">Your name</Label>
+                  <Label htmlFor="ob-name" className="text-[#E2E8F0]">Your name</Label>
                   <Input
                     id="ob-name"
                     placeholder="e.g., Jane Smith"
@@ -207,7 +207,7 @@ export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModa
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="ob-company" className="text-[#94A3B8]">
+                  <Label htmlFor="ob-company" className="text-[#E2E8F0]">
                     Company <span className="text-[#475569] font-normal">(optional)</span>
                   </Label>
                   <Input
@@ -226,7 +226,7 @@ export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModa
                   { icon: Upload, text: "AI extracts requirements from permit docs automatically" },
                   { icon: CheckCircle, text: "Get deadline alerts before they become problems" },
                 ].map(({ icon: Icon, text }) => (
-                  <div key={text} className="flex items-center gap-3 text-sm text-[#94A3B8]">
+                  <div key={text} className="flex items-center gap-3 text-sm text-[#E2E8F0]">
                     <div className="h-7 w-7 rounded-lg flex items-center justify-center shrink-0"
                       style={{ background: 'rgba(20,184,166,0.12)' }}>
                       <Icon className="h-3.5 w-3.5 text-[#14B8A6]" />
@@ -250,13 +250,13 @@ export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModa
           {step === 2 && (
             <div>
               <h2 className="text-xl font-bold text-[#F1F5F9] mb-1">Create your first project</h2>
-              <p className="text-[#64748B] text-sm mb-6">
+              <p className="text-[#CBD5E1] text-sm mb-6">
                 We&apos;ll load jurisdiction-specific permit requirements automatically.
               </p>
 
               <div className="space-y-4 mb-8">
                 <div className="space-y-2">
-                  <Label htmlFor="ob-proj-name" className="text-[#94A3B8]">Project name *</Label>
+                  <Label htmlFor="ob-proj-name" className="text-[#E2E8F0]">Project name *</Label>
                   <Input
                     id="ob-proj-name"
                     placeholder="e.g., 123 Main St Renovation"
@@ -268,7 +268,7 @@ export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModa
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="ob-address" className="text-[#94A3B8]">
+                  <Label htmlFor="ob-address" className="text-[#E2E8F0]">
                     <MapPin className="h-3.5 w-3.5 inline mr-1" />
                     Address
                   </Label>
@@ -282,7 +282,7 @@ export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModa
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[#94A3B8]">Jurisdiction</Label>
+                  <Label className="text-[#E2E8F0]">Jurisdiction</Label>
                   <Select value={jurisdiction} onValueChange={setJurisdiction}>
                     <SelectTrigger style={{ background: '#141C2E', border: '1px solid rgba(255,255,255,0.1)', color: '#F1F5F9' }}>
                       <SelectValue placeholder="Select jurisdiction" />
@@ -296,7 +296,7 @@ export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModa
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[#94A3B8]">Project type</Label>
+                  <Label className="text-[#E2E8F0]">Project type</Label>
                   <div className="grid grid-cols-1 gap-1.5">
                     {PROJECT_TYPE_OPTIONS.map((opt) => (
                       <button
@@ -325,7 +325,7 @@ export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModa
               </div>
 
               <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setStep(1)} className="flex-1 border-white/10 text-[#94A3B8]">
+                <Button variant="outline" onClick={() => setStep(1)} className="flex-1 border-white/10 text-[#E2E8F0]">
                   Back
                 </Button>
                 <Button
@@ -360,7 +360,7 @@ export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModa
               </div>
 
               <h2 className="text-2xl font-bold text-[#F1F5F9] mb-2">You&apos;re all set!</h2>
-              <p className="text-[#64748B] mb-6">
+              <p className="text-[#CBD5E1] mb-6">
                 {createdProjectName
                   ? `"${createdProjectName}" has been created. Upload your first permit doc to activate AI compliance extraction.`
                   : "Your account is ready. Upload a permit document to get started."}
@@ -383,7 +383,7 @@ export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModa
                     >
                       {i + 1}
                     </div>
-                    <p className="text-sm text-[#94A3B8]">{step}</p>
+                    <p className="text-sm text-[#E2E8F0]">{step}</p>
                   </div>
                 ))}
               </div>

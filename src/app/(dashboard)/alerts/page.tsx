@@ -99,7 +99,7 @@ export default function AlertsPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-[#F1F5F9]">Alerts</h1>
-          <p className="text-[#64748B] mt-1">
+          <p className="text-[#CBD5E1] mt-1">
             {unreadCount > 0
               ? `${unreadCount} unread alert${unreadCount > 1 ? "s" : ""}`
               : "No unread alerts"}

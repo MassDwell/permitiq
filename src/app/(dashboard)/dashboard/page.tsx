@@ -173,7 +173,7 @@ function DashboardPageContent() {
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
           style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#64748B]">Total Projects</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Total Projects</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: 'rgba(20,184,166,0.12)', boxShadow: '0 0 12px rgba(20,184,166,0.1)' }}>
               <FolderOpen className="h-4 w-4 text-[#14B8A6]" />
@@ -186,7 +186,7 @@ function DashboardPageContent() {
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
           style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#64748B]">Due This Week</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Due This Week</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{
                 background: dueSoonCount > 0 ? 'rgba(239,68,68,0.12)' : 'rgba(99,102,241,0.12)',
@@ -204,7 +204,7 @@ function DashboardPageContent() {
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
           style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#64748B]">Avg Compliance</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Avg Compliance</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: 'rgba(20,184,166,0.12)', boxShadow: '0 0 12px rgba(20,184,166,0.1)' }}>
               <CheckCircle className="h-4 w-4 text-[#14B8A6]" />
@@ -220,7 +220,7 @@ function DashboardPageContent() {
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
           style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-medium text-[#64748B]">Documents Processed</p>
+            <p className="text-sm font-medium text-[#CBD5E1]">Documents Processed</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
               style={{ background: 'rgba(99,102,241,0.12)', boxShadow: '0 0 12px rgba(99,102,241,0.1)' }}>
               <FileText className="h-4 w-4 text-[#6366F1]" />

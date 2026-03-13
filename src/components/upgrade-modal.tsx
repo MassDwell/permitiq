@@ -50,7 +50,7 @@ export function UpgradeModal({
             </div>
             <DialogTitle className="text-[#F1F5F9]">{title}</DialogTitle>
           </div>
-          <DialogDescription className="text-[#64748B]">
+          <DialogDescription className="text-[#CBD5E1]">
             {description ?? "You've reached your plan limit. Upgrade to Professional for unlimited access."}
           </DialogDescription>
         </DialogHeader>
@@ -61,7 +61,7 @@ export function UpgradeModal({
             style={{ background: 'rgba(20,184,166,0.06)', border: '1px solid rgba(20,184,166,0.15)' }}
           >
             {features.map((f) => (
-              <div key={f} className="flex items-center gap-2.5 text-sm text-[#94A3B8]">
+              <div key={f} className="flex items-center gap-2.5 text-sm text-[#E2E8F0]">
                 <CheckCircle className="h-4 w-4 text-[#14B8A6] shrink-0" />
                 {f}
               </div>

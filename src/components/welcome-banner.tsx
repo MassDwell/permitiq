@@ -68,7 +68,7 @@ export function WelcomeBanner({ projectCount, onCreateProject }: WelcomeBannerPr
 
       <div className="mb-5">
         <h2 className="text-xl font-bold text-[#F1F5F9]">Welcome to MeritLayer</h2>
-        <p className="text-sm text-[#64748B] mt-1">
+        <p className="text-sm text-[#CBD5E1] mt-1">
           You&apos;re 3 steps away from full compliance visibility
         </p>
       </div>
@@ -125,7 +125,7 @@ export function WelcomeBanner({ projectCount, onCreateProject }: WelcomeBannerPr
         </Button>
         <Button
           variant="outline"
-          className="border-white/10 text-[#94A3B8] hover:bg-white/5 hover:text-[#F1F5F9] text-sm"
+          className="border-white/10 text-[#E2E8F0] hover:bg-white/5 hover:text-[#F1F5F9] text-sm"
           asChild
         >
           <a href="/permits" target="_blank" rel="noopener noreferrer">

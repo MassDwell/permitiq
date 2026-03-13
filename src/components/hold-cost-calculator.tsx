@@ -56,7 +56,7 @@ export function HoldCostCalculator({ complianceScore = 50 }: HoldCostCalculatorP
     >
       <div className="mb-5">
         <h3 className="text-base font-semibold text-foreground">Hold Cost Calculator</h3>
-        <p className="text-sm text-[#64748B] mt-0.5">
+        <p className="text-sm text-[#CBD5E1] mt-0.5">
           See what permit delays are actually costing you in carry costs.
         </p>
       </div>
@@ -64,7 +64,7 @@ export function HoldCostCalculator({ complianceScore = 50 }: HoldCostCalculatorP
       {/* Inputs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div>
-          <label className="text-xs font-medium text-[#64748B] block mb-1.5">
+          <label className="text-xs font-medium text-[#CBD5E1] block mb-1.5">
             Loan Amount
           </label>
           <input
@@ -83,7 +83,7 @@ export function HoldCostCalculator({ complianceScore = 50 }: HoldCostCalculatorP
         </div>
 
         <div>
-          <label className="text-xs font-medium text-[#64748B] block mb-1.5">
+          <label className="text-xs font-medium text-[#CBD5E1] block mb-1.5">
             Interest Rate (%)
           </label>
           <input
@@ -103,7 +103,7 @@ export function HoldCostCalculator({ complianceScore = 50 }: HoldCostCalculatorP
         </div>
 
         <div>
-          <label className="text-xs font-medium text-[#64748B] block mb-1.5">
+          <label className="text-xs font-medium text-[#CBD5E1] block mb-1.5">
             Projected Delay (weeks)
             {autoDelay > 0 && (
               <span className="ml-2 text-[#14B8A6]">
@@ -127,7 +127,7 @@ export function HoldCostCalculator({ complianceScore = 50 }: HoldCostCalculatorP
         </div>
 
         <div>
-          <label className="text-xs font-medium text-[#64748B] block mb-1.5">
+          <label className="text-xs font-medium text-[#CBD5E1] block mb-1.5">
             Current Compliance
           </label>
           <div
@@ -151,19 +151,19 @@ export function HoldCostCalculator({ complianceScore = 50 }: HoldCostCalculatorP
         >
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <p className="text-xs text-[#64748B] mb-1">Weekly Carry Cost</p>
+              <p className="text-xs text-[#CBD5E1] mb-1">Weekly Carry Cost</p>
               <p className="text-xl font-bold text-foreground">
                 {formatDollars(calc.weeklyCarry)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-[#64748B] mb-1">Projected Delay</p>
+              <p className="text-xs text-[#CBD5E1] mb-1">Projected Delay</p>
               <p className="text-xl font-bold text-foreground">
                 {delayWeeks || 0} wks
               </p>
             </div>
             <div>
-              <p className="text-xs text-[#64748B] mb-1">Total Hold Cost Risk</p>
+              <p className="text-xs text-[#CBD5E1] mb-1">Total Hold Cost Risk</p>
               <p className="text-2xl font-bold text-red-400">
                 {formatDollars(calc.totalHold)}
               </p>
@@ -178,7 +178,7 @@ export function HoldCostCalculator({ complianceScore = 50 }: HoldCostCalculatorP
               <p className="text-sm font-medium text-green-400 mb-1">
                 Complete 2 more compliance items this week:
               </p>
-              <div className="flex items-center gap-6 text-sm text-[#94A3B8]">
+              <div className="flex items-center gap-6 text-sm text-[#E2E8F0]">
                 <span>
                   Delay drops to{" "}
                   <span className="text-green-400 font-semibold">{calc.reducedWeeks} weeks</span>

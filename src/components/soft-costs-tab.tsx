@@ -144,7 +144,7 @@ export function SoftCostsTab({ projectId }: SoftCostsTabProps) {
       <div className="flex items-start justify-between mb-5">
         <div>
           <h3 className="text-base font-semibold text-foreground">Soft Cost Tracker</h3>
-          <p className="text-sm text-[#64748B] mt-0.5">
+          <p className="text-sm text-[#CBD5E1] mt-0.5">
             Track professional fees and permit-related expenses.
           </p>
         </div>
@@ -166,7 +166,7 @@ export function SoftCostsTab({ projectId }: SoftCostsTabProps) {
             className="rounded-lg p-3"
             style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.06)" }}
           >
-            <p className="text-xs text-[#64748B] mb-1">Total Budgeted</p>
+            <p className="text-xs text-[#CBD5E1] mb-1">Total Budgeted</p>
             <p className="text-lg font-bold text-foreground">
               {formatDollars(summary.totalBudgeted)}
             </p>
@@ -175,7 +175,7 @@ export function SoftCostsTab({ projectId }: SoftCostsTabProps) {
             className="rounded-lg p-3"
             style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.06)" }}
           >
-            <p className="text-xs text-[#64748B] mb-1">Total Paid</p>
+            <p className="text-xs text-[#CBD5E1] mb-1">Total Paid</p>
             <p className="text-lg font-bold text-green-400">
               {formatDollars(summary.totalPaid)}
             </p>
@@ -184,7 +184,7 @@ export function SoftCostsTab({ projectId }: SoftCostsTabProps) {
             className="rounded-lg p-3"
             style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.06)" }}
           >
-            <p className="text-xs text-[#64748B] mb-1">Unpaid</p>
+            <p className="text-xs text-[#CBD5E1] mb-1">Unpaid</p>
             <p className="text-lg font-bold text-amber-400">
               {formatDollars(summary.totalUnpaid)}
             </p>
@@ -195,7 +195,7 @@ export function SoftCostsTab({ projectId }: SoftCostsTabProps) {
       {/* Category bar chart */}
       {summary && Object.keys(summary.byCategory).length > 0 && (
         <div className="mb-5 space-y-2">
-          <p className="text-xs font-medium text-[#64748B] uppercase tracking-wider mb-3">
+          <p className="text-xs font-medium text-[#CBD5E1] uppercase tracking-wider mb-3">
             By Category
           </p>
           {CATEGORIES.filter((c) => summary.byCategory[c.value]).map((cat) => {
@@ -203,7 +203,7 @@ export function SoftCostsTab({ projectId }: SoftCostsTabProps) {
             const pct = maxAmount > 0 ? (amt / maxAmount) * 100 : 0;
             return (
               <div key={cat.value} className="flex items-center gap-3">
-                <span className="text-xs text-[#64748B] w-24 shrink-0">{cat.label}</span>
+                <span className="text-xs text-[#CBD5E1] w-24 shrink-0">{cat.label}</span>
                 <div
                   className="flex-1 rounded-full overflow-hidden h-2"
                   style={{ background: "rgba(255,255,255,0.06)" }}
@@ -216,7 +216,7 @@ export function SoftCostsTab({ projectId }: SoftCostsTabProps) {
                     }}
                   />
                 </div>
-                <span className="text-xs text-[#94A3B8] tabular-nums w-20 text-right">
+                <span className="text-xs text-[#E2E8F0] tabular-nums w-20 text-right">
                   {formatDollars(amt)}
                 </span>
               </div>
@@ -234,7 +234,7 @@ export function SoftCostsTab({ projectId }: SoftCostsTabProps) {
           <p className="text-sm font-medium text-[#14B8A6] mb-3">New Expense</p>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-[#64748B] block mb-1">Category</label>
+              <label className="text-xs text-[#CBD5E1] block mb-1">Category</label>
               <select
                 value={form.category}
                 onChange={(e) => setForm((f) => ({ ...f, category: e.target.value as Category }))}
@@ -253,7 +253,7 @@ export function SoftCostsTab({ projectId }: SoftCostsTabProps) {
               </select>
             </div>
             <div>
-              <label className="text-xs text-[#64748B] block mb-1">Amount ($)</label>
+              <label className="text-xs text-[#CBD5E1] block mb-1">Amount ($)</label>
               <input
                 type="text"
                 inputMode="decimal"
@@ -270,7 +270,7 @@ export function SoftCostsTab({ projectId }: SoftCostsTabProps) {
             </div>
           </div>
           <div>
-            <label className="text-xs text-[#64748B] block mb-1">Description *</label>
+            <label className="text-xs text-[#CBD5E1] block mb-1">Description *</label>
             <input
               type="text"
               placeholder="e.g. Architectural drawings review"
@@ -286,7 +286,7 @@ export function SoftCostsTab({ projectId }: SoftCostsTabProps) {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-[#64748B] block mb-1">Vendor</label>
+              <label className="text-xs text-[#CBD5E1] block mb-1">Vendor</label>
               <input
                 type="text"
                 placeholder="e.g. Smith Architecture"
@@ -308,7 +308,7 @@ export function SoftCostsTab({ projectId }: SoftCostsTabProps) {
                   onChange={(e) => setForm((f) => ({ ...f, isPaid: e.target.checked }))}
                   style={{ accentColor: "#14B8A6" }}
                 />
-                <span className="text-sm text-[#94A3B8]">Already paid</span>
+                <span className="text-sm text-[#E2E8F0]">Already paid</span>
               </label>
             </div>
           </div>
@@ -383,7 +383,7 @@ export function SoftCostsTab({ projectId }: SoftCostsTabProps) {
                   )}
                 </span>
               </div>
-              <span className="text-sm text-[#64748B] truncate pr-2">{cost.vendor ?? "—"}</span>
+              <span className="text-sm text-[#CBD5E1] truncate pr-2">{cost.vendor ?? "—"}</span>
               <span className="text-sm font-medium text-foreground tabular-nums text-right">
                 {formatDollars(cost.amount)}
               </span>
