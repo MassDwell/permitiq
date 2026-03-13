@@ -11,6 +11,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
+  const toolUrls = [
+    "soft-costs-calculator",
+    "adu-eligibility",
+    "zoning-lookup",
+  ].map((tool) => ({
+    url: `${BASE_URL}/tools/${tool}`,
+    lastModified: new Date("2026-03-12"),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
   return [
     {
       url: BASE_URL,
@@ -25,6 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     ...permitGuideUrls,
+    ...toolUrls,
     {
       url: `${BASE_URL}/sign-up`,
       lastModified: new Date(),

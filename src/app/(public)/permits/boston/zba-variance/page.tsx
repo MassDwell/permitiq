@@ -140,6 +140,53 @@ const howToSchema = {
   })),
 };
 
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How much does it cost to file a Boston ZBA appeal?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "For residential buildings with 3 or fewer units: $150 flat fee. For all other buildings and residential buildings with more than 3 units: $150 per zoning violation cited in the denial letter. A project with 3 violations would cost $450 in filing fees.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How long do I have to file a ZBA appeal in Boston?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "You must file your ZBA appeal within 45 calendar days of receiving your denial letter from Boston's Inspectional Services Department (ISD). Missing this window requires starting a new permit application from scratch.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "When does the Boston ZBA meet in 2026?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "The Boston Zoning Board of Appeal holds public hearings every other Tuesday at 9:30 AM at 1 City Hall Square, Room 801. In 2026, hearings run bi-weekly from January through December.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What happens if the Boston ZBA denies my appeal?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "If the ZBA denies your appeal, you cannot re-apply for the same or substantially similar project for one full year — unless you make substantial changes to the plans or the denial was issued 'without prejudice.' A formal written decision typically arrives approximately 15 days after the hearing.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I withdraw a Boston ZBA appeal after filing?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Once public notices have been sent to abutters and published in the Boston Globe and Boston Herald, you cannot simply withdraw your appeal. You may request a dismissal 'without prejudice' before the board conducts its formal review.",
+      },
+    },
+  ],
+};
+
 const quarterGroups = ZBA_2026_HEARINGS.reduce<Record<string, typeof ZBA_2026_HEARINGS>>(
   (acc, h) => {
     if (!acc[h.quarter]) acc[h.quarter] = [];
@@ -155,6 +202,10 @@ export default function ZbaVariancePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12" style={{ background: '#080D1A', minHeight: '100vh' }}>
         {/* Breadcrumb */}
