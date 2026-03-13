@@ -157,7 +157,7 @@ export function Article80Tracker({
 
   const timelineLabel = reviewType === "lpr" ? "Typically 12–18 months" : "Typically 3–6 months";
   const reviewLabel =
-    reviewType === "lpr" ? "Article 80 Large Project Review (LPR)" : "Article 80 Small Project Review (SPR)";
+    reviewType === "lpr" ? "BPDA Large Project Review" : "BPDA Small Project Review";
 
   return (
     <div
@@ -230,7 +230,7 @@ export function Article80Tracker({
           const labelColor = isCompleted ? "#64748B" : isActive ? "#FDE68A" : "#CBD5E1";
           const isLast = idx === steps.length - 1;
           const currentStatus = isCompleted ? "met" : isActive ? "in_progress" : "pending";
-          const statusLabel = isCompleted ? "Complete" : isActive ? "In Progress" : "Pending";
+          const statusLabel = isCompleted ? "Done" : isActive ? "Working on it" : "Not started";
 
           return (
             <div key={step.id} style={{ display: "flex", gap: 12 }}>
@@ -238,7 +238,7 @@ export function Article80Tracker({
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0, width: 20 }}>
                 <button
                   onClick={() => onStepClick?.(step.id, currentStatus, step.description)}
-                  title={currentStatus === "pending" ? "Mark in progress" : currentStatus === "in_progress" ? "Mark complete" : "Mark pending"}
+                  title={currentStatus === "pending" ? "Start working" : currentStatus === "in_progress" ? "Mark done" : "Reset"}
                   style={{ background: "none", border: "none", padding: 0, cursor: onStepClick ? "pointer" : "default", color: dotColor, display: "flex", alignItems: "center", justifyContent: "center", transition: "opacity 0.15s", marginTop: 2 }}
                   onMouseEnter={(e) => { if (onStepClick) (e.currentTarget as HTMLButtonElement).style.opacity = "0.7"; }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
@@ -282,19 +282,19 @@ export function Article80Tracker({
                         {currentStatus !== "in_progress" && (
                           <button onClick={() => onStepClick(step.id, currentStatus, step.description)}
                             style={{ fontSize: 11, padding: "4px 10px", borderRadius: 5, background: "rgba(245,158,11,0.15)", color: "#FDE68A", border: "1px solid rgba(245,158,11,0.3)", cursor: "pointer", fontWeight: 600 }}>
-                            → Mark In Progress
+                            → Start Working
                           </button>
                         )}
                         {currentStatus !== "met" && (
                           <button onClick={() => onStepClick(step.id, "in_progress", step.description)}
                             style={{ fontSize: 11, padding: "4px 10px", borderRadius: 5, background: "rgba(20,184,166,0.15)", color: "#5EEAD4", border: "1px solid rgba(20,184,166,0.3)", cursor: "pointer", fontWeight: 600 }}>
-                            ✓ Mark Complete
+                            ✓ Mark Done
                           </button>
                         )}
                         {(currentStatus === "met" || currentStatus === "in_progress") && (
                           <button onClick={() => onStepClick(step.id, currentStatus, step.description)}
                             style={{ fontSize: 11, padding: "4px 10px", borderRadius: 5, background: "rgba(255,255,255,0.05)", color: "#64748B", border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer" }}>
-                            ↩ Reset to Pending
+                            ↩ Reset
                           </button>
                         )}
                       </div>
