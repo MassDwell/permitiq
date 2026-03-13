@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "MeritLayer Pricing",
     description:
-      "AI-powered permit compliance for Greater Boston developers. Founding member pricing available.",
+      "AI-powered permit compliance for Massachusetts developers. Founding member pricing available.",
   },
 };
 

@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "MeritLayer - AI-Powered Construction Compliance",
-    description: "Never miss a permit deadline again. AI-powered document intelligence for construction compliance in Greater Boston.",
+    description: "Never miss a permit deadline again. AI-powered document intelligence for construction compliance across Massachusetts.",
     url: "https://meritlayer.ai",
     siteName: "MeritLayer",
     images: [
