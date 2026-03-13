@@ -146,7 +146,7 @@ export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModa
     <Dialog open={open} onOpenChange={(o) => { if (!o) handleClose(); }}>
       <DialogContent
         className="sm:max-w-[520px] p-0 overflow-hidden"
-        style={{ background: '#0E1525', border: '1px solid rgba(20,184,166,0.3)' }}
+        style={{ background: '#1E293B', border: '1px solid rgba(20,184,166,0.3)' }}
       >
         {/* Progress bar */}
         <div className="h-1 w-full" style={{ background: 'rgba(255,255,255,0.06)' }}>
@@ -165,7 +165,7 @@ export function OnboardingModal({ userName, forceOpen, onClose }: OnboardingModa
                   className="h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold transition-all"
                   style={{
                     background: step > s.num ? '#14B8A6' : step === s.num ? 'rgba(20,184,166,0.2)' : 'rgba(255,255,255,0.06)',
-                    color: step > s.num ? '#080D1A' : step === s.num ? '#14B8A6' : '#475569',
+                    color: step > s.num ? '#0F172A' : step === s.num ? '#14B8A6' : '#475569',
                     border: step === s.num ? '1px solid rgba(20,184,166,0.5)' : 'none',
                   }}
                 >

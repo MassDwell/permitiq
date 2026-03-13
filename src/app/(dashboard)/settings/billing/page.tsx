@@ -95,7 +95,7 @@ function PlanBadge({ plan }: { plan: string }) {
 
 const CARD_STYLE = {
   background: "#0E1525",
-  border: "1px solid rgba(255,255,255,0.07)",
+  border: "1px solid rgba(255,255,255,0.1)",
   borderRadius: 16,
 };
 
@@ -130,7 +130,7 @@ export default function BillingPage() {
         </div>
         <div
           className="rounded-2xl p-8 text-center"
-          style={{ background: "#0E1525", border: "1px solid rgba(255,255,255,0.07)" }}
+          style={{ background: "#0E1525", border: "1px solid rgba(255,255,255,0.1)" }}
         >
           <div
             className="h-14 w-14 rounded-2xl flex items-center justify-center mx-auto mb-4"

@@ -38,7 +38,7 @@ export function UpgradeModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="sm:max-w-[440px]"
-        style={{ background: '#0E1525', border: '1px solid rgba(20,184,166,0.3)' }}
+        style={{ background: '#1E293B', border: '1px solid rgba(20,184,166,0.3)' }}
       >
         <DialogHeader>
           <div className="flex items-center gap-2 mb-1">
@@ -80,7 +80,7 @@ export function UpgradeModal({
           </Button>
           <Button
             asChild
-            style={{ background: '#14B8A6', color: '#080D1A' }}
+            style={{ background: '#14B8A6', color: '#0F172A' }}
             className="hover:bg-[#0D9488] font-semibold"
           >
             <a href="/pricing">

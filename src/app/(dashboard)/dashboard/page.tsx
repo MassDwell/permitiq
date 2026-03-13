@@ -171,7 +171,7 @@ function DashboardPageContent() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {/* Total Projects */}
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
-          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-medium text-[#64748B]">Total Projects</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
@@ -184,7 +184,7 @@ function DashboardPageContent() {
 
         {/* Items Due This Week */}
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
-          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-medium text-[#64748B]">Due This Week</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
@@ -202,7 +202,7 @@ function DashboardPageContent() {
 
         {/* Avg Compliance Score */}
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
-          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-medium text-[#64748B]">Avg Compliance</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
@@ -218,7 +218,7 @@ function DashboardPageContent() {
 
         {/* Documents Processed */}
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
-          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-medium text-[#64748B]">Documents Processed</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
@@ -233,7 +233,7 @@ function DashboardPageContent() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Projects List */}
         <div className="lg:col-span-2">
-          <div className="rounded-xl overflow-hidden" style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)' }}>
+          <div className="rounded-xl overflow-hidden" style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)' }}>
             <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
               <h2 className="text-base font-semibold text-[#F1F5F9]">Projects</h2>
               <p className="text-sm text-[#475569] mt-0.5">Your active construction projects</p>
@@ -570,7 +570,7 @@ function DashboardPageContent() {
       {/* Recent Activity Feed */}
       {projects && projects.length > 0 && (
         <div className="mt-8">
-          <div className="rounded-xl overflow-hidden" style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)' }}>
+          <div className="rounded-xl overflow-hidden" style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)' }}>
             <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
               <h2 className="text-base font-semibold text-[#F1F5F9]">Recent Activity</h2>
               <p className="text-sm text-[#475569] mt-0.5">Latest updates across all projects</p>

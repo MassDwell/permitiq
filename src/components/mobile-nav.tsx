@@ -20,8 +20,8 @@ export function MobileNav() {
     <nav
       className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
       style={{
-        background: '#060B17',
-        borderTop: '1px solid rgba(255,255,255,0.07)',
+        background: '#0F172A',
+        borderTop: '1px solid rgba(255,255,255,0.1)',
       }}
     >
       <div className="flex items-center justify-around px-2 pb-safe">

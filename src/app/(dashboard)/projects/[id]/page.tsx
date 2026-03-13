@@ -377,7 +377,7 @@ export default function ProjectDetailPage() {
       <div className="p-8 flex items-center justify-center min-h-[60vh]">
         <div
           className="text-center rounded-2xl p-10 max-w-md w-full"
-          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)' }}
+          style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)' }}
         >
           <div
             className="h-14 w-14 rounded-full flex items-center justify-center mx-auto mb-5"
@@ -511,7 +511,7 @@ export default function ProjectDetailPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
-          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-medium text-[#64748B]">Compliance Score</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
@@ -526,7 +526,7 @@ export default function ProjectDetailPage() {
         </div>
 
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
-          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-medium text-[#64748B]">Requirements Met</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
@@ -540,7 +540,7 @@ export default function ProjectDetailPage() {
         </div>
 
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
-          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-medium text-[#64748B]">Pending</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
@@ -552,7 +552,7 @@ export default function ProjectDetailPage() {
         </div>
 
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
-          style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-medium text-[#64748B]">Overdue</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
@@ -566,7 +566,7 @@ export default function ProjectDetailPage() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <div style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', marginBottom: '0' }}>
+        <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '0' }}>
           <div className="flex px-0 gap-0 overflow-x-auto scrollbar-none" style={{ whiteSpace: 'nowrap' }}>
             {[
               { value: "permits", label: "Permits" },
@@ -787,7 +787,7 @@ export default function ProjectDetailPage() {
                               onChange={(e) => handleStatusChange(item.id, e.target.value)}
                               className="text-xs rounded px-2 py-0.5 font-medium border cursor-pointer"
                               style={{
-                                background: '#0D1525',
+                                background: '#1E293B',
                                 borderColor: 'rgba(255,255,255,0.1)',
                                 color: item.status === 'met' ? '#4ade80'
                                   : item.status === 'in_progress' ? '#60a5fa'
@@ -876,7 +876,7 @@ export default function ProjectDetailPage() {
                                 placeholder="Add a note... e.g. Submitted water cut and cap application to BWSC on 3/12"
                                 className="flex-1 text-sm px-3 py-2 rounded-lg resize-none"
                                 style={{
-                                  background: '#111827',
+                                  background: '#1E293B',
                                   border: '1px solid rgba(255,255,255,0.15)',
                                   color: '#F1F5F9',
                                 }}
@@ -1081,7 +1081,7 @@ export default function ProjectDetailPage() {
           {isStarterPlan ? (
             <div
               className="rounded-xl p-10 text-center"
-              style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)' }}
+              style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)' }}
             >
               <div className="h-12 w-12 rounded-full flex items-center justify-center mx-auto mb-4"
                 style={{ background: 'rgba(20,184,166,0.12)' }}>
@@ -1097,7 +1097,7 @@ export default function ProjectDetailPage() {
                   "Invite teammates, assign roles, and share compliance reports with your team. Available on Professional plan."
                 )}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm transition-all"
-                style={{ background: '#14B8A6', color: '#080D1A' }}
+                style={{ background: '#14B8A6', color: '#0F172A' }}
               >
                 Upgrade to Collaborate
               </button>
@@ -1314,7 +1314,7 @@ export default function ProjectDetailPage() {
           {isStarterPlan ? (
             <div
               className="rounded-xl p-10 text-center"
-              style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)' }}
+              style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)' }}
             >
               <div className="h-12 w-12 rounded-full flex items-center justify-center mx-auto mb-4"
                 style={{ background: 'rgba(20,184,166,0.12)' }}>
@@ -1330,7 +1330,7 @@ export default function ProjectDetailPage() {
                   "Ask questions about your permits and compliance documents and get instant AI-powered answers. Available on Professional plan."
                 )}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm transition-all"
-                style={{ background: '#14B8A6', color: '#080D1A' }}
+                style={{ background: '#14B8A6', color: '#0F172A' }}
               >
                 Upgrade to Use AI Chat
               </button>

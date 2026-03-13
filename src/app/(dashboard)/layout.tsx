@@ -30,12 +30,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     : "Starter";
 
   return (
-    <div className="min-h-screen" style={{ background: '#080D1A' }}>
+    <div className="min-h-screen" style={{ background: '#0F172A' }}>
       {/* Sidebar — hidden on mobile, visible on md+ */}
-      <div className="hidden md:flex fixed inset-y-0 left-0 z-50 w-64" style={{ background: '#060B17', borderRight: '1px solid rgba(255,255,255,0.05)' }}>
+      <div className="hidden md:flex fixed inset-y-0 left-0 z-50 w-64" style={{ background: '#0F172A', borderRight: '1px solid rgba(255,255,255,0.1)' }}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center px-5 h-16" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+          <div className="flex items-center px-5 h-16" style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
             <Link href="/">
               <Logo size="md" />
             </Link>
@@ -96,7 +96,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
 
       {/* Main content */}
-      <div className="md:pl-64 pb-16 md:pb-0 min-h-screen" style={{ background: '#080D1A' }}>
+      <div className="md:pl-64 pb-16 md:pb-0 min-h-screen" style={{ background: '#0F172A' }}>
         <main className="min-h-screen">{children}</main>
       </div>
 

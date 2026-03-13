@@ -140,7 +140,7 @@ export default function AlertsPage() {
       {/* Alerts List */}
       <div
         className="rounded-xl overflow-hidden"
-        style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)' }}
+        style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)' }}
       >
         <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
           <h2 className="text-base font-semibold text-[#F1F5F9]">All Alerts</h2>

@@ -507,3 +507,69 @@ export const MA_STATE_REQUIREMENTS: RequirementData[] = [
     reasoning: "Massachusetts requires all contractors to carry Workers' Compensation insurance.",
   },
 ];
+
+export const BOSTON_DEMOLITION_REQUIREMENTS = [
+  {
+    requirementType: "demolition_delay_approval",
+    description: "Article 85 Demolition Delay approval from Boston Landmarks Commission",
+    sourceUrl: "https://www.boston.gov/departments/landmarks-commission/how-file-article-85-demolition-review",
+    sourceText: "You must obtain an Article 85 Demolition Delay approval from the Boston Landmarks Commission.",
+    reasoning: "Required to verify building has no historic preservation status before demolition.",
+  },
+  {
+    requirementType: "utility_shutoff_notices",
+    description: "Utility shut-off notices (gas, electrical, telephone, cable)",
+    sourceUrl: "https://www.boston.gov/departments/inspectional-services/how-get-demolition-permit",
+    sourceText: "Shut off notices from all underground and overhead utilities, such as: gas, electrical, telephone and cable companies.",
+    reasoning: "All utilities must be disconnected before demolition can begin safely.",
+  },
+  {
+    requirementType: "bwsc_closed_gsa",
+    description: "Boston Water and Sewer Commission (BWSC) closed GSA",
+    sourceUrl: "https://www.bwsc.org/",
+    sourceText: "The Boston Water and Sewer Commission closed general service agreement GSA.",
+    reasoning: "Water and sewer connections must be formally closed and documented.",
+  },
+  {
+    requirementType: "dep_hazmat_approval",
+    description: "DEP hazardous materials approval",
+    sourceUrl: "https://www.mass.gov/orgs/massachusetts-department-of-environmental-protection",
+    sourceText: "Department of Environmental Protection (DEP) approval for hazardous materials 617-292-5500",
+    reasoning: "Massachusetts DEP must approve hazardous material handling and disposal plan.",
+  },
+  {
+    requirementType: "dig_safe_reference",
+    description: "Dig Safe reference number",
+    sourceUrl: "https://www.digsafe.com",
+    sourceText: "Dig Safe reference number is required.",
+    reasoning: "State law requires Dig Safe clearance before any ground disturbance.",
+  },
+  {
+    requirementType: "pest_control_letter",
+    description: "Pest control contractor letter",
+    sourceUrl: "https://www.boston.gov/departments/inspectional-services/how-get-demolition-permit",
+    sourceText: "A letter or bill from a pest control contractor stating the pest management will be performed before and after the demolition project begins.",
+    reasoning: "Boston ISD requires documented pest management before and after demolition.",
+  },
+  {
+    requirementType: "licensed_builder_documents",
+    description: "Licensed builder + supporting documents (Workers Comp, Mattocks Higgins Affidavit, contract, liability insurance, builder license)",
+    sourceUrl: "https://www.boston.gov/departments/inspectional-services/how-get-demolition-permit",
+    sourceText: "A licensed builder is required with supporting documents, such as: the Workers Compensation Form, Mattocks Higgins Affidavit, contract between parties, liability insurance, copy of your builders license front and back side.",
+    reasoning: "Boston ISD requires licensed contractor with full documentation package.",
+  },
+  {
+    requirementType: "fire_prevention_permit",
+    description: "Boston Fire Prevention permit",
+    sourceUrl: "https://www.boston.gov/departments/fire-prevention",
+    sourceText: "Obtain a permit from Boston Fire Prevention pertaining to the demolition.",
+    reasoning: "Separate Fire Prevention permit required in addition to ISD demolition permit.",
+  },
+  {
+    requirementType: "environmental_services_review",
+    description: "Environmental Services Division review",
+    sourceUrl: "https://www.boston.gov/departments/inspectional-services/how-get-demolition-permit",
+    sourceText: "You will also need a review from our Environmental Services Division on the 4th floor here at 1010 Massachusetts Avenue, or isdenvironmental@boston.gov",
+    reasoning: "ISD Environmental Services must review the demolition plan for environmental compliance.",
+  },
+];

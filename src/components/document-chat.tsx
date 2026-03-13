@@ -55,30 +55,27 @@ export function DocumentChat({ projectId }: DocumentChatProps) {
         }),
       });
 
-      if (!res.ok || !res.body) {
-        throw new Error("Failed to get response");
+      if (!res.ok) {
+        let errMsg = "Failed to get response";
+        try {
+          const body = await res.json() as { error?: string };
+          if (body.error) errMsg = body.error;
+        } catch { /* ignore */ }
+        throw new Error(errMsg);
       }
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let accumulated = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        accumulated += decoder.decode(value, { stream: true });
-        setMessages((prev) => {
-          const updated = [...prev];
-          updated[updated.length - 1] = { role: "assistant", content: accumulated };
-          return updated;
-        });
-      }
-    } catch {
+      const text = await res.text();
+      setMessages((prev) => {
+        const updated = [...prev];
+        updated[updated.length - 1] = { role: "assistant", content: text };
+        return updated;
+      });
+    } catch (err) {
       setMessages((prev) => {
         const updated = [...prev];
         updated[updated.length - 1] = {
           role: "assistant",
-          content: "Sorry, I couldn't process that request. Please try again.",
+          content: err instanceof Error ? err.message : "Sorry, I couldn't process that request. Please try again.",
         };
         return updated;
       });
@@ -102,7 +99,7 @@ export function DocumentChat({ projectId }: DocumentChatProps) {
         height: 600,
         borderRadius: 16,
         background: "#0E1525",
-        border: "1px solid rgba(255,255,255,0.07)",
+        border: "1px solid rgba(255,255,255,0.1)",
         overflow: "hidden",
       }}
     >
@@ -110,7 +107,7 @@ export function DocumentChat({ projectId }: DocumentChatProps) {
       <div
         style={{
           padding: "1rem 1.25rem",
-          borderBottom: "1px solid rgba(255,255,255,0.07)",
+          borderBottom: "1px solid rgba(255,255,255,0.1)",
           display: "flex",
           alignItems: "center",
           gap: "0.625rem",
@@ -231,7 +228,7 @@ export function DocumentChat({ projectId }: DocumentChatProps) {
                   padding: "0.75rem 1rem",
                   borderRadius: msg.role === "user" ? "12px 4px 12px 12px" : "4px 12px 12px 12px",
                   background: msg.role === "user" ? "rgba(99,102,241,0.12)" : "rgba(255,255,255,0.04)",
-                  border: `1px solid ${msg.role === "user" ? "rgba(99,102,241,0.2)" : "rgba(255,255,255,0.07)"}`,
+                  border: `1px solid ${msg.role === "user" ? "rgba(99,102,241,0.2)" : "rgba(255,255,255,0.1)"}`,
                   fontSize: "0.875rem",
                   color: "#CBD5E1",
                   lineHeight: 1.6,
@@ -252,7 +249,7 @@ export function DocumentChat({ projectId }: DocumentChatProps) {
       </div>
 
       {/* Input area */}
-      <div style={{ padding: "0.875rem 1.25rem", borderTop: "1px solid rgba(255,255,255,0.07)", display: "flex", gap: "0.625rem", alignItems: "flex-end" }}>
+      <div style={{ padding: "0.875rem 1.25rem", borderTop: "1px solid rgba(255,255,255,0.1)", display: "flex", gap: "0.625rem", alignItems: "flex-end" }}>
         <textarea
           ref={inputRef}
           value={input}
@@ -288,7 +285,7 @@ export function DocumentChat({ projectId }: DocumentChatProps) {
           style={{
             padding: "0.625rem",
             borderRadius: 10,
-            background: input.trim() && !isLoading ? "linear-gradient(135deg, #14B8A6, #0EA5E9)" : "rgba(255,255,255,0.05)",
+            background: input.trim() && !isLoading ? "linear-gradient(135deg, #14B8A6, #0EA5E9)" : "rgba(255,255,255,0.1)",
             border: "none",
             cursor: input.trim() && !isLoading ? "pointer" : "not-allowed",
             flexShrink: 0,

@@ -131,12 +131,17 @@ interface Article80TrackerProps {
   completedStepIds?: string[];
   // requirementTypes that are "in_progress"
   activeStepIds?: string[];
+  // Map of requirementType → complianceItem id (for click-to-update)
+  complianceItemIdMap?: Record<string, string>;
+  // Called when a step circle is clicked — parent handles mutation
+  onStepClick?: (stepId: string, currentStatus: "pending" | "in_progress" | "met", stepDescription: string) => void;
 }
 
 export function Article80Tracker({
   reviewType,
   completedStepIds = [],
   activeStepIds = [],
+  onStepClick,
 }: Article80TrackerProps) {
   const steps = reviewType === "lpr" ? LPR_STEPS : SPR_STEPS;
   const completedSet = new Set(completedStepIds);
@@ -227,11 +232,36 @@ export function Article80Tracker({
 
           const isLast = idx === steps.length - 1;
 
+          const currentStatus = isCompleted ? "met" : isActive ? "in_progress" : "pending";
+
           return (
             <div key={step.id} style={{ display: "flex", gap: 12 }}>
               {/* Timeline line + icon */}
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
-                <div style={{ color: iconColor, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <button
+                  onClick={() => onStepClick?.(step.id, currentStatus, step.description)}
+                  title={
+                    currentStatus === "pending"
+                      ? "Mark as in progress"
+                      : currentStatus === "in_progress"
+                      ? "Mark as complete"
+                      : "Mark as pending"
+                  }
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    cursor: onStepClick ? "pointer" : "default",
+                    color: iconColor,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "50%",
+                    transition: "opacity 0.15s",
+                  }}
+                  onMouseEnter={(e) => { if (onStepClick) (e.currentTarget as HTMLButtonElement).style.opacity = "0.7"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.opacity = "1"; }}
+                >
                   {isCompleted ? (
                     <CheckCircle2 style={{ width: 18, height: 18 }} />
                   ) : isActive ? (
@@ -252,7 +282,8 @@ export function Article80Tracker({
                   ) : (
                     <Circle style={{ width: 18, height: 18 }} />
                   )}
-                </div>
+                </button>
+                
                 {!isLast && (
                   <div
                     style={{

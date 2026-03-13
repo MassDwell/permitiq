@@ -6,6 +6,7 @@ import { TRPCError } from "@trpc/server";
 import { assertProjectAccess } from "../project-access";
 import {
   BOSTON_BUILDING_REQUIREMENTS,
+  BOSTON_DEMOLITION_REQUIREMENTS,
   BOSTON_TRADE_REQUIREMENTS,
   CAMBRIDGE_BUILDING_REQUIREMENTS,
   BROOKLINE_BUILDING_REQUIREMENTS,
@@ -56,8 +57,17 @@ function getRequirementsSummary(
     return MA_STATE_REQUIREMENTS.map((r) => r.description);
   }
 
-  // For demolition, foundation, excavation — include asbestos/dig safe from MA state
-  if (["demolition", "foundation", "excavation"].includes(permitCategory)) {
+  // For demolition — use jurisdiction-specific requirements
+  if (permitCategory === "demolition") {
+    if (jur.includes("boston")) return BOSTON_DEMOLITION_REQUIREMENTS.map((r) => r.description);
+    // Generic MA demolition fallback
+    return MA_STATE_REQUIREMENTS.filter((r) =>
+      ["asbestos_abatement_docs", "dig_safe", "contractor_license", "sealed_plans"].includes(r.requirementType)
+    ).map((r) => r.description);
+  }
+
+  // Foundation / excavation
+  if (["foundation", "excavation"].includes(permitCategory)) {
     return MA_STATE_REQUIREMENTS.filter((r) =>
       ["asbestos_abatement_docs", "dig_safe", "contractor_license", "sealed_plans"].includes(r.requirementType)
     ).map((r) => r.description);

@@ -7,6 +7,7 @@ import { TRPCError } from "@trpc/server";
 import Anthropic from "@anthropic-ai/sdk";
 import {
   BOSTON_BUILDING_REQUIREMENTS,
+  BOSTON_DEMOLITION_REQUIREMENTS,
   BOSTON_TRADE_REQUIREMENTS,
   CAMBRIDGE_BUILDING_REQUIREMENTS,
   BROOKLINE_BUILDING_REQUIREMENTS,
@@ -19,6 +20,27 @@ import {
 } from "@/lib/permit-requirements";
 
 // Detect jurisdiction from a free-text permit type string
+function normalizeJurisdiction(jurisdiction: string): string {
+  const lower = jurisdiction.toLowerCase();
+  if (/cambridge/.test(lower)) return "cambridge";
+  if (/somerville/.test(lower)) return "somerville";
+  if (/quincy/.test(lower)) return "quincy";
+  if (/newton/.test(lower)) return "newton";
+  if (/waltham/.test(lower)) return "waltham";
+  if (/dedham/.test(lower)) return "dedham";
+  if (/westwood/.test(lower)) return "westwood";
+  if (/needham/.test(lower)) return "needham";
+  if (/norwood/.test(lower)) return "norwood";
+  if (/canton/.test(lower)) return "canton";
+  if (/brookline/.test(lower)) return "brookline";
+  if (/salem/.test(lower)) return "salem";
+  if (/lowell/.test(lower)) return "lowell";
+  if (/springfield/.test(lower)) return "springfield";
+  if (/\bma\b|massachusetts|statewide/.test(lower)) return "ma_statewide";
+  if (/boston/.test(lower)) return "boston";
+  return lower.split(/[,\s]/)[0] ?? "boston";
+}
+
 function detectJurisdiction(permitType: string): string {
   const lower = permitType.toLowerCase();
   if (/cambridge/.test(lower)) return "cambridge";
@@ -70,71 +92,7 @@ function getRequirementsForPermit(
   return null; // trigger AI fallback
 }
 
-const BOSTON_DEMOLITION_REQUIREMENTS = [
-  {
-    requirementType: "demolition_delay_approval",
-    description: "Article 85 Demolition Delay approval from Boston Landmarks Commission",
-    sourceUrl: "https://www.boston.gov/departments/landmarks-commission/how-file-article-85-demolition-review",
-    sourceText: "You must obtain an Article 85 Demolition Delay approval from the Boston Landmarks Commission.",
-    reasoning: "Required to verify building has no historic preservation status before demolition.",
-  },
-  {
-    requirementType: "utility_shutoff_notices",
-    description: "Utility shut-off notices (gas, electrical, telephone, cable)",
-    sourceUrl: "https://www.boston.gov/departments/inspectional-services/how-get-demolition-permit",
-    sourceText: "Shut off notices from all underground and overhead utilities, such as: gas, electrical, telephone and cable companies.",
-    reasoning: "All utilities must be disconnected before demolition can begin safely.",
-  },
-  {
-    requirementType: "bwsc_closed_gsa",
-    description: "Boston Water and Sewer Commission (BWSC) closed GSA",
-    sourceUrl: "https://www.bwsc.org/",
-    sourceText: "The Boston Water and Sewer Commission closed general service agreement GSA.",
-    reasoning: "Water and sewer connections must be formally closed and documented.",
-  },
-  {
-    requirementType: "dep_hazmat_approval",
-    description: "DEP hazardous materials approval",
-    sourceUrl: "https://www.mass.gov/orgs/massachusetts-department-of-environmental-protection",
-    sourceText: "Department of Environmental Protection (DEP) approval for hazardous materials 617-292-5500",
-    reasoning: "Massachusetts DEP must approve hazardous material handling and disposal plan.",
-  },
-  {
-    requirementType: "dig_safe_reference",
-    description: "Dig Safe reference number",
-    sourceUrl: "https://www.digsafe.com",
-    sourceText: "Dig Safe reference number is required.",
-    reasoning: "State law requires Dig Safe clearance before any ground disturbance.",
-  },
-  {
-    requirementType: "pest_control_letter",
-    description: "Pest control contractor letter",
-    sourceUrl: "https://www.boston.gov/departments/inspectional-services/how-get-demolition-permit",
-    sourceText: "A letter or bill from a pest control contractor stating the pest management will be performed before and after the demolition project begins.",
-    reasoning: "Boston ISD requires documented pest management before and after demolition.",
-  },
-  {
-    requirementType: "licensed_builder_documents",
-    description: "Licensed builder + supporting documents (Workers Comp, Mattocks Higgins Affidavit, contract, liability insurance, builder license)",
-    sourceUrl: "https://www.boston.gov/departments/inspectional-services/how-get-demolition-permit",
-    sourceText: "A licensed builder is required with supporting documents, such as: the Workers Compensation Form, Mattocks Higgins Affidavit, contract between parties, liability insurance, copy of your builders license front and back side.",
-    reasoning: "Boston ISD requires licensed contractor with full documentation package.",
-  },
-  {
-    requirementType: "fire_prevention_permit",
-    description: "Boston Fire Prevention permit",
-    sourceUrl: "https://www.boston.gov/departments/fire-prevention",
-    sourceText: "Obtain a permit from Boston Fire Prevention pertaining to the demolition.",
-    reasoning: "Separate Fire Prevention permit required in addition to ISD demolition permit.",
-  },
-  {
-    requirementType: "environmental_services_review",
-    description: "Environmental Services Division review",
-    sourceUrl: "https://www.boston.gov/departments/inspectional-services/how-get-demolition-permit",
-    sourceText: "You will also need a review from our Environmental Services Division on the 4th floor here at 1010 Massachusetts Avenue, or isdenvironmental@boston.gov",
-    reasoning: "ISD Environmental Services must review the demolition plan for environmental compliance.",
-  },
-];
+
 
 export const complianceRouter = createTRPCRouter({
   listForProject: protectedProcedure
@@ -462,7 +420,10 @@ export const complianceRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
       }
 
-      const jurisdiction = detectJurisdiction(input.permitType);
+      // Prefer saved project jurisdiction over permit-type parsing
+      const jurisdiction = project.jurisdiction
+        ? normalizeJurisdiction(project.jurisdiction)
+        : detectJurisdiction(input.permitType);
       const category = detectPermitCategory(input.permitType);
 
       const JURISDICTION_DISPLAY: Record<string, string> = {
@@ -483,6 +444,23 @@ export const complianceRouter = createTRPCRouter({
         sourceText: string;
         reasoning: string;
       }>;
+
+      // Dedup: remove any existing items for this project+jurisdiction+category before re-inserting
+      const existingForCategory = await ctx.db.query.complianceItems.findMany({
+        where: and(
+          eq(complianceItems.projectId, input.projectId),
+          eq(complianceItems.jurisdiction, JURISDICTION_DISPLAY[jurisdiction] ?? "Boston, MA")
+        ),
+        columns: { id: true },
+      });
+      if (existingForCategory.length > 0) {
+        await ctx.db.delete(complianceItems).where(
+          and(
+            eq(complianceItems.projectId, input.projectId),
+            eq(complianceItems.jurisdiction, JURISDICTION_DISPLAY[jurisdiction] ?? "Boston, MA")
+          )
+        );
+      }
 
       const curated = getRequirementsForPermit(jurisdiction, category);
       let isAiGenerated = false;
@@ -629,6 +607,68 @@ export const complianceRouter = createTRPCRouter({
         permitType: input.permitType,
         isAiGenerated,
       };
+    }),
+
+  // Toggle an Article 80 step — upserts if missing, cycles pending → in_progress → met → pending
+  toggleArticle80Step: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string().uuid(),
+        stepId: z.string(), // requirementType / step id
+        stepDescription: z.string(),
+        currentStatus: z.enum(["pending", "in_progress", "met"]),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Verify project ownership
+      const project = await ctx.db.query.projects.findFirst({
+        where: and(
+          eq(projects.id, input.projectId),
+          eq(projects.userId, ctx.dbUser.id)
+        ),
+      });
+      if (!project) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+      }
+
+      // Cycle: pending → in_progress → met → pending
+      const nextStatus =
+        input.currentStatus === "pending"
+          ? "in_progress"
+          : input.currentStatus === "in_progress"
+          ? "met"
+          : "pending";
+
+      // Try to find existing compliance item for this step
+      const existing = await ctx.db.query.complianceItems.findFirst({
+        where: and(
+          eq(complianceItems.projectId, input.projectId),
+          eq(complianceItems.requirementType, input.stepId)
+        ),
+      });
+
+      if (existing) {
+        const [updated] = await ctx.db
+          .update(complianceItems)
+          .set({ status: nextStatus, updatedAt: new Date() })
+          .where(eq(complianceItems.id, existing.id))
+          .returning();
+        return updated;
+      } else {
+        // Create the compliance item for this Article 80 step
+        const [created] = await ctx.db
+          .insert(complianceItems)
+          .values({
+            projectId: input.projectId,
+            requirementType: input.stepId,
+            description: input.stepDescription,
+            jurisdiction: project.jurisdiction ?? "BOSTON_ISD",
+            source: "rule_based",
+            status: nextStatus,
+          })
+          .returning();
+        return created;
+      }
     }),
 
   // Check for overdue items and update status

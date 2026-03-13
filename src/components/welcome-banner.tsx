@@ -80,7 +80,7 @@ export function WelcomeBanner({ projectCount, onCreateProject }: WelcomeBannerPr
             className={`flex items-center gap-3 flex-1 rounded-lg px-4 py-3 transition-all ${
               step.active
                 ? "border border-[rgba(20,184,166,0.2)]"
-                : "border border-[rgba(255,255,255,0.05)] opacity-50"
+                : "border border-[rgba(255,255,255,0.1)] opacity-50"
             }`}
             style={
               step.active
