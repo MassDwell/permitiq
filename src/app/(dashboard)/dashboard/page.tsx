@@ -26,12 +26,15 @@ import {
   ShieldAlert,
   ShieldCheck,
   ShieldQuestion,
+  LayoutGrid,
+  TableIcon,
 } from "lucide-react";
 import { CreateProjectDialog } from "@/components/create-project-dialog";
 import { WelcomeBanner } from "@/components/welcome-banner";
 import { ActivityFeed } from "@/components/activity-feed";
 import { OnboardingModal } from "@/components/onboarding-modal";
 import { EmptyState } from "@/components/empty-state";
+import { ProjectTable } from "@/components/project-table";
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
@@ -44,11 +47,32 @@ function getHealthDot(status: "green" | "yellow" | "red") {
   }
 }
 
+type ViewMode = "table" | "grid";
+
 function DashboardPageContent() {
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("table");
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  // Load view preference from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("meritlayer-dashboard-view");
+      if (saved === "grid" || saved === "table") {
+        setViewMode(saved);
+      }
+    }
+  }, []);
+
+  // Persist view preference
+  const handleViewModeChange = (mode: ViewMode) => {
+    setViewMode(mode);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("meritlayer-dashboard-view", mode);
+    }
+  };
 
   const claimPendingInvite = trpc.collaborators.claimPendingInvite.useMutation({
     onSuccess: ({ projectId }) => {
@@ -234,9 +258,43 @@ function DashboardPageContent() {
         {/* Projects List */}
         <div className="lg:col-span-2">
           <div className="rounded-xl overflow-hidden" style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)' }}>
-            <div className="px-5 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              <h2 className="text-base font-semibold text-[#F1F5F9]">Projects</h2>
-              <p className="text-sm text-[#475569] mt-0.5">Your active construction projects</p>
+            <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <div>
+                <h2 className="text-base font-semibold text-[#F1F5F9]">Projects</h2>
+                <p className="text-sm text-[#475569] mt-0.5">Your active construction projects</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => handleViewModeChange("table")}
+                  className={`p-2 rounded-md transition-colors ${
+                    viewMode === "table"
+                      ? "bg-[rgba(255,255,255,0.1)] text-[#F1F5F9]"
+                      : "text-[#64748B] hover:text-[#94A3B8] hover:bg-[rgba(255,255,255,0.05)]"
+                  }`}
+                  title="Table view"
+                >
+                  <TableIcon className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => handleViewModeChange("grid")}
+                  className={`p-2 rounded-md transition-colors ${
+                    viewMode === "grid"
+                      ? "bg-[rgba(255,255,255,0.1)] text-[#F1F5F9]"
+                      : "text-[#64748B] hover:text-[#94A3B8] hover:bg-[rgba(255,255,255,0.05)]"
+                  }`}
+                  title="Grid view"
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </button>
+                <Button
+                  size="sm"
+                  onClick={() => setCreateProjectOpen(true)}
+                  className="ml-2 bg-[#14B8A6] hover:bg-[#0D9488] text-white h-8 px-3"
+                >
+                  <Plus className="h-3.5 w-3.5 mr-1" />
+                  Add Project
+                </Button>
+              </div>
             </div>
             <div className="p-4">
               {projectsLoading ? (
@@ -246,37 +304,41 @@ function DashboardPageContent() {
                   ))}
                 </div>
               ) : projects && projects.length > 0 ? (
-                <div className="space-y-2">
-                  {projects.map((project) => {
-                    const dotColor = project.healthStatus === 'green' ? '#14B8A6' : project.healthStatus === 'yellow' ? '#F59E0B' : '#EF4444';
-                    const dotGlow = project.healthStatus === 'green' ? 'rgba(20,184,166,0.6)' : project.healthStatus === 'yellow' ? 'rgba(245,158,11,0.6)' : 'rgba(239,68,68,0.6)';
-                    return (
-                      <Link key={project.id} href={`/projects/${project.id}`} className="block">
-                        <div className="flex items-center gap-4 px-4 py-3.5 rounded-lg cursor-pointer transition-all duration-150 hover:bg-[rgba(255,255,255,0.03)]"
-                          style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
-                          <div className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: dotColor, boxShadow: `0 0 6px ${dotGlow}` }} />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-[#F1F5F9] truncate">{project.name}</p>
-                            <p className="text-xs text-[#475569] truncate">{project.address || "No address"}</p>
-                          </div>
-                          <div className="w-20 shrink-0">
-                            <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.1)' }}>
-                              <div className="h-full rounded-full" style={{ width: `${project.healthScore}%`, background: '#14B8A6' }} />
+                viewMode === "table" ? (
+                  <ProjectTable projects={projects} />
+                ) : (
+                  <div className="space-y-2">
+                    {projects.map((project) => {
+                      const dotColor = project.healthStatus === 'green' ? '#14B8A6' : project.healthStatus === 'yellow' ? '#F59E0B' : '#EF4444';
+                      const dotGlow = project.healthStatus === 'green' ? 'rgba(20,184,166,0.6)' : project.healthStatus === 'yellow' ? 'rgba(245,158,11,0.6)' : 'rgba(239,68,68,0.6)';
+                      return (
+                        <Link key={project.id} href={`/projects/${project.id}`} className="block">
+                          <div className="flex items-center gap-4 px-4 py-3.5 rounded-lg cursor-pointer transition-all duration-150 hover:bg-[rgba(255,255,255,0.03)]"
+                            style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
+                            <div className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: dotColor, boxShadow: `0 0 6px ${dotGlow}` }} />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-[#F1F5F9] truncate">{project.name}</p>
+                              <p className="text-xs text-[#475569] truncate">{project.address || "No address"}</p>
                             </div>
-                            <p className="text-xs text-[#475569] text-right mt-0.5">{project.healthScore}%</p>
+                            <div className="w-20 shrink-0">
+                              <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.1)' }}>
+                                <div className="h-full rounded-full" style={{ width: `${project.healthScore}%`, background: '#14B8A6' }} />
+                              </div>
+                              <p className="text-xs text-[#475569] text-right mt-0.5">{project.healthScore}%</p>
+                            </div>
+                            <ArrowRight className="h-4 w-4 text-[#334155] shrink-0" />
                           </div>
-                          <ArrowRight className="h-4 w-4 text-[#334155] shrink-0" />
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )
               ) : (
                 <EmptyState
                   icon={<FolderOpen />}
                   title="No projects yet"
-                  description="Create your first project to start tracking compliance deadlines."
-                  action={{ label: "Create Project", onClick: () => setCreateProjectOpen(true) }}
+                  description="Add your first project to get started."
+                  action={{ label: "Add Project", onClick: () => setCreateProjectOpen(true) }}
                 />
               )}
             </div>
