@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogContent,
+} from "@/components/ui/dialog";
 import {
   Paperclip,
   X,
@@ -20,10 +25,13 @@ import {
   AlertCircle,
   Circle,
   Minus,
+  Image as ImageIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
+import { PhotoCapture } from "@/components/photo-capture";
+import { MobileStatusSheet } from "@/components/mobile-status-sheet";
 
 type ComplianceStatus =
   | "pending"
@@ -94,6 +102,20 @@ const statusConfig: Record<
   },
 };
 
+// Hook for mobile detection
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  return isMobile;
+}
+
 export function ComplianceItemCard({
   item,
   projectId,
@@ -104,6 +126,9 @@ export function ComplianceItemCard({
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [showPrompt, setShowPrompt] = useState(false);
   const [pendingDocId, setPendingDocId] = useState<string | null>(null);
+  const [showStatusSheet, setShowStatusSheet] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   const utils = trpc.useUtils();
 
@@ -167,15 +192,37 @@ export function ComplianceItemCard({
 
   const config = statusConfig[item.status];
 
+  // Filter attached documents to get photos (images)
+  const attachedPhotos = item.attachedDocuments?.filter((ad) =>
+    ad.document.storageUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i) ||
+    ad.document.docType === "other" && ad.document.filename?.startsWith("Photo")
+  ) ?? [];
+
+  const handlePhotoUploaded = () => {
+    utils.compliance.getItemsWithDocuments.invalidate({ projectId });
+    utils.compliance.listForProject.invalidate({ projectId });
+  };
+
+  const handleStatusBadgeClick = () => {
+    if (isMobile && onStatusChange) {
+      setShowStatusSheet(true);
+    }
+  };
+
   return (
     <>
       <Card className="bg-slate-800/50 border-slate-700 p-4">
         <div className="flex items-start gap-3">
-          {/* Status indicator */}
+          {/* Status indicator - tap to open sheet on mobile */}
           <div className="mt-0.5">
             <Badge
               variant="outline"
-              className={cn("gap-1 text-xs", config.className)}
+              className={cn(
+                "gap-1 text-xs",
+                config.className,
+                isMobile && onStatusChange && "cursor-pointer active:scale-95 transition-transform"
+              )}
+              onClick={handleStatusBadgeClick}
             >
               {config.icon}
               {config.label}
@@ -198,27 +245,66 @@ export function ComplianceItemCard({
               </p>
             )}
 
-            {/* Attached document chips */}
+            {/* Photo strip */}
+            {attachedPhotos.length > 0 && (
+              <div className="flex items-center gap-2 mt-3 overflow-x-auto pb-1">
+                {attachedPhotos.map((ad) => (
+                  <button
+                    key={ad.document.id}
+                    onClick={() => setLightboxImage(ad.document.storageUrl)}
+                    className="relative w-12 h-12 rounded-lg overflow-hidden border border-slate-600 hover:border-teal-500 transition-colors shrink-0 group"
+                  >
+                    <Image
+                      src={ad.document.storageUrl}
+                      alt={ad.document.filename}
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                  </button>
+                ))}
+                <PhotoCapture
+                  projectId={projectId}
+                  complianceItemId={item.id}
+                  onPhotoUploaded={handlePhotoUploaded}
+                />
+              </div>
+            )}
+
+            {/* Attached document chips (non-photos) */}
             {item.attachedDocuments && item.attachedDocuments.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mt-2">
-                {item.attachedDocuments.map((ad) => (
-                  <span
-                    key={ad.document.id}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-teal-900/30 text-teal-300 border border-teal-700/50"
-                  >
-                    <FileText className="h-3 w-3" />
-                    <span className="max-w-[120px] truncate">
-                      {ad.document.filename}
-                    </span>
-                    <button
-                      onClick={() => handleDetachDocument(ad.document.id)}
-                      className="hover:text-red-400 transition-colors ml-0.5"
-                      title="Remove document"
+                {item.attachedDocuments
+                  .filter((ad) => !attachedPhotos.includes(ad))
+                  .map((ad) => (
+                    <span
+                      key={ad.document.id}
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-teal-900/30 text-teal-300 border border-teal-700/50"
                     >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                ))}
+                      <FileText className="h-3 w-3" />
+                      <span className="max-w-[120px] truncate">
+                        {ad.document.filename}
+                      </span>
+                      <button
+                        onClick={() => handleDetachDocument(ad.document.id)}
+                        className="hover:text-red-400 transition-colors ml-0.5"
+                        title="Remove document"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+              </div>
+            )}
+
+            {/* Show PhotoCapture if no photos yet */}
+            {attachedPhotos.length === 0 && (
+              <div className="mt-3">
+                <PhotoCapture
+                  projectId={projectId}
+                  complianceItemId={item.id}
+                  onPhotoUploaded={handlePhotoUploaded}
+                />
               </div>
             )}
           </div>
@@ -323,6 +409,33 @@ export function ComplianceItemCard({
           </Card>
         </div>
       )}
+
+      {/* Mobile status sheet */}
+      {showStatusSheet && onStatusChange && (
+        <MobileStatusSheet
+          itemId={item.id}
+          description={item.description}
+          currentStatus={item.status}
+          onStatusChange={onStatusChange}
+          onClose={() => setShowStatusSheet(false)}
+        />
+      )}
+
+      {/* Photo lightbox */}
+      <Dialog open={!!lightboxImage} onOpenChange={() => setLightboxImage(null)}>
+        <DialogContent className="max-w-3xl p-0 bg-black border-slate-700">
+          {lightboxImage && (
+            <div className="relative w-full aspect-[4/3]">
+              <Image
+                src={lightboxImage}
+                alt="Photo"
+                fill
+                className="object-contain"
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
