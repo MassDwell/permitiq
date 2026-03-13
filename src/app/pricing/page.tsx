@@ -394,8 +394,9 @@ function PricingContent() {
 
         <SpotsBar />
 
-        {/* Annual toggle */}
-        <div className="flex items-center justify-center gap-3 mt-10">
+        {/* AUDIT-FIX: Annual toggle hidden — annual Stripe prices not yet created; would mislead customers */}
+        {/* Annual toggle disabled until annual price IDs are configured in Stripe */}
+        <div className="flex items-center justify-center gap-3 mt-10" style={{ display: 'none' }}>
           <span className="text-sm font-medium" style={{ color: isAnnual ? "#475569" : "#F1F5F9" }}>
             Monthly
           </span>
