@@ -5,9 +5,10 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-02-25.clover",
-});
+const getStripe = () =>
+  new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
+    apiVersion: "2026-02-25.clover",
+  });
 
 // Map Stripe price IDs to plan names
 const PRICE_TO_PLAN: Record<string, "starter" | "professional" | "enterprise"> = {
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid price ID" }, { status: 400 });
     }
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: "https://meritlayer.ai/dashboard?welcome=true",

@@ -4,6 +4,7 @@ import { documents, projects, complianceItems } from "@/db/schema";
 import { eq, and, desc, count } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { processDocumentWithAI } from "@/lib/ai/document-processor";
+import { sendDocumentProcessedEmail } from "@/lib/email";
 
 export const documentsRouter = createTRPCRouter({
   list: protectedProcedure
@@ -217,6 +218,22 @@ export const documentsRouter = createTRPCRouter({
             });
           }
         }
+
+        // Calculate how many items were extracted
+        const extractedCount =
+          (extractedData.deadlines?.length ?? 0) +
+          (extractedData.requiredInspections?.length ?? 0) +
+          (extractedData.complianceRequirements?.length ?? 0);
+
+        // Send "document is ready" email (fire-and-forget)
+        sendDocumentProcessedEmail({
+          to: ctx.dbUser.email,
+          userName: ctx.dbUser.name,
+          projectName: doc.project.name,
+          projectId: doc.projectId,
+          documentName: doc.filename,
+          extractedCount,
+        }).catch((err) => console.error("[email] document processed email failed:", err));
 
         return { success: true, extractedData };
       } catch (error) {

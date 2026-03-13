@@ -2,11 +2,8 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { complianceItems, alerts, users, projects, userSettings } from "@/db/schema";
 import { eq, and, sql, lte, gte, isNull, or } from "drizzle-orm";
-import { Resend } from "resend";
 import { generateAlertMessage } from "@/lib/ai/document-processor";
-
-// Lazy-initialize to avoid build-time errors when env vars aren't set
-const getResend = () => new Resend(process.env.RESEND_API_KEY ?? "");
+import { sendDeadlineAlertEmail, sendOverdueAlertEmail } from "@/lib/email";
 
 export async function GET(request: Request) {
   // Verify cron secret for security
@@ -142,31 +139,16 @@ export async function GET(request: Request) {
       alertsSent.push(newAlert.id);
 
       // Send email if enabled
-      if (settings?.emailAlerts && process.env.RESEND_API_KEY) {
+      if (settings?.emailAlerts) {
         try {
-          await getResend().emails.send({
-            from: process.env.RESEND_FROM_EMAIL || "MeritLayer <alerts@meritlayer.com>",
+          await sendDeadlineAlertEmail({
             to: item.project.user.email,
-            subject: `Deadline Alert: ${item.description}`,
-            html: `
-              <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #1f2937;">Deadline Alert</h2>
-                <p style="color: #4b5563;">${message}</p>
-                <div style="background-color: #f3f4f6; padding: 16px; border-radius: 8px; margin: 16px 0;">
-                  <p style="margin: 0; color: #1f2937;"><strong>Project:</strong> ${item.project.name}</p>
-                  <p style="margin: 8px 0 0; color: #1f2937;"><strong>Requirement:</strong> ${item.description}</p>
-                  <p style="margin: 8px 0 0; color: #1f2937;"><strong>Deadline:</strong> ${deadline.toLocaleDateString()}</p>
-                </div>
-                <a href="${process.env.NEXT_PUBLIC_APP_URL}/projects/${item.projectId}"
-                   style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
-                  View Project
-                </a>
-                <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">
-                  You're receiving this because you have deadline alerts enabled.
-                  <a href="${process.env.NEXT_PUBLIC_APP_URL}/settings">Manage preferences</a>
-                </p>
-              </div>
-            `,
+            userName: item.project.user.name,
+            projectName: item.project.name,
+            projectId: item.projectId,
+            requirementDescription: item.description,
+            deadline,
+            daysUntil,
           });
 
           // Update alert with sent timestamp
@@ -177,7 +159,7 @@ export async function GET(request: Request) {
 
           emailsSent.push(item.project.user.email);
         } catch (emailError) {
-          console.error("Failed to send email:", emailError);
+          console.error("Failed to send deadline alert email:", emailError);
         }
       }
     }
@@ -216,27 +198,14 @@ export async function GET(request: Request) {
       alertsSent.push(newAlert.id);
 
       // Send email if enabled
-      if (settings?.emailAlerts && process.env.RESEND_API_KEY) {
+      if (settings?.emailAlerts) {
         try {
-          await getResend().emails.send({
-            from: process.env.RESEND_FROM_EMAIL || "MeritLayer <alerts@meritlayer.com>",
+          await sendOverdueAlertEmail({
             to: item.project.user.email,
-            subject: `OVERDUE: ${item.description}`,
-            html: `
-              <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #dc2626;">Overdue Alert</h2>
-                <p style="color: #4b5563;">${message}</p>
-                <div style="background-color: #fef2f2; padding: 16px; border-radius: 8px; margin: 16px 0; border-left: 4px solid #dc2626;">
-                  <p style="margin: 0; color: #1f2937;"><strong>Project:</strong> ${item.project.name}</p>
-                  <p style="margin: 8px 0 0; color: #1f2937;"><strong>Requirement:</strong> ${item.description}</p>
-                  <p style="margin: 8px 0 0; color: #dc2626;"><strong>Status:</strong> OVERDUE</p>
-                </div>
-                <a href="${process.env.NEXT_PUBLIC_APP_URL}/projects/${item.projectId}"
-                   style="display: inline-block; background-color: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
-                  Take Action Now
-                </a>
-              </div>
-            `,
+            userName: item.project.user.name,
+            projectName: item.project.name,
+            projectId: item.projectId,
+            requirementDescription: item.description,
           });
 
           await db
@@ -246,7 +215,7 @@ export async function GET(request: Request) {
 
           emailsSent.push(item.project.user.email);
         } catch (emailError) {
-          console.error("Failed to send overdue email:", emailError);
+          console.error("Failed to send overdue alert email:", emailError);
         }
       }
     }

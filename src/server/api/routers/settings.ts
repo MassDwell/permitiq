@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { userSettings } from "@/db/schema";
+import { userSettings, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const settingsRouter = createTRPCRouter({
@@ -73,7 +73,31 @@ export const settingsRouter = createTRPCRouter({
       email: ctx.dbUser.email,
       name: ctx.dbUser.name,
       plan: ctx.dbUser.plan,
+      onboardingCompleted: ctx.dbUser.onboardingCompleted,
+      subscriptionStatus: ctx.dbUser.subscriptionStatus,
+      subscriptionPeriodEnd: ctx.dbUser.subscriptionPeriodEnd,
       createdAt: ctx.dbUser.createdAt,
     };
+  }),
+
+  // Update user profile (name)
+  updateProfile: protectedProcedure
+    .input(z.object({ name: z.string().min(1).max(120) }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .update(users)
+        .set({ name: input.name, updatedAt: new Date() })
+        .where(eq(users.id, ctx.dbUser.id));
+      return { success: true };
+    }),
+
+  // Mark onboarding as complete
+  completeOnboarding: protectedProcedure.mutation(async ({ ctx }) => {
+    await ctx.db
+      .update(users)
+      .set({ onboardingCompleted: true, updatedAt: new Date() })
+      .where(eq(users.id, ctx.dbUser.id));
+
+    return { success: true };
   }),
 });

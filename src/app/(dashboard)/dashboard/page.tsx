@@ -577,7 +577,6 @@ function DashboardPageContent() {
       {!projectsLoading && (
         <OnboardingModal
           userName={profile?.name}
-          hasProjects={(projects?.length ?? 0) > 0}
           forceOpen={showOnboarding}
           onClose={() => setShowOnboarding(false)}
         />

@@ -3,6 +3,7 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { projects, documents, complianceItems, complianceSnapshots } from "@/db/schema";
 import { eq, and, desc, count, sql, gte } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { sendProjectCreatedEmail } from "@/lib/email";
 
 export const projectsRouter = createTRPCRouter({
   list: protectedProcedure.query(async ({ ctx }) => {
@@ -136,6 +137,14 @@ export const projectsRouter = createTRPCRouter({
           description: input.description,
         })
         .returning();
+
+      // Send welcome email (fire-and-forget)
+      sendProjectCreatedEmail({
+        to: ctx.dbUser.email,
+        userName: ctx.dbUser.name,
+        projectName: newProject.name,
+        projectId: newProject.id,
+      }).catch((err) => console.error("[email] project created email failed:", err));
 
       return newProject;
     }),
