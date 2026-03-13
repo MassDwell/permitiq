@@ -338,15 +338,28 @@ export default function ProjectDetailPage() {
   ]);
 
   // Group compliance items by permit process
-  const getPermitGroup = (item: { ruleId: string | null; source: string | null; requirementType: string; document?: { filename: string } | null }): string => {
+  const getPermitGroup = (item: { ruleId: string | null; source: string | null; requirementType: string; description?: string; document?: { filename: string } | null }): string => {
     const ruleId = item.ruleId ?? "";
+    const desc = (item.description ?? "").toLowerCase();
+    const reqType = item.requirementType.toLowerCase();
+
+    // --- Demolition Permit ---
     if (
       ruleId.startsWith("boston-isd-demo") ||
       ruleId.startsWith("boston-demolition") ||
-      /demolition/i.test(item.requirementType) ||
-      DEMOLITION_REQUIREMENT_TYPES.has(item.requirementType)
+      /demolition/i.test(reqType) ||
+      DEMOLITION_REQUIREMENT_TYPES.has(item.requirementType) ||
+      // keyword match for extracted PDF items about demolition
+      /demolition|article.?85|landmarks.?commission|asbestos|dig.?safe|pest.?control|utility.?shut|bwsc|fire.?prevention|hazmat|hazardous.?material|environmental.?services/i.test(desc)
     ) return "Demolition Permit";
-    if (ruleId.startsWith("boston-isd-building") || ruleId.startsWith("boston-building")) return "Building Permit";
+
+    // --- Building Permit ---
+    if (
+      ruleId.startsWith("boston-isd-building") ||
+      ruleId.startsWith("boston-building") ||
+      /building.?permit|isd.?portal|construction.?cost|structural.?drawing|architectural.?drawing|zoning.?compliance.?letter|mep.?drawing|site.?plan|deed.?and.?title|contractor.?documentation/i.test(desc)
+    ) return "Building Permit";
+
     if (ruleId.startsWith("boston-isd-trade")) return "Trade Permits";
     if (ruleId.startsWith("boston-isd-article-80-large") || ruleId.startsWith("boston-article-80-large")) return "BPDA Large Project Review";
     if (ruleId.startsWith("boston-isd-article-80-small") || ruleId.startsWith("boston-article-80-small")) return "BPDA Small Project Review";
@@ -356,7 +369,15 @@ export default function ProjectDetailPage() {
     if (ruleId.startsWith("lowell")) return "Lowell Building Permit";
     if (ruleId.startsWith("springfield")) return "Springfield Building Permit";
     if (ruleId.startsWith("ma-state") || ruleId.startsWith("ma_state") || ruleId.startsWith("ma-statewide")) return "Massachusetts State Requirements";
-    if (item.source === "extracted") return item.document?.filename ? `From: ${item.document.filename}` : "Uploaded Documents";
+
+    // Extracted PDF items: categorize by description keywords, not by filename
+    if (item.source === "extracted") {
+      if (/zba|variance|zoning.?board/i.test(desc)) return "ZBA / Variance";
+      if (/article.?80/i.test(desc)) return /large/i.test(desc) ? "BPDA Large Project Review" : "BPDA Small Project Review";
+      if (/inspection|certificate.?of.?occupancy|co\b/i.test(desc)) return "Inspections";
+      return "Uploaded Documents";
+    }
+
     if (item.source === "manual") return "Custom Requirements";
     return "Other Requirements";
   };
@@ -923,9 +944,17 @@ export default function ProjectDetailPage() {
                                         <div style={{ flex: 1, paddingBottom: isLast ? 4 : 14 }}>
                                           {/* Clickable header row */}
                                           <div onClick={() => toggleItemExpand(item.id)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, minHeight: 24 }}>
-                                            <span style={{ fontSize: 13, fontWeight: 500, color: labelColor, textDecoration: item.status === 'met' ? 'line-through' : 'none', flex: 1, lineHeight: '1.45' }}>
-                                              {item.description}
-                                            </span>
+                                            <div style={{ flex: 1 }}>
+                                              <span style={{ fontSize: 13, fontWeight: 500, color: labelColor, textDecoration: item.status === 'met' ? 'line-through' : 'none', lineHeight: '1.45', display: 'block' }}>
+                                                {item.description}
+                                              </span>
+                                              {/* Source badge — shown inline, not as a section header */}
+                                              {item.source === 'extracted' && item.document && (
+                                                <span style={{ fontSize: 10, color: '#475569', marginTop: 2, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                                                  📄 <span style={{ color: '#4B6584', fontStyle: 'italic' }}>{item.document.filename}</span>
+                                                </span>
+                                              )}
+                                            </div>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, marginTop: 1 }}>
                                               <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 100, background: `${dotColor}22`, color: dotColor, whiteSpace: 'nowrap' }}>{statusLabel}</span>
                                               <span style={{ fontSize: 10, color: '#475569', transition: 'transform 0.15s', display: 'inline-block', transform: isExp ? 'rotate(180deg)' : 'none' }}>▼</span>
