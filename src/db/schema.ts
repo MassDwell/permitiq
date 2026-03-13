@@ -85,8 +85,18 @@ export const complianceItems = pgTable("compliance_items", {
   sourceUrl: text("source_url"),
   sourceText: text("source_text"),
   reasoning: text("reasoning"),
+  submittedAt: timestamp("submitted_at"), // CLA-111: when user submitted this to the AHJ
+  followUpSnoozedUntil: timestamp("follow_up_snoozed_until"), // CLA-111: snooze follow-up reminders until this date
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Compliance Item Documents junction table (CLA-108: document ↔ requirement linkage)
+export const complianceItemDocuments = pgTable("compliance_item_documents", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  complianceItemId: uuid("compliance_item_id").notNull().references(() => complianceItems.id, { onDelete: "cascade" }),
+  documentId: uuid("document_id").notNull().references(() => documents.id, { onDelete: "cascade" }),
+  attachedAt: timestamp("attached_at").notNull().defaultNow(),
 });
 
 // Alerts table
@@ -196,6 +206,18 @@ export const complianceItemsRelations = relations(complianceItems, ({ one, many 
     references: [documents.id],
   }),
   alerts: many(alerts),
+  attachedDocuments: many(complianceItemDocuments),
+}));
+
+export const complianceItemDocumentsRelations = relations(complianceItemDocuments, ({ one }) => ({
+  complianceItem: one(complianceItems, {
+    fields: [complianceItemDocuments.complianceItemId],
+    references: [complianceItems.id],
+  }),
+  document: one(documents, {
+    fields: [complianceItemDocuments.documentId],
+    references: [documents.id],
+  }),
 }));
 
 export const alertsRelations = relations(alerts, ({ one }) => ({
@@ -337,6 +359,8 @@ export type Document = typeof documents.$inferSelect;
 export type NewDocument = typeof documents.$inferInsert;
 export type ComplianceItem = typeof complianceItems.$inferSelect;
 export type NewComplianceItem = typeof complianceItems.$inferInsert;
+export type ComplianceItemDocument = typeof complianceItemDocuments.$inferSelect;
+export type NewComplianceItemDocument = typeof complianceItemDocuments.$inferInsert;
 export type Alert = typeof alerts.$inferSelect;
 export type NewAlert = typeof alerts.$inferInsert;
 export type WaitlistEntry = typeof waitlist.$inferSelect;
