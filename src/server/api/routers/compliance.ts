@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { complianceItems, projects, jurisdictionRules, complianceSnapshots, jurisdictionRequests } from "@/db/schema";
-import { eq, and, desc, sql } from "drizzle-orm";
+import { complianceItems, projects, jurisdictionRules, complianceSnapshots, jurisdictionRequests, complianceItemDocuments, documents } from "@/db/schema";
+import { eq, and, desc, sql, isNull, lt } from "drizzle-orm";
 import { assertProjectAccess } from "../project-access";
 import { TRPCError } from "@trpc/server";
 import Anthropic from "@anthropic-ai/sdk";
@@ -701,4 +701,223 @@ export const complianceRouter = createTRPCRouter({
 
     return { updatedCount: result.length };
   }),
+
+  // CLA-108: Attach a document to a compliance item
+  attachDocument: protectedProcedure
+    .input(z.object({
+      complianceItemId: z.string().uuid(),
+      documentId: z.string().uuid(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      // Verify compliance item exists and user has access
+      const item = await ctx.db.query.complianceItems.findFirst({
+        where: eq(complianceItems.id, input.complianceItemId),
+        with: { project: true },
+      });
+
+      if (!item) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Compliance item not found" });
+      }
+
+      await assertProjectAccess(ctx.db, item.project.id, ctx.dbUser.id, ctx.userId);
+
+      // Verify document exists and belongs to the same project
+      const doc = await ctx.db.query.documents.findFirst({
+        where: and(
+          eq(documents.id, input.documentId),
+          eq(documents.projectId, item.project.id)
+        ),
+      });
+
+      if (!doc) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Document not found in this project" });
+      }
+
+      // Check if already attached
+      const existing = await ctx.db.query.complianceItemDocuments.findFirst({
+        where: and(
+          eq(complianceItemDocuments.complianceItemId, input.complianceItemId),
+          eq(complianceItemDocuments.documentId, input.documentId)
+        ),
+      });
+
+      if (existing) {
+        return existing; // Already attached
+      }
+
+      const [record] = await ctx.db
+        .insert(complianceItemDocuments)
+        .values({
+          complianceItemId: input.complianceItemId,
+          documentId: input.documentId,
+        })
+        .returning();
+
+      return record;
+    }),
+
+  // CLA-108: Detach a document from a compliance item
+  detachDocument: protectedProcedure
+    .input(z.object({
+      complianceItemId: z.string().uuid(),
+      documentId: z.string().uuid(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      // Verify compliance item exists and user has access
+      const item = await ctx.db.query.complianceItems.findFirst({
+        where: eq(complianceItems.id, input.complianceItemId),
+        with: { project: true },
+      });
+
+      if (!item) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Compliance item not found" });
+      }
+
+      await assertProjectAccess(ctx.db, item.project.id, ctx.dbUser.id, ctx.userId);
+
+      await ctx.db
+        .delete(complianceItemDocuments)
+        .where(
+          and(
+            eq(complianceItemDocuments.complianceItemId, input.complianceItemId),
+            eq(complianceItemDocuments.documentId, input.documentId)
+          )
+        );
+
+      return { success: true };
+    }),
+
+  // CLA-108: Get compliance items with their attached documents
+  getItemsWithDocuments: protectedProcedure
+    .input(z.object({ projectId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      await assertProjectAccess(ctx.db, input.projectId, ctx.dbUser.id, ctx.userId);
+
+      return ctx.db.query.complianceItems.findMany({
+        where: eq(complianceItems.projectId, input.projectId),
+        orderBy: [complianceItems.deadline, desc(complianceItems.createdAt)],
+        with: {
+          document: {
+            columns: {
+              id: true,
+              filename: true,
+            },
+          },
+          attachedDocuments: {
+            with: {
+              document: {
+                columns: {
+                  id: true,
+                  filename: true,
+                  storageUrl: true,
+                  docType: true,
+                },
+              },
+            },
+          },
+        },
+      });
+    }),
+
+  // CLA-111: Set the submitted date for a compliance item
+  setSubmittedDate: protectedProcedure
+    .input(z.object({
+      complianceItemId: z.string().uuid(),
+      submittedAt: z.date(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const item = await ctx.db.query.complianceItems.findFirst({
+        where: eq(complianceItems.id, input.complianceItemId),
+        with: { project: true },
+      });
+
+      if (!item) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Compliance item not found" });
+      }
+
+      await assertProjectAccess(ctx.db, item.project.id, ctx.dbUser.id, ctx.userId);
+
+      const [updated] = await ctx.db
+        .update(complianceItems)
+        .set({
+          submittedAt: input.submittedAt,
+          status: "in_progress", // Auto-set to in_progress when submitted
+          updatedAt: new Date(),
+        })
+        .where(eq(complianceItems.id, input.complianceItemId))
+        .returning();
+
+      return updated;
+    }),
+
+  // CLA-111: Snooze follow-up reminders for a compliance item
+  snoozeFollowUp: protectedProcedure
+    .input(z.object({
+      complianceItemId: z.string().uuid(),
+      days: z.number().min(1).max(90).default(7),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const item = await ctx.db.query.complianceItems.findFirst({
+        where: eq(complianceItems.id, input.complianceItemId),
+        with: { project: true },
+      });
+
+      if (!item) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Compliance item not found" });
+      }
+
+      await assertProjectAccess(ctx.db, item.project.id, ctx.dbUser.id, ctx.userId);
+
+      const snoozedUntil = new Date();
+      snoozedUntil.setDate(snoozedUntil.getDate() + input.days);
+
+      const [updated] = await ctx.db
+        .update(complianceItems)
+        .set({
+          followUpSnoozedUntil: snoozedUntil,
+          updatedAt: new Date(),
+        })
+        .where(eq(complianceItems.id, input.complianceItemId))
+        .returning();
+
+      return updated;
+    }),
+
+  // CLA-111: Get items pending follow-up (submitted >7 days ago, still in_progress, not snoozed)
+  getPendingFollowUps: protectedProcedure
+    .input(z.object({ projectId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      await assertProjectAccess(ctx.db, input.projectId, ctx.dbUser.id, ctx.userId);
+
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const now = new Date();
+
+      // Get items where:
+      // - submitted_at IS NOT NULL
+      // - status = 'in_progress'
+      // - (follow_up_snoozed_until IS NULL OR follow_up_snoozed_until < NOW())
+      // - submitted_at < NOW() - 7 days
+      const items = await ctx.db.query.complianceItems.findMany({
+        where: and(
+          eq(complianceItems.projectId, input.projectId),
+          eq(complianceItems.status, "in_progress"),
+          sql`${complianceItems.submittedAt} IS NOT NULL`,
+          lt(complianceItems.submittedAt, sevenDaysAgo),
+          sql`(${complianceItems.followUpSnoozedUntil} IS NULL OR ${complianceItems.followUpSnoozedUntil} < ${now})`
+        ),
+        with: {
+          project: {
+            columns: {
+              id: true,
+              name: true,
+              address: true,
+              jurisdiction: true,
+            },
+          },
+        },
+      });
+
+      return items;
+    }),
 });
