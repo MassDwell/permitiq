@@ -167,6 +167,7 @@ export default function ProjectDetailPage() {
   const [shareLabel, setShareLabel] = useState("");
   const [generatedShareUrl, setGeneratedShareUrl] = useState("");
   const [copiedShareUrl, setCopiedShareUrl] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [upgradeModalConfig, setUpgradeModalConfig] = useState<{ title: string; description: string }>({
     title: "Upgrade to Professional",
@@ -525,8 +526,9 @@ export default function ProjectDetailPage() {
           </div>
         </div>
 
-        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
-          style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px] cursor-pointer select-none"
+          onClick={() => { setActiveTab("compliance"); setStatusFilter(statusFilter === "met" ? null : "met"); }}
+          style={{ background: '#1E293B', border: statusFilter === "met" ? '1px solid rgba(16,185,129,0.5)' : '1px solid rgba(255,255,255,0.1)', boxShadow: statusFilter === "met" ? '0 0 0 2px rgba(16,185,129,0.15)' : '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-medium text-[#CBD5E1]">Requirements Met</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
@@ -537,10 +539,12 @@ export default function ProjectDetailPage() {
           <p className="text-4xl font-bold tracking-tight text-[#10B981]">
             {project.metItems}<span className="text-xl text-[#475569]">/{project.totalItems}</span>
           </p>
+          {statusFilter === "met" && <p className="text-xs text-[#10B981] mt-2 font-medium">● Filtering</p>}
         </div>
 
-        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
-          style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px] cursor-pointer select-none"
+          onClick={() => { setActiveTab("compliance"); setStatusFilter(statusFilter === "pending" ? null : "pending"); }}
+          style={{ background: '#1E293B', border: statusFilter === "pending" ? '1px solid rgba(245,158,11,0.5)' : '1px solid rgba(255,255,255,0.1)', boxShadow: statusFilter === "pending" ? '0 0 0 2px rgba(245,158,11,0.15)' : '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-medium text-[#CBD5E1]">Pending</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
@@ -549,10 +553,12 @@ export default function ProjectDetailPage() {
             </div>
           </div>
           <p className="text-4xl font-bold tracking-tight text-[#F59E0B]">{project.pendingItems}</p>
+          {statusFilter === "pending" && <p className="text-xs text-[#F59E0B] mt-2 font-medium">● Filtering</p>}
         </div>
 
-        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
-          style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+        <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px] cursor-pointer select-none"
+          onClick={() => { setActiveTab("compliance"); setStatusFilter(statusFilter === "overdue" ? null : "overdue"); }}
+          style={{ background: '#1E293B', border: statusFilter === "overdue" ? '1px solid rgba(239,68,68,0.5)' : '1px solid rgba(255,255,255,0.1)', boxShadow: statusFilter === "overdue" ? '0 0 0 2px rgba(239,68,68,0.15)' : '0 1px 3px rgba(0,0,0,0.3)' }}>
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-medium text-[#CBD5E1]">Overdue</p>
             <div className="h-8 w-8 rounded-lg flex items-center justify-center"
@@ -561,6 +567,7 @@ export default function ProjectDetailPage() {
             </div>
           </div>
           <p className="text-4xl font-bold tracking-tight text-[#EF4444]">{project.overdueItems}</p>
+          {statusFilter === "overdue" && <p className="text-xs text-[#EF4444] mt-2 font-medium">● Filtering</p>}
         </div>
       </div>
 
@@ -667,9 +674,19 @@ export default function ProjectDetailPage() {
 
             {/* Header + action buttons */}
             <div className="flex items-center justify-between gap-3">
-              <div>
-                <h2 className="text-lg font-semibold text-foreground">Permit Requirements</h2>
-                <p className="text-sm text-muted-foreground mt-0.5">Complete each step in order to get your permit approved</p>
+              <div className="flex items-center gap-3">
+                <div>
+                  <h2 className="text-lg font-semibold text-foreground">Permit Requirements</h2>
+                  <p className="text-sm text-muted-foreground mt-0.5">Complete each step in order to get your permit approved</p>
+                </div>
+                {statusFilter && (
+                  <button onClick={() => setStatusFilter(null)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-colors"
+                    style={{ background: 'rgba(20,184,166,0.12)', border: '1px solid rgba(20,184,166,0.3)', color: '#5EEAD4' }}>
+                    {statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)} only
+                    <span className="ml-1 opacity-70">✕</span>
+                  </button>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" onClick={() => { const lower = project.name.toLowerCase(); setResearchPermitType(/demo(lition)?/.test(lower) ? "demolition" : ""); setResearchOpen(true); }}>
@@ -682,7 +699,9 @@ export default function ProjectDetailPage() {
             </div>
 
             {project.complianceItems.length > 0 ? (() => {
-              const items = project.complianceItems;
+              const items = statusFilter
+                ? project.complianceItems.filter((i) => i.status === statusFilter)
+                : project.complianceItems;
               const totalSteps = items.length;
               const completeSteps = items.filter((i) => i.status === "met").length;
               const pct = totalSteps > 0 ? Math.round((completeSteps / totalSteps) * 100) : 0;
