@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     }
 
     const stream = await client.messages.stream({
-      model: "claude-3-5-sonnet-latest",
+      model: "claude-sonnet-4-5-20251001",
       max_tokens: 1500,
       system:
         "You are a construction permit consultant specializing in Massachusetts building regulations (780 CMR). Draft a professional, concise response to the following permit objection. Cite specific code sections (IBC, 780 CMR, or local ordinances). Be persuasive but professional. Format as a formal letter.",
