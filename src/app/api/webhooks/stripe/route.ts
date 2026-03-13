@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 
 const getStripe = () => new Stripe((process.env.STRIPE_SECRET_KEY ?? "").trim());
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!.trim();
+const webhookSecret = (process.env.STRIPE_WEBHOOK_SECRET ?? "").trim();
 
 // Map Stripe price IDs to plan names
 const PRICE_TO_PLAN: Record<string, "starter" | "professional" | "enterprise"> = {
