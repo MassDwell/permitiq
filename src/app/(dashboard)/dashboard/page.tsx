@@ -49,11 +49,11 @@ function DashboardPageContent() {
   const searchParams = useSearchParams();
 
   const { data: projects, isLoading: projectsLoading } =
-    trpc.projects.list.useQuery();
+    trpc.projects.list.useQuery(undefined, { staleTime: 30_000 });
   const { data: upcomingDeadlines, isLoading: deadlinesLoading } =
-    trpc.projects.getUpcomingDeadlines.useQuery({ days: 30 });
-  const { data: profile } = trpc.settings.getProfile.useQuery();
-  const { data: velocityData } = trpc.projects.getComplianceVelocity.useQuery();
+    trpc.projects.getUpcomingDeadlines.useQuery({ days: 30 }, { staleTime: 30_000 });
+  const { data: profile } = trpc.settings.getProfile.useQuery(undefined, { staleTime: 60_000 });
+  const { data: velocityData } = trpc.projects.getComplianceVelocity.useQuery(undefined, { staleTime: 60_000 });
 
   // Show success toast on post-checkout redirect (?welcome=true)
   useEffect(() => {
@@ -126,9 +126,9 @@ function DashboardPageContent() {
       : "stable";
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-8 gap-3">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
           <p className="text-muted-foreground mt-1">
@@ -148,7 +148,7 @@ function DashboardPageContent() {
       />
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {/* Total Projects */}
         <div className="rounded-xl p-5 transition-all duration-200 hover:translate-y-[-1px]"
           style={{ background: '#0E1525', border: '1px solid rgba(255,255,255,0.07)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>

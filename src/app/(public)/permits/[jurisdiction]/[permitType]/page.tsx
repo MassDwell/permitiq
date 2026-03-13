@@ -36,6 +36,26 @@ export async function generateMetadata({
   };
 }
 
+// Build Article JSON-LD schema
+function buildArticleSchema(cityName: string, permitName: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: `${cityName} ${permitName} Requirements`,
+    description: `Complete guide to ${cityName} ${permitName} requirements, fee schedule, checklist, and department contacts in Massachusetts.`,
+    publisher: {
+      "@type": "Organization",
+      name: "MeritLayer",
+      url: "https://meritlayer.ai",
+    },
+    author: {
+      "@type": "Organization",
+      name: "MeritLayer",
+    },
+    dateModified: new Date(PERMIT_RULES.lastUpdated).toISOString(),
+  };
+}
+
 // Build the JSON-LD structured data (HowTo schema)
 function buildHowToSchema(
   cityName: string,
@@ -94,9 +114,14 @@ export default async function PermitGuidePage({
     : permitTypeData?.whatRequiresPermit;
 
   const jsonLd = buildHowToSchema(cityName, permitName, requirements, processSteps);
+  const articleJsonLd = buildArticleSchema(cityName, permitName);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
