@@ -1,40 +1,48 @@
 import Link from "next/link";
-import { Building2 } from "lucide-react";
+import { Logo } from "@/components/ui/logo";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-white">
-      <nav className="border-b bg-white/90 backdrop-blur-sm sticky top-0 z-50">
+    <div style={{ minHeight: "100vh", background: "#080D1A", color: "#F1F5F9" }}>
+      <nav
+        className="sticky top-0 z-50 backdrop-blur-sm"
+        style={{ background: "rgba(6,11,23,0.95)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14">
             <div className="flex items-center gap-6">
-              <Link href="/" className="flex items-center gap-2">
-                <Building2 className="h-6 w-6 text-blue-600" />
-                <span className="font-bold text-gray-900">MeritLayer</span>
+              <Link href="/">
+                <Logo size="md" />
               </Link>
               <Link
                 href="/permits"
-                className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-sm text-[#64748B] hover:text-[#94A3B8] transition-colors"
               >
                 Permit Guides
               </Link>
               <Link
                 href="/tools/soft-costs-calculator"
-                className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-sm text-[#64748B] hover:text-[#94A3B8] transition-colors"
               >
-                Soft Costs Calculator
+                Soft Costs
+              </Link>
+              <Link
+                href="/tools/zoning-lookup"
+                className="text-sm text-[#64748B] hover:text-[#94A3B8] transition-colors"
+              >
+                Zoning Lookup
               </Link>
             </div>
             <div className="flex items-center gap-3">
               <Link
                 href="/sign-in"
-                className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                className="text-sm text-[#94A3B8] hover:text-white transition-colors"
               >
                 Sign In
               </Link>
               <Link
                 href="/sign-up"
-                className="text-sm bg-blue-600 text-white px-4 py-1.5 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                className="text-sm px-4 py-1.5 rounded-lg font-medium bg-[#14B8A6] text-white hover:bg-[#0D9488] transition-colors"
               >
                 Get Started
               </Link>
@@ -43,15 +51,19 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         </div>
       </nav>
       {children}
-      <footer className="border-t py-8 mt-16 bg-gray-50">
+      <footer
+        className="py-8 mt-16"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "#060B17" }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-blue-600" />
-              <span className="font-bold text-gray-900">MeritLayer</span>
-              <span className="text-gray-400 text-sm">AI-powered permit compliance for MA developers</span>
+            <div className="flex items-center gap-3">
+              <Logo size="sm" />
+              <span className="text-sm" style={{ color: "#475569" }}>
+                AI-powered permit compliance for MA developers
+              </span>
             </div>
-            <p className="text-gray-400 text-sm">
+            <p className="text-sm" style={{ color: "#475569" }}>
               &copy; {new Date().getFullYear()} MeritLayer. All rights reserved.
             </p>
           </div>
