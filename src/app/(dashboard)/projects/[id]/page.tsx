@@ -181,7 +181,7 @@ export default function ProjectDetailPage() {
 
   const utils = trpc.useUtils();
 
-  const { data: project, isLoading } = trpc.projects.get.useQuery({
+  const { data: project, isLoading, error } = trpc.projects.get.useQuery({
     id: projectId,
   });
 
@@ -325,14 +325,14 @@ export default function ProjectDetailPage() {
     );
   }
 
-  if (!project) {
+  if (error || !project) {
     return (
       <div className="p-8 text-center">
         <h1 className="text-2xl font-bold text-foreground mb-2">
-          Project not found
+          {error ? "Failed to load project" : "Project not found"}
         </h1>
         <p className="text-muted-foreground mb-4">
-          This project doesn&apos;t exist or you don&apos;t have access to it.
+          {error ? error.message : "This project doesn't exist or you don't have access to it."}
         </p>
         <Link href="/dashboard">
           <Button>

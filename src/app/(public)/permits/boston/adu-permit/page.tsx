@@ -462,7 +462,7 @@ export default function BostonADUPermitPage() {
                   >
                     <Icon className="h-4 w-4 text-[#64748B] group-hover:text-[#14B8A6] flex-shrink-0" />
                     <p className="text-sm text-[#94A3B8] group-hover:text-[#14B8A6] transition-colors">{g.label}</p>
-                    <ChevronRight className="h-3.5 w-3.5 text-gray-300 group-hover:text-[#14B8A6] ml-auto flex-shrink-0" />
+                    <ChevronRight className="h-3.5 w-3.5 text-white/30 group-hover:text-[#14B8A6] ml-auto flex-shrink-0" />
                   </Link>
                 );
               })}
