@@ -151,6 +151,7 @@ export function CreateProjectDialog({
               <Label htmlFor="name">Project Name *</Label>
               <Input
                 id="name"
+                className="text-base"
                 placeholder="e.g., 123 Main Street Renovation"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -162,6 +163,7 @@ export function CreateProjectDialog({
               <Label htmlFor="address">Address</Label>
               <Input
                 id="address"
+                className="text-base"
                 placeholder="Full project address"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
@@ -220,6 +222,7 @@ export function CreateProjectDialog({
                 <Label htmlFor="unitCount">Number of Units <span style={{ color: "#64748B", fontWeight: 400 }}>(optional)</span></Label>
                 <Input
                   id="unitCount"
+                  className="text-base"
                   type="number"
                   min="1"
                   placeholder="e.g. 12"
@@ -250,6 +253,7 @@ export function CreateProjectDialog({
               </div>
               <Input
                 id="grossFloorArea"
+                className="text-base"
                 type="number"
                 min="1"
                 placeholder="e.g. 25000"
@@ -265,6 +269,7 @@ export function CreateProjectDialog({
               <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
+                className="text-base"
                 placeholder="Brief project description..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}

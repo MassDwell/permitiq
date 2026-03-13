@@ -158,6 +158,7 @@ export function AddPermitDialog({
             <Label htmlFor="permitName">Permit Name *</Label>
             <Input
               id="permitName"
+              className="text-base"
               value={permitName}
               onChange={(e) => setPermitName(e.target.value)}
               placeholder="e.g. Building Permit - New Construction"
@@ -168,6 +169,7 @@ export function AddPermitDialog({
             <Label htmlFor="jurisdiction">Jurisdiction</Label>
             <Input
               id="jurisdiction"
+              className="text-base"
               value={jurisdiction}
               onChange={(e) => setJurisdiction(e.target.value)}
               placeholder="e.g. Boston ISD, Cambridge, Brookline"
@@ -179,6 +181,7 @@ export function AddPermitDialog({
               <Label htmlFor="assignedTo">Assigned To</Label>
               <Input
                 id="assignedTo"
+                className="text-base"
                 value={assignedTo}
                 onChange={(e) => setAssignedTo(e.target.value)}
                 placeholder="Me, Architect, GC..."
@@ -189,6 +192,7 @@ export function AddPermitDialog({
               <Label htmlFor="assignedToEmail">Email (optional)</Label>
               <Input
                 id="assignedToEmail"
+                className="text-base"
                 type="email"
                 value={assignedToEmail}
                 onChange={(e) => setAssignedToEmail(e.target.value)}
@@ -230,6 +234,7 @@ export function AddPermitDialog({
             <Label htmlFor="notes">Notes</Label>
             <Textarea
               id="notes"
+              className="text-base"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Any notes about this permit..."

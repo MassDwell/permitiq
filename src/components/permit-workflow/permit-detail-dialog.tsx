@@ -233,6 +233,7 @@ export function PermitDetailDialog({
                     <div className="flex-1 space-y-1.5">
                       <Label>Permit Number</Label>
                       <Input
+                        className="text-base"
                         value={newPermitNumber}
                         onChange={(e) => setNewPermitNumber(e.target.value)}
                         placeholder="e.g. ISD-2024-001234"
@@ -264,6 +265,7 @@ export function PermitDetailDialog({
                   <div className="space-y-1.5">
                     <Label>Assigned To</Label>
                     <Input
+                      className="text-base"
                       value={editAssignedTo}
                       onChange={(e) => { setEditAssignedTo(e.target.value); setDetailsEdited(true); }}
                       placeholder="Me, Architect, GC..."
@@ -272,6 +274,7 @@ export function PermitDetailDialog({
                   <div className="space-y-1.5">
                     <Label>Email</Label>
                     <Input
+                      className="text-base"
                       type="email"
                       value={editAssignedToEmail}
                       onChange={(e) => { setEditAssignedToEmail(e.target.value); setDetailsEdited(true); }}
@@ -303,6 +306,7 @@ export function PermitDetailDialog({
                   <div className="space-y-1.5">
                     <Label>Estimated Fee ($)</Label>
                     <Input
+                      className="text-base"
                       type="number"
                       value={editEstimatedFee}
                       onChange={(e) => { setEditEstimatedFee(e.target.value); setDetailsEdited(true); }}
@@ -312,6 +316,7 @@ export function PermitDetailDialog({
                   <div className="col-span-2 space-y-1.5">
                     <Label>Notes</Label>
                     <Textarea
+                      className="text-base"
                       value={editNotes}
                       onChange={(e) => { setEditNotes(e.target.value); setDetailsEdited(true); }}
                       placeholder="Notes about this permit..."
@@ -394,7 +399,7 @@ export function PermitDetailDialog({
                     onChange={(e) => setCommentContent(e.target.value)}
                     placeholder="Add a note, rejection reason, or internal comment..."
                     rows={2}
-                    className="bg-white"
+                    className="bg-white text-base"
                   />
                   <div className="flex items-center gap-2">
                     <Select
@@ -416,7 +421,7 @@ export function PermitDetailDialog({
                       value={commentSource}
                       onChange={(e) => setCommentSource(e.target.value)}
                       placeholder="Source (ISD, ZBA...)"
-                      className="h-8 text-xs"
+                      className="h-8 text-base"
                     />
                     <Button
                       size="sm"

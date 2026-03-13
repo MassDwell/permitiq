@@ -2,7 +2,7 @@
   "name": "MeritLayer",
   "short_name": "MeritLayer",
   "description": "Permit compliance tracking",
-  "start_url": "/dashboard",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#0E1525",
   "theme_color": "#14B8A6",

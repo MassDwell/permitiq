@@ -39,7 +39,7 @@ export default function AuditTrailPage() {
 
   if (isLoading) {
     return (
-      <div className="p-8 space-y-4">
+      <div className="p-4 sm:p-8 space-y-4">
         <Skeleton className="h-8 w-64" />
         <Skeleton className="h-4 w-96" />
         <Skeleton className="h-64" />
@@ -49,7 +49,7 @@ export default function AuditTrailPage() {
 
   if (!project) {
     return (
-      <div className="p-8 text-center">
+      <div className="p-4 sm:p-8 text-center">
         <p className="text-muted-foreground">Project not found.</p>
         <Link href="/dashboard"><Button className="mt-4">Back to Dashboard</Button></Link>
       </div>
@@ -75,7 +75,7 @@ export default function AuditTrailPage() {
       `}</style>
 
       {/* Controls — hidden when printing */}
-      <div className="no-print sticky top-0 z-10 flex items-center gap-3 px-8 py-4"
+      <div className="no-print sticky top-0 z-10 flex items-center gap-3 px-4 sm:px-8 py-4 flex-wrap"
         style={{ background: '#1E293B', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
         <Link href={`/projects/${projectId}`}>
           <Button variant="outline" size="sm">

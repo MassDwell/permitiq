@@ -18,7 +18,7 @@ export function MobileNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
       style={{
         background: '#0F172A',
         borderTop: '1px solid rgba(255,255,255,0.1)',
@@ -32,7 +32,7 @@ export function MobileNav() {
               key={item.name}
               href={item.href}
               className={cn(
-                'flex flex-col items-center gap-1 py-3 px-4 text-xs font-medium transition-colors',
+                'flex flex-col items-center gap-1 py-3 px-4 text-xs font-medium transition-colors min-h-[44px] justify-center',
                 isActive ? 'text-[#14B8A6]' : 'text-[#475569]'
               )}
             >
@@ -42,7 +42,7 @@ export function MobileNav() {
           );
         })}
         <SignOutButton>
-          <button className="flex flex-col items-center gap-1 py-3 px-4 text-xs font-medium transition-colors text-[#475569] hover:text-red-400">
+          <button className="flex flex-col items-center gap-1 py-3 px-4 text-xs font-medium transition-colors text-[#475569] hover:text-red-400 min-h-[44px] justify-center">
             <LogOut className="h-5 w-5" />
             Sign Out
           </button>

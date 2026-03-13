@@ -172,14 +172,14 @@ function DashboardPageContent() {
   return (
     <div className="p-4 sm:p-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8 gap-3">
+      <div className="flex items-center justify-between mb-8 gap-3 flex-wrap">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
           <p className="text-muted-foreground mt-1">
             Welcome back{profile?.name ? `, ${profile.name}` : ""}
           </p>
         </div>
-        <Button onClick={() => setCreateProjectOpen(true)} className="bg-primary text-primary-foreground hover:bg-primary/90">
+        <Button onClick={() => setCreateProjectOpen(true)} className="bg-primary text-primary-foreground hover:bg-primary/90 min-h-[44px]">
           <Plus className="h-4 w-4 mr-2" />
           New Project
         </Button>

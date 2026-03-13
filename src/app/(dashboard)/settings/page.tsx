@@ -104,7 +104,7 @@ export default function SettingsPage() {
   const isLoading = profileLoading || settingsLoading;
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-4 sm:p-8 max-w-4xl">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[#F1F5F9]">Settings</h1>

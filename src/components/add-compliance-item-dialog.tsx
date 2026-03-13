@@ -120,6 +120,7 @@ export function AddComplianceItemDialog({
               <Label htmlFor="description">Description *</Label>
               <Textarea
                 id="description"
+                className="text-base"
                 placeholder="e.g., Submit building permit application"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -157,6 +158,7 @@ export function AddComplianceItemDialog({
               <Label htmlFor="notes">Notes</Label>
               <Textarea
                 id="notes"
+                className="text-base"
                 placeholder="Additional notes or context..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
