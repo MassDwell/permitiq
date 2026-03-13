@@ -85,7 +85,7 @@ export default function RootLayout({
         elements: {
           card: 'bg-[#111827] border border-white/10 shadow-2xl',
           headerTitle: 'text-white',
-          socialButtonsBlockButton: 'bg-white/5 border-white/10 text-white hover:bg-white/10',
+          socialButtonsBlockButton: 'bg-white border border-gray-300 text-gray-900 hover:bg-gray-100',
           formFieldInput: 'bg-[#111827] border-white/10 text-white',
           footerActionLink: 'text-teal-400',
         },
