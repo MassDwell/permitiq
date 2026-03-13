@@ -9,6 +9,11 @@ import { seedSomervilleRules } from "@/db/seeds/somerville-rules";
 import { seedQuincyRules } from "@/db/seeds/quincy-rules";
 import { seedNewtonRules } from "@/db/seeds/newton-rules";
 import { seedWalthamRules } from "@/db/seeds/waltham-rules";
+import { seedDedhamRules } from "@/db/seeds/dedham-rules";
+import { seedWestwoodRules } from "@/db/seeds/westwood-rules";
+import { seedNeedhamRules } from "@/db/seeds/needham-rules";
+import { seedNorwoodRules } from "@/db/seeds/norwood-rules";
+import { seedCantonRules } from "@/db/seeds/canton-rules";
 
 // Supported MA jurisdiction codes
 export const SUPPORTED_JURISDICTION_CODES = [
@@ -36,6 +41,16 @@ export const SUPPORTED_JURISDICTION_CODES = [
   "WALTHAM_ISD",
   "WALTHAM_ZBA",
   "WALTHAM_PLANNING",
+  // Dedham
+  "DEDHAM_MA",
+  // Westwood
+  "WESTWOOD_MA",
+  // Needham
+  "NEEDHAM_MA",
+  // Norwood
+  "NORWOOD_MA",
+  // Canton
+  "CANTON_MA",
   // State-level
   "MA_GENERIC",
 ] as const;
@@ -319,6 +334,31 @@ export const jurisdictionRulesRouter = createTRPCRouter({
     return seedWalthamRules();
   }),
 
+  // Admin: seed Dedham rules into the DB
+  seedDedhamRules: protectedProcedure.mutation(async () => {
+    return seedDedhamRules();
+  }),
+
+  // Admin: seed Westwood rules into the DB
+  seedWestwoodRules: protectedProcedure.mutation(async () => {
+    return seedWestwoodRules();
+  }),
+
+  // Admin: seed Needham rules into the DB
+  seedNeedhamRules: protectedProcedure.mutation(async () => {
+    return seedNeedhamRules();
+  }),
+
+  // Admin: seed Norwood rules into the DB
+  seedNorwoodRules: protectedProcedure.mutation(async () => {
+    return seedNorwoodRules();
+  }),
+
+  // Admin: seed Canton rules into the DB
+  seedCantonRules: protectedProcedure.mutation(async () => {
+    return seedCantonRules();
+  }),
+
   // Admin: seed all jurisdictions at once
   seedAllRules: protectedProcedure.mutation(async () => {
     const results = await Promise.all([
@@ -328,6 +368,11 @@ export const jurisdictionRulesRouter = createTRPCRouter({
       seedQuincyRules(),
       seedNewtonRules(),
       seedWalthamRules(),
+      seedDedhamRules(),
+      seedWestwoodRules(),
+      seedNeedhamRules(),
+      seedNorwoodRules(),
+      seedCantonRules(),
     ]);
     const totalSeeded = results.reduce((sum, r) => sum + r.seededCount, 0);
     const allJurisdictions = results.flatMap((r) => r.jurisdictions);
