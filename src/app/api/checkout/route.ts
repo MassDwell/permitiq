@@ -16,15 +16,18 @@ type PlanName = "starter" | "professional" | "enterprise";
 // Includes both founder (introductory) and regular price IDs
 // These IDs are already public in the client-side pricing page
 const HARDCODED_PRICES: Record<string, PlanName> = {
-  // Solo / Starter — founder + regular
+  // Solo / Starter — founder monthly + regular monthly + founder annual
   "price_1TAKUV8WeSNkRrKoSn83vPyr": "starter",
   "price_1TAIiZ94ePmNThnD8A8bjdVn": "starter",
-  // Developer / Professional — founder + regular
+  "price_1TAVxw8WeSNkRrKokEtxdBnD": "starter",   // $470/yr annual
+  // Developer / Professional — founder monthly + regular monthly + founder annual
   "price_1TAKUW8WeSNkRrKo864hCugD": "professional",
   "price_1TAIia94ePmNThnD1mr2KDJT": "professional",
-  // Portfolio / Enterprise — founder + regular
+  "price_1TAVy28WeSNkRrKo2SI4edhW": "professional", // $950/yr annual
+  // Portfolio / Enterprise — founder monthly + regular monthly + founder annual
   "price_1TAKUX8WeSNkRrKoG6rVbNmn": "enterprise",
   "price_1TAIib94ePmNThnDBfqopr9e": "enterprise",
+  "price_1TAVy28WeSNkRrKoWxvOFja2": "enterprise",  // $1,910/yr annual
 };
 
 const ENV_PRICES: Record<string, PlanName> = {};

@@ -10,15 +10,24 @@ const webhookSecret = (process.env.STRIPE_WEBHOOK_SECRET ?? "").trim();
 
 // Map Stripe price IDs to plan names
 const PRICE_TO_PLAN: Record<string, "starter" | "professional" | "enterprise"> = {
-  // Solo → Starter
+  // Solo → Starter (monthly + annual)
   [process.env.STRIPE_FOUNDER_SOLO_PRICE_ID || ""]: "starter",
   [process.env.STRIPE_SOLO_PRICE_ID || ""]: "starter",
-  // Developer → Professional
+  "price_1TAKUV8WeSNkRrKoSn83vPyr": "starter",   // founder monthly
+  "price_1TAIiZ94ePmNThnD8A8bjdVn": "starter",   // regular monthly
+  "price_1TAVxw8WeSNkRrKokEtxdBnD": "starter",   // founder annual $470/yr
+  // Developer → Professional (monthly + annual)
   [process.env.STRIPE_FOUNDER_DEVELOPER_PRICE_ID || ""]: "professional",
   [process.env.STRIPE_DEVELOPER_PRICE_ID || ""]: "professional",
-  // Portfolio → Enterprise
+  "price_1TAKUW8WeSNkRrKo864hCugD": "professional", // founder monthly
+  "price_1TAIia94ePmNThnD1mr2KDJT": "professional", // regular monthly
+  "price_1TAVy28WeSNkRrKo2SI4edhW": "professional", // founder annual $950/yr
+  // Portfolio → Enterprise (monthly + annual)
   [process.env.STRIPE_FOUNDER_PORTFOLIO_PRICE_ID || ""]: "enterprise",
   [process.env.STRIPE_PORTFOLIO_PRICE_ID || ""]: "enterprise",
+  "price_1TAKUX8WeSNkRrKoG6rVbNmn": "enterprise",  // founder monthly
+  "price_1TAIib94ePmNThnDBfqopr9e": "enterprise",  // regular monthly
+  "price_1TAVy28WeSNkRrKoWxvOFja2": "enterprise",  // founder annual $1,910/yr
 };
 
 export async function POST(req: Request) {
