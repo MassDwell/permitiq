@@ -310,6 +310,142 @@ export const SPRINGFIELD_BUILDING_REQUIREMENTS: RequirementData[] = [
   },
 ];
 
+// Boston Article 80 Large Project Review (LPR)
+// Triggered by: Boston jurisdiction + residential/mixed_use + 15+ units OR 50,000+ sq ft
+export const BOSTON_ARTICLE_80_LARGE_REQUIREMENTS: RequirementData[] = [
+  {
+    requirementType: "bpda_pre_application_conference",
+    description: "Pre-Application Conference with BPDA — Schedule and attend pre-app meeting with BPDA staff before filing",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "Prior to filing a Project Notification Form, applicants are encouraged to meet with BPDA staff to discuss the project informally.",
+    reasoning: "BPDA strongly recommends a pre-application meeting to identify issues early and ensure a complete PNF submission.",
+  },
+  {
+    requirementType: "pnf_submission",
+    description: "Project Notification Form (PNF) — Submit PNF to BPDA including project description, site plans, and community impact analysis",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "The PNF must be submitted to the BPDA and shall describe the proposed project in sufficient detail to allow the BPDA to determine the scope of review required.",
+    reasoning: "The PNF is the formal filing that initiates Article 80 Large Project Review under Boston Zoning Code Article 80B.",
+  },
+  {
+    requirementType: "public_comment_period_30_days",
+    description: "30-Day Public Comment Period — BPDA publishes PNF and opens 30-day public comment window",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "Upon receipt of the PNF, the BPDA shall publish notice and open a 30-day public comment period.",
+    reasoning: "Article 80B mandates a minimum 30-day public comment period after PNF publication before further review steps.",
+  },
+  {
+    requirementType: "iag_formation",
+    description: "Impact Advisory Group (IAG) Formation — BPDA convenes IAG with community representatives and city agencies",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "The BPDA shall establish an Impact Advisory Group (IAG) to provide ongoing community input on the project's impacts.",
+    reasoning: "The IAG is a required body under Article 80B that represents community interests throughout the review process.",
+  },
+  {
+    requirementType: "scoping_determination",
+    description: "Scoping Determination — BPDA issues letter defining required impact studies (traffic, shadow, wind, historic, etc.)",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "The BPDA shall issue a Scoping Determination identifying the studies and analyses required in the Draft Project Impact Report.",
+    reasoning: "The Scoping Determination defines exactly what technical analyses the applicant must include in the DPIR.",
+  },
+  {
+    requirementType: "dpir_submission",
+    description: "Draft Project Impact Report (DPIR) — Prepare and submit DPIR addressing all scoping items (traffic, shadow, wind, historic, etc.)",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "The Applicant shall prepare and file a Draft Project Impact Report (DPIR) addressing each item identified in the Scoping Determination.",
+    reasoning: "The DPIR is the core technical document addressing all identified project impacts as required by Article 80B.",
+  },
+  {
+    requirementType: "iag_review_meetings",
+    description: "IAG Review Meetings — Attend IAG meetings to present DPIR findings and respond to community concerns",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "The Applicant shall attend and present at IAG meetings as required by the BPDA to review the DPIR with community stakeholders.",
+    reasoning: "IAG review is mandatory under Article 80B to ensure community input is incorporated before final BPDA action.",
+  },
+  {
+    requirementType: "fpir_submission",
+    description: "Final Project Impact Report (FPIR) — Submit FPIR incorporating IAG feedback and addressing all outstanding issues",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "The Applicant shall submit a Final Project Impact Report (FPIR) that addresses comments raised during the IAG review process.",
+    reasoning: "The FPIR is the final technical submission before the BPDA Board vote, incorporating all public and IAG feedback.",
+  },
+  {
+    requirementType: "bpda_board_vote",
+    description: "BPDA Board Vote — Project goes before BPDA board for approval vote",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "Following completion of Article 80 review, the BPDA Board shall vote on whether to approve the project.",
+    reasoning: "BPDA Board approval is required before any building permits can be issued for an Article 80 Large Project.",
+  },
+  {
+    requirementType: "dip_agreement",
+    description: "Development Impact Project (DIP) Agreement — Negotiate and execute DIP agreement covering affordable housing, linkage fees, and community benefits",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "Large projects must negotiate a Development Impact Project (DIP) agreement with the BPDA addressing affordable housing obligations and community benefits.",
+    reasoning: "Boston's linkage and affordable housing policies require a DIP agreement as a condition of Article 80 approval.",
+  },
+  {
+    requirementType: "article_80_covenant",
+    description: "Article 80 Covenant — Record Article 80 covenant with Suffolk County Registry of Deeds",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "An Article 80 covenant shall be recorded at the Suffolk County Registry of Deeds memorializing BPDA approval conditions.",
+    reasoning: "Recording the covenant runs conditions with the land and is required before building permits can issue.",
+  },
+  {
+    requirementType: "isd_building_permit",
+    description: "Building Permit Application to ISD — With Article 80 complete, file building permit with Boston ISD",
+    sourceUrl: "https://onlinepermitsandlicenses.boston.gov/isdpermits/",
+    sourceText: "Following BPDA Board approval and covenant recording, the Applicant may file for a building permit with Boston ISD.",
+    reasoning: "Building permits from ISD are issued only after Article 80 review is fully complete and conditions satisfied.",
+  },
+];
+
+// Boston Article 80 Small Project Review (SPR)
+// Triggered by: Boston jurisdiction + residential/mixed_use + 7–14 units OR 20,000–49,999 sq ft
+export const BOSTON_ARTICLE_80_SMALL_REQUIREMENTS: RequirementData[] = [
+  {
+    requirementType: "bpda_pre_application_conference",
+    description: "Pre-Application Conference with BPDA (optional but strongly recommended) — Meet with BPDA staff to discuss project informally",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "Applicants for Small Project Review are encouraged to meet informally with BPDA staff prior to filing a PNF.",
+    reasoning: "Pre-application meetings reduce surprises during review and help applicants submit a complete PNF on the first try.",
+  },
+  {
+    requirementType: "pnf_submission",
+    description: "Project Notification Form (PNF) — Submit PNF to BPDA with project description, plans, and community context",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "The Applicant shall file a Project Notification Form (PNF) with the BPDA to initiate Small Project Review under Article 80E.",
+    reasoning: "The PNF initiates Article 80 Small Project Review (Article 80E) for eligible projects.",
+  },
+  {
+    requirementType: "public_comment_period_20_days",
+    description: "20-Day Public Comment Period — BPDA publishes PNF and opens 20-day public comment window",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "Upon receipt of the PNF, the BPDA shall publish notice and open a 20-day public comment period for Small Project Review.",
+    reasoning: "Article 80E requires a 20-day public comment period (shorter than LPR's 30 days) before BPDA issues a determination.",
+  },
+  {
+    requirementType: "spr_determination",
+    description: "Small Project Review Determination — BPDA issues determination: approved, approved with conditions, or referred to Large Project Review",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "Following public comment, the BPDA shall issue a Small Project Review determination approving, approving with conditions, or escalating to Large Project Review.",
+    reasoning: "The BPDA determination is the primary decision point for SPR — conditions must be met before permits issue.",
+  },
+  {
+    requirementType: "conditions_compliance",
+    description: "Conditions Compliance — If approved with conditions, document and comply with all BPDA-imposed conditions",
+    sourceUrl: "https://www.bostonplans.org/projects/development-review/article-80-development-review",
+    sourceText: "If the BPDA approves a project with conditions, the Applicant must satisfy all conditions prior to or concurrent with building permit issuance.",
+    reasoning: "BPDA conditions are legally binding and must be satisfied before ISD will issue a building permit.",
+  },
+  {
+    requirementType: "isd_building_permit",
+    description: "Building Permit Application to ISD — With SPR complete, file building permit with Boston ISD",
+    sourceUrl: "https://onlinepermitsandlicenses.boston.gov/isdpermits/",
+    sourceText: "Following BPDA Small Project Review approval, the Applicant may file for a building permit with Boston ISD.",
+    reasoning: "Building permits from ISD are issued only after Article 80 Small Project Review is complete.",
+  },
+];
+
 // Massachusetts state-wide (default fallback)
 export const MA_STATE_REQUIREMENTS: RequirementData[] = [
   {

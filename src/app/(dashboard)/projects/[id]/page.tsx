@@ -1274,19 +1274,51 @@ export default function ProjectDetailPage() {
               What permit type is this project? We&apos;ll look up the requirements for you.
             </DialogDescription>
           </DialogHeader>
-          <div className="py-2">
-            <Label htmlFor="permitType" className="mb-2 block">Permit type</Label>
-            <Input
-              id="permitType"
-              placeholder="e.g. demolition, building permit, electrical..."
-              value={researchPermitType}
-              onChange={(e) => setResearchPermitType(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && researchPermitType.trim()) {
-                  researchRequirements.mutate({ projectId, permitType: researchPermitType.trim() });
-                }
-              }}
-            />
+          <div className="py-2 space-y-3">
+            {/* Quick-select buttons for common permit types */}
+            <div>
+              <div style={{ fontSize: 12, color: "#64748B", marginBottom: 6 }}>Quick select:</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {[
+                  { label: "Boston Building Permit", value: "Boston building permit" },
+                  { label: "Article 80 LPR", value: "Article 80 Large Project Review Boston" },
+                  { label: "Article 80 SPR", value: "Article 80 Small Project Review Boston" },
+                  { label: "Demolition", value: "Boston demolition permit" },
+                  { label: "Electrical", value: "Boston electrical permit" },
+                ].map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setResearchPermitType(opt.value)}
+                    style={{
+                      padding: "4px 10px",
+                      borderRadius: 6,
+                      fontSize: 12,
+                      cursor: "pointer",
+                      background: researchPermitType === opt.value ? "rgba(20,184,166,0.2)" : "rgba(51,65,85,0.4)",
+                      border: researchPermitType === opt.value ? "1px solid rgba(20,184,166,0.5)" : "1px solid rgba(71,85,105,0.5)",
+                      color: researchPermitType === opt.value ? "#14B8A6" : "#94A3B8",
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="permitType" className="mb-2 block">Or enter a permit type</Label>
+              <Input
+                id="permitType"
+                placeholder="e.g. demolition, building permit, electrical..."
+                value={researchPermitType}
+                onChange={(e) => setResearchPermitType(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && researchPermitType.trim()) {
+                    researchRequirements.mutate({ projectId, permitType: researchPermitType.trim() });
+                  }
+                }}
+              />
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setResearchOpen(false)}>

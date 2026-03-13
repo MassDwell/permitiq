@@ -103,6 +103,9 @@ export const projectsRouter = createTRPCRouter({
         jurisdiction: z.string().optional(),
         projectType: z.enum(["residential", "commercial", "adu", "mixed_use", "renovation"]),
         description: z.string().optional(),
+        unitCount: z.number().int().positive().optional(),
+        grossFloorArea: z.number().int().positive().optional(),
+        articleEightyTrack: z.enum(["none", "spr", "lpr"]).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -136,6 +139,9 @@ export const projectsRouter = createTRPCRouter({
           jurisdiction: input.jurisdiction,
           projectType: input.projectType,
           description: input.description,
+          unitCount: input.unitCount,
+          grossFloorArea: input.grossFloorArea,
+          articleEightyTrack: input.articleEightyTrack,
         })
         .returning();
 
@@ -160,6 +166,9 @@ export const projectsRouter = createTRPCRouter({
         projectType: z.enum(["residential", "commercial", "adu", "mixed_use", "renovation"]).optional(),
         status: z.enum(["active", "completed", "on_hold", "archived"]).optional(),
         description: z.string().optional(),
+        unitCount: z.number().int().positive().nullable().optional(),
+        grossFloorArea: z.number().int().positive().nullable().optional(),
+        articleEightyTrack: z.enum(["none", "spr", "lpr"]).nullable().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {

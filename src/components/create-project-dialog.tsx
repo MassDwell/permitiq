@@ -66,6 +66,7 @@ export function CreateProjectDialog({
     "residential" | "commercial" | "adu" | "mixed_use" | "renovation"
   >("residential");
   const [description, setDescription] = useState("");
+  const [unitCount, setUnitCount] = useState("");
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
 
   const { data: jurisdictions } = trpc.compliance.getJurisdictions.useQuery();
@@ -82,6 +83,7 @@ export function CreateProjectDialog({
       setJurisdiction("");
       setProjectType("residential");
       setDescription("");
+      setUnitCount("");
     },
     onError: (error) => {
       // Show upgrade modal for plan limit errors
@@ -106,6 +108,7 @@ export function CreateProjectDialog({
       jurisdiction: jurisdiction || undefined,
       projectType,
       description: description.trim() || undefined,
+      unitCount: unitCount ? parseInt(unitCount, 10) : undefined,
     });
   };
 
@@ -195,6 +198,20 @@ export function CreateProjectDialog({
                 </Select>
               </div>
             </div>
+
+            {(projectType === "residential" || projectType === "mixed_use") && (
+              <div className="space-y-2">
+                <Label htmlFor="unitCount">Number of Units <span style={{ color: "#64748B", fontWeight: 400 }}>(optional — used for Article 80 detection)</span></Label>
+                <Input
+                  id="unitCount"
+                  type="number"
+                  min="1"
+                  placeholder="e.g. 12"
+                  value={unitCount}
+                  onChange={(e) => setUnitCount(e.target.value)}
+                />
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>

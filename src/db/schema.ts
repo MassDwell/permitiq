@@ -47,6 +47,9 @@ export const projects = pgTable("projects", {
   projectType: projectTypeEnum("project_type").notNull().default("residential"),
   status: projectStatusEnum("status").notNull().default("active"),
   description: text("description"),
+  unitCount: integer("unit_count"),
+  grossFloorArea: integer("gross_floor_area"), // sq ft — used for Article 80 threshold detection
+  articleEightyTrack: text("article_eighty_track"), // "none" | "spr" | "lpr"
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

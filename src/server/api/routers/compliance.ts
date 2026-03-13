@@ -13,6 +13,8 @@ import {
   LOWELL_BUILDING_REQUIREMENTS,
   SPRINGFIELD_BUILDING_REQUIREMENTS,
   MA_STATE_REQUIREMENTS,
+  BOSTON_ARTICLE_80_LARGE_REQUIREMENTS,
+  BOSTON_ARTICLE_80_SMALL_REQUIREMENTS,
 } from "@/lib/permit-requirements";
 
 // Detect jurisdiction from a free-text permit type string
@@ -32,6 +34,9 @@ function detectPermitCategory(permitType: string): string {
   const lower = permitType.toLowerCase();
   if (/demo(lition)?|tear.?down/.test(lower)) return "demolition";
   if (/trade|electrical|plumbing|gas\b|mechanical|hvac/.test(lower)) return "trade";
+  if (/article.?80.*(large|lpr)|lpr|large.project.review/.test(lower)) return "article_80_large";
+  if (/article.?80.*(small|spr)|spr|small.project.review/.test(lower)) return "article_80_small";
+  if (/article.?80|bpda.review/.test(lower)) return "article_80_large"; // default to LPR for generic "article 80"
   if (/building|construction|new.construction|addition|renovation|alteration/.test(lower)) return "building";
   return "unknown";
 }
@@ -45,6 +50,8 @@ function getRequirementsForPermit(
     if (category === "demolition") return BOSTON_DEMOLITION_REQUIREMENTS;
     if (category === "building") return BOSTON_BUILDING_REQUIREMENTS;
     if (category === "trade") return BOSTON_TRADE_REQUIREMENTS;
+    if (category === "article_80_large") return BOSTON_ARTICLE_80_LARGE_REQUIREMENTS;
+    if (category === "article_80_small") return BOSTON_ARTICLE_80_SMALL_REQUIREMENTS;
     // Boston default: building
     return BOSTON_BUILDING_REQUIREMENTS;
   }
@@ -57,6 +64,8 @@ function getRequirementsForPermit(
   // Unknown jurisdiction — use MA state-wide as fallback before AI
   if (category === "demolition") return BOSTON_DEMOLITION_REQUIREMENTS;
   if (category === "trade") return BOSTON_TRADE_REQUIREMENTS;
+  if (category === "article_80_large") return BOSTON_ARTICLE_80_LARGE_REQUIREMENTS;
+  if (category === "article_80_small") return BOSTON_ARTICLE_80_SMALL_REQUIREMENTS;
   return null; // trigger AI fallback
 }
 
@@ -401,6 +410,43 @@ export const complianceRouter = createTRPCRouter({
       },
     });
   }),
+
+  // Auto-detect whether project needs Article 80 review based on jurisdiction, type, and unit count
+  detectArticle80: protectedProcedure
+    .input(z.object({ projectId: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const project = await ctx.db.query.projects.findFirst({
+        where: and(
+          eq(projects.id, input.projectId),
+          eq(projects.userId, ctx.dbUser.id)
+        ),
+      });
+
+      if (!project) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+      }
+
+      const jurisdictionLower = (project.jurisdiction ?? "").toLowerCase();
+      const isBoston = /boston/.test(jurisdictionLower);
+      const isEligibleType = project.projectType === "residential" || project.projectType === "mixed_use";
+      const unitCount = project.unitCount ?? 0;
+      const gfa = project.grossFloorArea ?? 0;
+
+      if (!isBoston || !isEligibleType) {
+        return { applies: false, reviewType: null as null };
+      }
+
+      // LPR thresholds: 15+ units OR 50,000+ sq ft GFA
+      if (unitCount >= 15 || gfa >= 50000) {
+        return { applies: true, reviewType: "large" as const };
+      }
+      // SPR thresholds: 7-14 units OR 20,000-49,999 sq ft GFA
+      if (unitCount >= 7 || (gfa >= 20000 && gfa < 50000)) {
+        return { applies: true, reviewType: "small" as const };
+      }
+      // Unit count and GFA unknown — flag as potentially applicable
+      return { applies: unitCount === 0 && gfa === 0, reviewType: "unknown" as const };
+    }),
 
   researchRequirements: protectedProcedure
     .input(z.object({ projectId: z.string().uuid(), permitType: z.string() }))
