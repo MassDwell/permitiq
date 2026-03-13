@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { trpc } from "@/lib/trpc/client";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -29,7 +30,9 @@ import {
 import { CreateProjectDialog } from "@/components/create-project-dialog";
 import { WelcomeBanner } from "@/components/welcome-banner";
 import { ActivityFeed } from "@/components/activity-feed";
-import { useState } from "react";
+import { OnboardingModal } from "@/components/onboarding-modal";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 
 function getHealthDot(status: "green" | "yellow" | "red") {
   switch (status) {
@@ -40,8 +43,10 @@ function getHealthDot(status: "green" | "yellow" | "red") {
   }
 }
 
-export default function DashboardPage() {
+function DashboardPageContent() {
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const searchParams = useSearchParams();
 
   const { data: projects, isLoading: projectsLoading } =
     trpc.projects.list.useQuery();
@@ -49,6 +54,32 @@ export default function DashboardPage() {
     trpc.projects.getUpcomingDeadlines.useQuery({ days: 30 });
   const { data: profile } = trpc.settings.getProfile.useQuery();
   const { data: velocityData } = trpc.projects.getComplianceVelocity.useQuery();
+
+  // Show success toast on post-checkout redirect (?welcome=true)
+  useEffect(() => {
+    const isWelcome = searchParams.get("welcome") === "true";
+    if (isWelcome) {
+      const hasShownToast = sessionStorage.getItem("checkout-success-shown");
+      if (!hasShownToast) {
+        toast.success("Welcome to MeritLayer! 🎉", {
+          description: "Your subscription is now active. Let's create your first project.",
+          duration: 6000,
+        });
+        sessionStorage.setItem("checkout-success-shown", "true");
+      }
+    }
+  }, [searchParams]);
+
+  // Trigger onboarding on ?welcome=true or when user has zero projects
+  useEffect(() => {
+    const isWelcome = searchParams.get("welcome") === "true";
+    const alreadyDone = typeof window !== "undefined"
+      ? localStorage.getItem("meritlayer-onboarding-complete") === "true"
+      : true;
+    if (isWelcome && !alreadyDone) {
+      setShowOnboarding(true);
+    }
+  }, [searchParams]);
 
   const totalProjects = projects?.length || 0;
   const totalDocuments = projects?.reduce((acc, p) => acc + p.documentCount, 0) || 0;
@@ -541,6 +572,24 @@ export default function DashboardPage() {
         open={createProjectOpen}
         onOpenChange={setCreateProjectOpen}
       />
+
+      {/* Onboarding modal — triggered on ?welcome=true or auto for new users (localStorage gated) */}
+      {!projectsLoading && (
+        <OnboardingModal
+          userName={profile?.name}
+          hasProjects={(projects?.length ?? 0) > 0}
+          forceOpen={showOnboarding}
+          onClose={() => setShowOnboarding(false)}
+        />
+      )}
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense>
+      <DashboardPageContent />
+    </Suspense>
   );
 }
