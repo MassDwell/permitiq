@@ -651,6 +651,63 @@ export default function ProjectDetailPage() {
               documentCount={project.documents.length}
             />
 
+            {/* Confidence Badge */}
+            {(() => {
+              const items = project.complianceItems;
+              const hasAiGenerated = items.some((i) => i.source === "ai_generated");
+              const nonStateItems = items.filter(
+                (i) => i.jurisdiction !== "MA_STATE" && i.jurisdiction !== "Massachusetts (Statewide Requirements)"
+              );
+              const onlyStateRules = items.length > 0 && nonStateItems.length === 0;
+
+              if (onlyStateRules) {
+                return (
+                  <div
+                    className="flex items-start gap-3 px-4 py-3 rounded-lg text-sm"
+                    style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)' }}
+                  >
+                    <span className="text-amber-400 mt-0.5">⚠️</span>
+                    <div>
+                      <span className="text-amber-300 font-medium">No jurisdiction-specific rules found for {project.jurisdiction ?? "this city"}.</span>
+                      <span className="text-amber-200/70 ml-2">Showing Massachusetts state requirements only.</span>
+                      <button
+                        className="ml-2 text-amber-400 hover:text-amber-300 underline underline-offset-2"
+                        onClick={() => { setResearchPermitType(""); setResearchOpen(true); }}
+                      >
+                        Request rules for this jurisdiction →
+                      </button>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (hasAiGenerated) {
+                return (
+                  <div
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium"
+                    style={{ background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.25)', color: '#FCD34D' }}
+                  >
+                    <span>🤖</span>
+                    <span>AI-researched — verify with local authority</span>
+                  </div>
+                );
+              }
+
+              if (items.length > 0) {
+                return (
+                  <div
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium"
+                    style={{ background: 'rgba(20,184,166,0.12)', border: '1px solid rgba(20,184,166,0.25)', color: '#5EEAD4' }}
+                  >
+                    <span>✅</span>
+                    <span>Curated rules — verified by MeritLayer</span>
+                  </div>
+                );
+              }
+
+              return null;
+            })()}
+
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>

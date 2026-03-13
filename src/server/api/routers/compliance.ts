@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { complianceItems, projects, jurisdictionRules, complianceSnapshots } from "@/db/schema";
+import { complianceItems, projects, jurisdictionRules, complianceSnapshots, jurisdictionRequests } from "@/db/schema";
 import { eq, and, desc, sql } from "drizzle-orm";
 import { assertProjectAccess } from "../project-access";
 import { TRPCError } from "@trpc/server";
@@ -339,41 +339,58 @@ export const complianceRouter = createTRPCRouter({
         });
       }
 
-      // Filter rules applicable to this project type
-      const applicableRules = ruleSet.rules.filter(
-        (rule) =>
-          !ruleSet.projectTypes ||
-          ruleSet.projectTypes.length === 0 ||
-          ruleSet.projectTypes.includes(project.projectType)
-      );
+      // Also fetch MA_STATE baseline rules (always merged in)
+      const maStateRuleSet = input.jurisdictionCode !== "MA_STATE"
+        ? await ctx.db.query.jurisdictionRules.findFirst({
+            where: eq(jurisdictionRules.jurisdictionCode, "MA_STATE"),
+          })
+        : null;
 
-      // Create compliance items for each rule
+      // Build combined list: jurisdiction-specific first, then MA_STATE baseline
+      const ruleSetsToApply = [
+        ruleSet,
+        ...(maStateRuleSet ? [maStateRuleSet] : []),
+      ];
+
+      // Create compliance items for each rule set
       const createdItems = [];
-      for (const rule of applicableRules) {
-        // Check if item already exists
-        const existing = await ctx.db.query.complianceItems.findFirst({
-          where: and(
-            eq(complianceItems.projectId, input.projectId),
-            eq(complianceItems.ruleId, rule.id)
-          ),
-        });
+      for (const rs of ruleSetsToApply) {
+        // Filter rules applicable to this project type
+        const applicableRules = rs.rules.filter(
+          (rule) =>
+            !rs.projectTypes ||
+            rs.projectTypes.length === 0 ||
+            rs.projectTypes.includes(project.projectType)
+        );
 
-        if (!existing) {
-          const [item] = await ctx.db
-            .insert(complianceItems)
-            .values({
-              projectId: input.projectId,
-              requirementType: rule.requirementType,
-              description: rule.description,
-              jurisdiction: ruleSet.jurisdictionCode,
-              notes: rule.notes,
-              source: "rule_based",
-              ruleId: rule.id,
-              status: "pending",
-            })
-            .returning();
+        const itemSource = rs.source === "ai_generated" ? "ai_generated" : "rule_based";
 
-          createdItems.push(item);
+        for (const rule of applicableRules) {
+          // Check if item already exists
+          const existing = await ctx.db.query.complianceItems.findFirst({
+            where: and(
+              eq(complianceItems.projectId, input.projectId),
+              eq(complianceItems.ruleId, rule.id)
+            ),
+          });
+
+          if (!existing) {
+            const [item] = await ctx.db
+              .insert(complianceItems)
+              .values({
+                projectId: input.projectId,
+                requirementType: rule.requirementType,
+                description: rule.description,
+                jurisdiction: rs.jurisdictionCode,
+                notes: rule.notes,
+                source: itemSource,
+                ruleId: rule.id,
+                status: "pending",
+              })
+              .returning();
+
+            createdItems.push(item);
+          }
         }
       }
 
@@ -468,36 +485,124 @@ export const complianceRouter = createTRPCRouter({
       }>;
 
       const curated = getRequirementsForPermit(jurisdiction, category);
+      let isAiGenerated = false;
 
       if (curated) {
         requirementsData = curated;
       } else {
-        // Fall back to Claude Haiku for unknown permit types
-        const client = new Anthropic();
-        const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(input.permitType + " permit requirements Massachusetts")}`;
+        // Unknown jurisdiction — check AI cache first
+        const cacheKey = `AI_${jurisdiction.toUpperCase()}_${category.toUpperCase()}`;
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-        const message = await client.messages.create({
-          model: "claude-haiku-4-5-20251001",
-          max_tokens: 1024,
-          messages: [
-            {
-              role: "user",
-              content: `List the key permit requirements for a "${input.permitType}" permit in Massachusetts. Return a JSON array of objects with fields: requirementType (snake_case identifier), description (clear one-line description), sourceText (a plausible regulatory citation from 780 CMR or local code), reasoning (one sentence explaining why it applies). Return only valid JSON, no markdown.`,
-            },
-          ],
+        const cached = await ctx.db.query.jurisdictionRules.findFirst({
+          where: eq(jurisdictionRules.jurisdictionCode, cacheKey),
         });
 
-        try {
-          const text = message.content[0].type === "text" ? message.content[0].text : "[]";
-          const parsed = JSON.parse(text) as Array<{
-            requirementType: string;
-            description: string;
-            sourceText: string;
-            reasoning: string;
-          }>;
-          requirementsData = parsed.map((r) => ({ ...r, sourceUrl: googleSearchUrl }));
-        } catch {
-          requirementsData = MA_STATE_REQUIREMENTS;
+        if (
+          cached &&
+          cached.source === "ai_generated" &&
+          cached.cachedAt &&
+          cached.cachedAt > thirtyDaysAgo
+        ) {
+          // Use cached AI-generated rules
+          requirementsData = cached.rules.map((r) => ({
+            requirementType: r.requirementType,
+            description: r.description,
+            sourceUrl: (r as { sourceUrl?: string }).sourceUrl ?? "",
+            sourceText: r.notes ?? "",
+            reasoning: (r as { reasoning?: string }).reasoning ?? "",
+          }));
+          isAiGenerated = true;
+        } else {
+          // Fall back to Claude Haiku for unknown permit types
+          const client = new Anthropic();
+          const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(input.permitType + " permit requirements Massachusetts")}`;
+
+          const message = await client.messages.create({
+            model: "claude-haiku-4-5-20251001",
+            max_tokens: 1024,
+            messages: [
+              {
+                role: "user",
+                content: `List the key permit requirements for a "${input.permitType}" permit in Massachusetts. Return a JSON array of objects with fields: requirementType (snake_case identifier), description (clear one-line description), sourceText (a plausible regulatory citation from 780 CMR or local code), reasoning (one sentence explaining why it applies). Return only valid JSON, no markdown.`,
+              },
+            ],
+          });
+
+          try {
+            const text =
+              message.content[0].type === "text" ? message.content[0].text : "[]";
+            const parsed = JSON.parse(text) as Array<{
+              requirementType: string;
+              description: string;
+              sourceText: string;
+              reasoning: string;
+            }>;
+            requirementsData = parsed.map((r) => ({
+              ...r,
+              sourceUrl: googleSearchUrl,
+            }));
+          } catch {
+            requirementsData = MA_STATE_REQUIREMENTS;
+          }
+
+          // Cache the AI-generated rules in jurisdictionRules
+          // We store extra fields (sourceUrl, reasoning) in the JSONB alongside JurisdictionRule fields
+          const rulesToCache = requirementsData.map((r, i) => ({
+            id: `${cacheKey.toLowerCase()}-${i + 1}`,
+            requirementType: r.requirementType,
+            description: r.description,
+            isRequired: true,
+            notes: r.sourceText,
+            // Extra fields stored in JSONB (not in TypeScript type but persisted)
+            sourceUrl: r.sourceUrl,
+            reasoning: r.reasoning,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          })) as any;
+
+          if (cached) {
+            await ctx.db
+              .update(jurisdictionRules)
+              .set({
+                rules: rulesToCache,
+                source: "ai_generated",
+                cachedAt: new Date(),
+                updatedAt: new Date(),
+              })
+              .where(eq(jurisdictionRules.jurisdictionCode, cacheKey));
+          } else {
+            await ctx.db.insert(jurisdictionRules).values({
+              jurisdictionCode: cacheKey,
+              jurisdictionName: `${jurisdictionDisplay} (AI-generated)`,
+              projectTypes: ["residential", "commercial", "adu", "mixed_use", "renovation"],
+              rules: rulesToCache,
+              source: "ai_generated",
+              cachedAt: new Date(),
+            });
+          }
+
+          isAiGenerated = true;
+
+          // Upsert jurisdiction request queue
+          const jurisdictionCode = cacheKey;
+          const existing = await ctx.db.query.jurisdictionRequests.findFirst({
+            where: eq(jurisdictionRequests.jurisdictionCode, jurisdictionCode),
+          });
+          if (existing) {
+            await ctx.db
+              .update(jurisdictionRequests)
+              .set({
+                requestCount: existing.requestCount + 1,
+                lastRequestedAt: new Date(),
+              })
+              .where(eq(jurisdictionRequests.jurisdictionCode, jurisdictionCode));
+          } else {
+            await ctx.db.insert(jurisdictionRequests).values({
+              jurisdictionCode,
+              jurisdictionName: jurisdictionDisplay,
+              requestCount: 1,
+            });
+          }
         }
       }
 
@@ -509,7 +614,7 @@ export const complianceRouter = createTRPCRouter({
             requirementType: r.requirementType,
             description: r.description,
             jurisdiction: jurisdictionDisplay,
-            source: "rule_based",
+            source: isAiGenerated ? "ai_generated" : "rule_based",
             sourceUrl: r.sourceUrl,
             sourceText: r.sourceText,
             reasoning: r.reasoning,
@@ -522,6 +627,7 @@ export const complianceRouter = createTRPCRouter({
         items: insertedItems,
         jurisdiction: jurisdictionDisplay,
         permitType: input.permitType,
+        isAiGenerated,
       };
     }),
 

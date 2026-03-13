@@ -1,6 +1,7 @@
+import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
-import { users, projects, documents, complianceItems } from "@/db/schema";
+import { users, projects, documents, complianceItems, jurisdictionRequests } from "@/db/schema";
 import { count, eq, gte, sql, desc, ne } from "drizzle-orm";
 import Stripe from "stripe";
 
@@ -221,6 +222,27 @@ export const adminRouter = createTRPCRouter({
   getPlanDistribution: adminProcedure.query(async ({ ctx }) => {
     return ctx.db.select({ plan: users.plan, count: count() }).from(users).groupBy(users.plan);
   }),
+
+  getJurisdictionRequests: adminProcedure.query(async ({ ctx }) => {
+    return ctx.db
+      .select()
+      .from(jurisdictionRequests)
+      .orderBy(desc(jurisdictionRequests.requestCount));
+  }),
+
+  markJurisdictionCurated: adminProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const [updated] = await ctx.db
+        .update(jurisdictionRequests)
+        .set({ status: "completed" })
+        .where(eq(jurisdictionRequests.id, input.id))
+        .returning();
+      if (!updated) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      return updated;
+    }),
 
   getStripeMetrics: adminProcedure.query(async () => {
     const zero = { mrr: 0, arr: 0, activeSubscribers: 0, newMrrThisMonth: 0, churnRate: 0, totalCollectedYTD: 0 };

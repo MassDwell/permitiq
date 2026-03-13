@@ -119,8 +119,21 @@ export const jurisdictionRules = pgTable("jurisdiction_rules", {
   jurisdictionName: text("jurisdiction_name").notNull(),
   projectTypes: jsonb("project_types").$type<string[]>(), // Which project types this applies to
   rules: jsonb("rules").$type<JurisdictionRule[]>().notNull(),
+  source: text("source").default("curated"), // "curated" | "ai_generated"
+  cachedAt: timestamp("cached_at"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Jurisdiction Request Queue — tracks which unknown jurisdictions users have tried
+export const jurisdictionRequests = pgTable("jurisdiction_requests", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  jurisdictionCode: text("jurisdiction_code").notNull(),
+  jurisdictionName: text("jurisdiction_name").notNull(),
+  requestCount: integer("request_count").default(1).notNull(),
+  lastRequestedAt: timestamp("last_requested_at").defaultNow(),
+  status: text("status").default("pending"), // "pending" | "in_progress" | "completed"
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 // User Settings table
@@ -526,3 +539,6 @@ export const apiRequestLogsRelations = relations(apiRequestLogs, ({ one }) => ({
 
 export type ApiRequestLog = typeof apiRequestLogs.$inferSelect;
 export type NewApiRequestLog = typeof apiRequestLogs.$inferInsert;
+
+export type JurisdictionRequest = typeof jurisdictionRequests.$inferSelect;
+export type NewJurisdictionRequest = typeof jurisdictionRequests.$inferInsert;
