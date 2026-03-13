@@ -80,6 +80,17 @@ export const settingsRouter = createTRPCRouter({
     };
   }),
 
+  // Update user profile (name)
+  updateProfile: protectedProcedure
+    .input(z.object({ name: z.string().min(1).max(120) }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .update(users)
+        .set({ name: input.name, updatedAt: new Date() })
+        .where(eq(users.id, ctx.dbUser.id));
+      return { success: true };
+    }),
+
   // Mark onboarding as complete
   completeOnboarding: protectedProcedure.mutation(async ({ ctx }) => {
     await ctx.db
