@@ -52,42 +52,51 @@ const features = [
 
 const pricingPlans = [
   {
-    name: "Starter",
-    price: 999,
-    description: "Perfect for small contractors",
+    name: "Solo",
+    price: 49,
+    regularPrice: 149,
+    description: "Perfect for independent developers.",
     features: [
-      "1 active project",
-      "100 documents/month",
-      "AI document processing",
-      "Deadline alerts",
+      "Up to 3 active projects",
+      "AI document extraction",
+      "Compliance checklist tracking",
+      "Permit workflow tracker",
+      "Public permit guides",
+      "Soft costs calculator",
       "Email support",
     ],
   },
   {
-    name: "Professional",
-    price: 2499,
-    description: "For growing construction firms",
+    name: "Developer",
+    price: 99,
+    regularPrice: 349,
+    description: "For development teams managing multiple projects.",
     features: [
-      "5 active projects",
-      "Unlimited documents",
-      "AI document processing",
-      "Priority deadline alerts",
-      "Compliance reports",
-      "Priority support",
+      "Everything in Solo",
+      "Up to 10 active projects",
+      "3 team members",
+      "AI permit research with source citations",
+      "Inspection tracker",
+      "Comment response assistant",
+      "AHJ contact directory",
+      "Priority email support",
     ],
     popular: true,
   },
   {
-    name: "Enterprise",
-    price: 7499,
-    description: "For large-scale operations",
+    name: "Portfolio",
+    price: 199,
+    regularPrice: 749,
+    description: "For firms managing large project portfolios.",
     features: [
+      "Everything in Developer",
       "Unlimited projects",
-      "Unlimited documents",
-      "Custom compliance rules",
+      "Unlimited team members",
       "API access",
-      "Dedicated account manager",
-      "Custom integrations",
+      "White-label option",
+      "Custom AHJ integrations",
+      "Dedicated onboarding call",
+      "Phone + email support",
     ],
   },
 ];
@@ -679,10 +688,10 @@ export default function LandingPage() {
               Pricing
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Simple, transparent pricing.
+              Lock in your rate before prices go up.
             </h2>
             <p className="text-lg max-w-xl mx-auto" style={{ color: "#94A3B8" }}>
-              All plans include AI document processing. No hidden fees. Cancel anytime.
+              Founding member pricing is locked in forever. Regular pricing launches April 15, 2026.
             </p>
           </div>
 
@@ -725,6 +734,9 @@ export default function LandingPage() {
                     ${plan.price.toLocaleString()}
                   </span>
                   <span className="text-sm ml-1" style={{ color: "#475569" }}>/month</span>
+                  {plan.regularPrice && (
+                    <span className="ml-2 text-sm line-through" style={{ color: "#475569" }}>${plan.regularPrice}/mo</span>
+                  )}
                 </div>
 
                 <ul className="space-y-3 mb-7">
@@ -756,7 +768,7 @@ export default function LandingPage() {
                           }
                     }
                   >
-                    Get Started
+                    Claim Founding Price
                   </button>
                 </Link>
               </div>
