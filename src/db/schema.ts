@@ -96,7 +96,7 @@ export const complianceItemDocuments = pgTable("compliance_item_documents", {
   id: uuid("id").primaryKey().defaultRandom(),
   complianceItemId: uuid("compliance_item_id").notNull().references(() => complianceItems.id, { onDelete: "cascade" }),
   documentId: uuid("document_id").notNull().references(() => documents.id, { onDelete: "cascade" }),
-  attachedAt: timestamp("attached_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 // Alerts table

@@ -344,12 +344,6 @@ export const projectsRouter = createTRPCRouter({
       const project = await ctx.db.query.projects.findFirst({
         where: eq(projects.id, input.id),
         with: {
-          complianceItems: {
-            with: {
-              document: true,
-            },
-            orderBy: [desc(complianceItems.deadline)],
-          },
           documents: {
             orderBy: [desc(documents.createdAt)],
           },
@@ -363,11 +357,25 @@ export const projectsRouter = createTRPCRouter({
         });
       }
 
+      // Fetch compliance items separately so schema drift doesn't crash the whole page
+      let projectComplianceItems: Awaited<ReturnType<typeof ctx.db.query.complianceItems.findMany>> = [];
+      let complianceLoadError: string | null = null;
+      try {
+        projectComplianceItems = await ctx.db.query.complianceItems.findMany({
+          where: eq(complianceItems.projectId, input.id),
+          with: { document: true },
+          orderBy: [desc(complianceItems.deadline)],
+        });
+      } catch (err) {
+        console.error("[projects.get] compliance items query failed:", err);
+        complianceLoadError = "Failed to load compliance items — schema may be out of sync.";
+      }
+
       // Calculate health metrics
-      const totalItems = project.complianceItems.length;
-      const metItems = project.complianceItems.filter((i) => i.status === "met").length;
-      const overdueItems = project.complianceItems.filter((i) => i.status === "overdue").length;
-      const pendingItems = project.complianceItems.filter((i) => i.status === "pending").length;
+      const totalItems = projectComplianceItems.length;
+      const metItems = projectComplianceItems.filter((i) => i.status === "met").length;
+      const overdueItems = projectComplianceItems.filter((i) => i.status === "overdue").length;
+      const pendingItems = projectComplianceItems.filter((i) => i.status === "pending").length;
       const healthScore = totalItems > 0 ? Math.round((metItems / totalItems) * 100) : 100;
 
       let healthStatus: "green" | "yellow" | "red" = "green";
@@ -379,6 +387,8 @@ export const projectsRouter = createTRPCRouter({
 
       return {
         ...project,
+        complianceItems: projectComplianceItems,
+        complianceLoadError,
         healthScore,
         healthStatus,
         totalItems,
@@ -446,14 +456,14 @@ export const projectsRouter = createTRPCRouter({
         projectId: newProject.id,
       }).catch((err) => console.error("[email] project created email failed:", err));
 
-      // Auto-trigger requirements research (fire-and-forget)
-      autoTriggerRequirementsResearch(
+      // Run requirements research inline — awaited so Vercel lambda doesn't kill it before completion
+      await autoTriggerRequirementsResearch(
         ctx.db,
         newProject.id,
         input.projectType,
         input.address,
         input.jurisdiction
-      ).catch((err) => console.error("[auto-research] requirements research failed:", err));
+      );
 
       return newProject;
     }),
