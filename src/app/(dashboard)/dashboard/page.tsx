@@ -31,6 +31,7 @@ import { CreateProjectDialog } from "@/components/create-project-dialog";
 import { WelcomeBanner } from "@/components/welcome-banner";
 import { ActivityFeed } from "@/components/activity-feed";
 import { OnboardingModal } from "@/components/onboarding-modal";
+import { OnboardingFlow } from "@/components/onboarding-flow";
 import { EmptyState } from "@/components/empty-state";
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -67,6 +68,8 @@ function DashboardPageContent() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const utils = trpc.useUtils();
 
   const { data: projects, isLoading: projectsLoading } =
     trpc.projects.list.useQuery(undefined, { staleTime: 30_000 });
@@ -144,6 +147,31 @@ function DashboardPageContent() {
       : thisWeekCompleted < lastWeekCompleted
       ? "declining"
       : "stable";
+
+  // Show OnboardingFlow for first-time users with zero projects
+  const showOnboardingFlow =
+    !projectsLoading &&
+    totalProjects === 0 &&
+    profile &&
+    !profile.onboardingCompleted &&
+    (typeof window === "undefined" ||
+      localStorage.getItem("meritlayer-onboarding-complete") !== "true");
+
+  // If showing full-screen onboarding flow, render only that
+  if (showOnboardingFlow) {
+    return (
+      <OnboardingFlow
+        onComplete={() => {
+          utils.projects.list.invalidate();
+          utils.settings.getProfile.invalidate();
+        }}
+        onSkip={() => {
+          localStorage.setItem("meritlayer-onboarding-complete", "true");
+          utils.settings.getProfile.invalidate();
+        }}
+      />
+    );
+  }
 
   return (
     <div className="p-4 sm:p-8">

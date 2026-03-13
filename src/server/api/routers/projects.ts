@@ -5,6 +5,90 @@ import { eq, and, desc, count, sql, gte, lte, inArray } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { sendProjectCreatedEmail } from "@/lib/email";
 import { assertProjectAccess } from "../project-access";
+import {
+  BOSTON_BUILDING_REQUIREMENTS,
+  BOSTON_DEMOLITION_REQUIREMENTS,
+  BOSTON_TRADE_REQUIREMENTS,
+  CAMBRIDGE_BUILDING_REQUIREMENTS,
+  BROOKLINE_BUILDING_REQUIREMENTS,
+  SALEM_BUILDING_REQUIREMENTS,
+  LOWELL_BUILDING_REQUIREMENTS,
+  SPRINGFIELD_BUILDING_REQUIREMENTS,
+  MA_STATE_REQUIREMENTS,
+  BOSTON_ARTICLE_80_LARGE_REQUIREMENTS,
+  BOSTON_ARTICLE_80_SMALL_REQUIREMENTS,
+  type RequirementData,
+} from "@/lib/permit-requirements";
+
+// Detect jurisdiction from address string
+function detectJurisdictionFromAddress(address: string | undefined | null): string {
+  if (!address) return "boston";
+  const lower = address.toLowerCase();
+  if (/cambridge/.test(lower)) return "cambridge";
+  if (/brookline/.test(lower)) return "brookline";
+  if (/somerville/.test(lower)) return "somerville";
+  if (/salem/.test(lower)) return "salem";
+  if (/lowell/.test(lower)) return "lowell";
+  if (/springfield/.test(lower)) return "springfield";
+  if (/\bma\b|massachusetts/.test(lower) && !/boston/.test(lower)) return "ma_statewide";
+  return "boston";
+}
+
+// Detect permit category from project type
+function detectPermitCategoryFromProjectType(
+  projectType: string
+): string {
+  switch (projectType) {
+    case "residential":
+    case "commercial":
+    case "mixed_use":
+      return "building";
+    case "renovation":
+      return "building";
+    case "adu":
+      return "building";
+    default:
+      return "building";
+  }
+}
+
+// Get requirements for jurisdiction + category
+function getRequirementsForProject(
+  jurisdiction: string,
+  category: string
+): RequirementData[] | null {
+  if (jurisdiction === "boston") {
+    if (category === "demolition") return BOSTON_DEMOLITION_REQUIREMENTS;
+    if (category === "building") return BOSTON_BUILDING_REQUIREMENTS;
+    if (category === "trade") return BOSTON_TRADE_REQUIREMENTS;
+    if (category === "article_80_large") return BOSTON_ARTICLE_80_LARGE_REQUIREMENTS;
+    if (category === "article_80_small") return BOSTON_ARTICLE_80_SMALL_REQUIREMENTS;
+    return BOSTON_BUILDING_REQUIREMENTS;
+  }
+  if (jurisdiction === "cambridge") return CAMBRIDGE_BUILDING_REQUIREMENTS;
+  if (jurisdiction === "brookline") return BROOKLINE_BUILDING_REQUIREMENTS;
+  if (jurisdiction === "salem") return SALEM_BUILDING_REQUIREMENTS;
+  if (jurisdiction === "lowell") return LOWELL_BUILDING_REQUIREMENTS;
+  if (jurisdiction === "springfield") return SPRINGFIELD_BUILDING_REQUIREMENTS;
+  if (jurisdiction === "ma_statewide") return MA_STATE_REQUIREMENTS;
+  // Default fallback
+  return MA_STATE_REQUIREMENTS;
+}
+
+// Get display name for jurisdiction
+function getJurisdictionDisplay(jurisdiction: string): string {
+  const map: Record<string, string> = {
+    boston: "Boston, MA",
+    cambridge: "Cambridge, MA",
+    brookline: "Brookline, MA",
+    somerville: "Somerville, MA",
+    salem: "Salem, MA",
+    lowell: "Lowell, MA",
+    springfield: "Springfield, MA",
+    ma_statewide: "Massachusetts",
+  };
+  return map[jurisdiction] ?? "Boston, MA";
+}
 
 export const projectsRouter = createTRPCRouter({
   list: protectedProcedure.query(async ({ ctx }) => {
@@ -182,6 +266,46 @@ export const projectsRouter = createTRPCRouter({
         projectName: newProject.name,
         projectId: newProject.id,
       }).catch((err) => console.error("[email] project created email failed:", err));
+
+      // CLA-104: Auto-trigger requirements on project creation (fire-and-forget)
+      const autoTriggerRequirements = async () => {
+        try {
+          // Detect jurisdiction from address
+          const jurisdiction = detectJurisdictionFromAddress(newProject.address);
+          const jurisdictionDisplay = getJurisdictionDisplay(jurisdiction);
+
+          // Detect permit category from project type
+          const category = detectPermitCategoryFromProjectType(newProject.projectType);
+
+          // Get requirements for this jurisdiction + category
+          const requirements = getRequirementsForProject(jurisdiction, category);
+
+          if (requirements && requirements.length > 0) {
+            // Insert compliance items for the new project
+            await ctx.db.insert(complianceItems).values(
+              requirements.map((r) => ({
+                projectId: newProject.id,
+                requirementType: r.requirementType,
+                description: r.description,
+                jurisdiction: jurisdictionDisplay,
+                source: "rule_based" as const,
+                sourceUrl: r.sourceUrl,
+                sourceText: r.sourceText,
+                reasoning: r.reasoning,
+                status: "pending" as const,
+              }))
+            );
+            console.log(
+              `[auto-requirements] Created ${requirements.length} items for project ${newProject.id} (${jurisdictionDisplay})`
+            );
+          }
+        } catch (err) {
+          console.error("[auto-requirements] Failed to auto-trigger requirements:", err);
+        }
+      };
+
+      // Fire-and-forget — don't await, don't block response
+      autoTriggerRequirements();
 
       return newProject;
     }),
