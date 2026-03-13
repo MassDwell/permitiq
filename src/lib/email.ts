@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 const FROM_ADDRESS = "MeritLayer <noreply@meritlayer.ai>";
 
-const getResend = () => new Resend(process.env.RESEND_API_KEY ?? "");
+const getResend = () => new Resend((process.env.RESEND_API_KEY ?? "").trim());
 
 function baseLayout(content: string): string {
   return `
@@ -46,7 +46,7 @@ export async function sendProjectCreatedEmail({
   projectName: string;
   projectId: string;
 }): Promise<void> {
-  if (!process.env.RESEND_API_KEY) return;
+  if (!process.env.RESEND_API_KEY?.trim()) return;
 
   const greeting = userName ? `Hi ${userName.split(" ")[0]},` : "Hi there,";
   const projectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/projects/${projectId}`;
@@ -98,7 +98,7 @@ export async function sendDocumentProcessedEmail({
   documentName: string;
   extractedCount: number;
 }): Promise<void> {
-  if (!process.env.RESEND_API_KEY) return;
+  if (!process.env.RESEND_API_KEY?.trim()) return;
 
   const greeting = userName ? `Hi ${userName.split(" ")[0]},` : "Hi there,";
   const projectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/projects/${projectId}`;
@@ -159,7 +159,7 @@ export async function sendDeadlineAlertEmail({
   deadline: Date;
   daysUntil: number;
 }): Promise<void> {
-  if (!process.env.RESEND_API_KEY) return;
+  if (!process.env.RESEND_API_KEY?.trim()) return;
 
   const greeting = userName ? `Hi ${userName.split(" ")[0]},` : "Hi there,";
   const projectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/projects/${projectId}`;
@@ -208,7 +208,7 @@ export async function sendTeamInviteEmail({
   role: "editor" | "viewer";
   token: string;
 }): Promise<void> {
-  if (!process.env.RESEND_API_KEY) return;
+  if (!process.env.RESEND_API_KEY?.trim()) return;
 
   const inviteUrl = `https://meritlayer.ai/invite/${token}`;
   const roleLabel = role === "editor" ? "Editor" : "Viewer";
@@ -260,7 +260,7 @@ export async function sendOverdueAlertEmail({
   projectId: string;
   requirementDescription: string;
 }): Promise<void> {
-  if (!process.env.RESEND_API_KEY) return;
+  if (!process.env.RESEND_API_KEY?.trim()) return;
 
   const greeting = userName ? `Hi ${userName.split(" ")[0]},` : "Hi there,";
   const projectUrl = `${process.env.NEXT_PUBLIC_APP_URL}/projects/${projectId}`;
